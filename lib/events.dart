@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:mladez_zpevnik/talk.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mladez_zpevnik/config.dart';
 import 'package:mladez_zpevnik/jsonDateTime.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Events extends StatefulWidget {
   Events({Key key, this.preferences, this.config}) : super(key: key);
@@ -79,7 +79,7 @@ class _EventsState extends State<Events> {
 
   final _myPadding = EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0);
   final _myDateFormat = new DateFormat.Hm().add_yMd();
-  final ScrollController _controller = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   List<Event> _cacheEvents;
 
   Future<List<Event>> _getEvents() async {
@@ -103,97 +103,76 @@ class _EventsState extends State<Events> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-            backgroundColor: Colors.black12,
-//        backgroundColor: config.darkMode ? Colors.black87 : Colors.white,
-            appBar: AppBar(
-                title: Text('Akce'),
-                bottom: TabBar(
-                  tabs: <Widget>[
-                    Tab(icon: Icon(Icons.date_range)),
-                    Tab(icon: Icon(Icons.chat)),
-                  ],
-                )),
-            body: TabBarView(children: <Widget>[
-              FutureBuilder(
-                  future: _getEvents(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.data == null && _cacheEvents == null) {
-                      return LinearProgressIndicator();
-                    }
-                    if (snapshot.data != null) {
-                      preferences?.setString(
-                          'events', json.encode(snapshot.data));
-                    }
-                    return LiquidPullToRefresh(
-                      onRefresh: () {
-                        setState(() {});
-                        return _getEvents();
-                      },
-                      showChildOpacityTransition: false,
-                      scrollController: _controller,
-                      child: ListView.builder(
-                          itemCount: (snapshot.data ?? _cacheEvents).length,
-                          controller: _controller,
-                          itemBuilder: (BuildContext context, int index) {
-                            Event event =
-                                (snapshot.data ?? _cacheEvents)[index];
-                            return Card(
+    return FutureBuilder(
+        future: _getEvents(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.data == null && _cacheEvents == null) {
+            return SpinKitWave(color: Colors.green[500]);
+          }
+          if (snapshot.data != null) {
+            preferences?.setString('events', json.encode(snapshot.data));
+          }
+          return LiquidPullToRefresh(
+            onRefresh: () {
+              setState(() {});
+              return _getEvents();
+            },
+            showChildOpacityTransition: false,
+            scrollController: _scrollController,
+            child: ListView.builder(
+                itemCount: (snapshot.data ?? _cacheEvents).length,
+                controller: _scrollController,
+                itemBuilder: (BuildContext context, int index) {
+                  Event event = (snapshot.data ?? _cacheEvents)[index];
+                  return Card(
 //                color: config.darkMode ? Colors.black87 : Colors.white,
-                                elevation: 5,
-                                margin: EdgeInsets.all(15.0),
-                                child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.fromLTRB(
-                                            10.0, 5.0, 10.0, 0.0),
-                                        child: Text(
-                                          event.title,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20.0),
-                                        ),
-                                      ),
-                                      Divider(color: Colors.black),
-                                      Padding(
-                                        padding: _myPadding,
-                                        child: Linkify(
-                                          text: event.description,
-                                          onOpen: (link) async {
-                                            if (await canLaunch(link.url)) {
-                                              await launch(link.url);
-                                            } else {
-                                              throw 'Could not launch ' +
-                                                  link.url;
-                                            }
-                                          },
-                                          humanize: true,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: _myPadding,
-                                        child: Text(_myDateFormat
-                                            .format(event.date.value)),
-                                      ),
-                                      event.show
-                                          ? Padding(
-                                              padding: _myPadding,
-                                              child: Text(
-                                                event.author,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ))
-                                          : Center()
-                                    ]));
-                          }),
-                    );
-                  }),
-              Talk(),
-            ])));
+                      elevation: 5,
+                      margin: EdgeInsets.all(15.0),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 0.0),
+                              child: Text(
+                                event.title,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.0),
+                              ),
+                            ),
+                            Divider(color: Colors.black),
+                            Padding(
+                              padding: _myPadding,
+                              child: Linkify(
+                                text: event.description,
+                                onOpen: (link) async {
+                                  if (await canLaunch(link.url)) {
+                                    await launch(link.url);
+                                  } else {
+                                    throw 'Could not launch ' + link.url;
+                                  }
+                                },
+                                humanize: true,
+                              ),
+                            ),
+                            Padding(
+                              padding: _myPadding,
+                              child:
+                                  Text(_myDateFormat.format(event.date.value)),
+                            ),
+                            event.show
+                                ? Padding(
+                                    padding: _myPadding,
+                                    child: Text(
+                                      event.author,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ))
+                                : Center()
+                          ]));
+                }),
+          );
+        });
   }
 }

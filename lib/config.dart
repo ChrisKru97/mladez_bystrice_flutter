@@ -1,18 +1,15 @@
 import 'dart:convert' show json;
-//import 'dart:ui';
+import 'dart:ui';
 
 class Config {
-//  final Color primary;
-//  final Color secondary;
-//  final bool darkMode;
+  final Color primary;
+  final Color secondary;
+  final bool darkMode;
   final int songFontSize;
-//  final int textSize;
+  final int textSize;
 
-  Config(
-//      this.primary, this.secondary, this.darkMode,
-    this.songFontSize,
-//      this.textSize
-  );
+  Config(this.primary, this.secondary, this.darkMode, this.songFontSize,
+      this.textSize);
 
   toJson() {
     return {

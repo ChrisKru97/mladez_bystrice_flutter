@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mladez_zpevnik/config.dart';
+import 'package:mladez_zpevnik/social.dart';
 import 'package:mladez_zpevnik/songs.dart';
-import 'package:mladez_zpevnik/events.dart';
-import 'package:mladez_zpevnik/talk.dart';
 import 'package:mladez_zpevnik/settings.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mladez_zpevnik/recordings.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,11 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   SharedPreferences _preferences;
-  Config _config = Config(
-//      Colors.blue, Colors.green[800], false,
-      28
-//      , 18
-      );
+  Config _config = Config(Colors.blue, Colors.green[800], false, 28, 18);
 
   _saveSettings(Config config) {
     this.setState(() {
@@ -54,14 +50,13 @@ class _MyHomePageState extends State<MyHomePage> {
         var data = jsonDecode(configString);
         setState(() {
           _config = Config(
-//              Color.fromRGBO(
-//                  data.primary.red, data.primary.green, data.primary.blue, 1.0),
-//              Color.fromRGBO(data.secondary.red, data.secondary.green,
-//                  data.secondary.blue, 1.0),
-//              data.darkMode,
-            data['songFontSize'],
-//              data.textSize
-          );
+              Color.fromRGBO(
+                  data.primary.red, data.primary.green, data.primary.blue, 1.0),
+              Color.fromRGBO(data.secondary.red, data.secondary.green,
+                  data.secondary.blue, 1.0),
+              data.darkMode,
+              data['songFontSize'],
+              data.textSize);
           _preferences = value;
         });
       } else {
@@ -86,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget myWidget;
     switch (_selectedIndex) {
       case 0:
-        myWidget = Events(
+        myWidget = Social(
           preferences: _preferences,
           config: _config,
         );

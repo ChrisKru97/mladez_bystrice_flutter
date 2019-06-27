@@ -1,4 +1,6 @@
 PODS:
+  - file_picker (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - shared_preferences (0.0.1):
     - Flutter
@@ -6,11 +8,14 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `.symlinks/flutter/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
 EXTERNAL SOURCES:
+  file_picker:
+    :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
     :path: ".symlinks/flutter/ios"
   shared_preferences:
@@ -19,6 +24,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher/ios"
 
 SPEC CHECKSUMS:
+  file_picker: 408623be2125b79a4539cf703be3d4b3abe5e245
   Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
   shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
   url_launcher: 0067ddb8f10d36786672aa0722a21717dba3a298
