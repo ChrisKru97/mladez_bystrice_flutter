@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert' show json;
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mladez_zpevnik/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,7 +55,7 @@ class _SongBookState extends State<SongBook> {
 
   @override
   void initState() {
-    String asString = preferences?.getString('favorites') ?? '';
+    String asString = preferences.getString('favorites') ?? '';
     if (asString != '') {
       var data = json.decode(asString);
       for (var e in data) {
@@ -87,6 +88,7 @@ class _SongBookState extends State<SongBook> {
         return Scaffold(
 //          backgroundColor: config.darkMode ? Colors.black26 : Colors.white,
           appBar: AppBar(
+            backgroundColor: config.primary,
             title: Text(song.number.toString() + '. ' + song.name),
           ),
           body: SingleChildScrollView(
@@ -112,12 +114,16 @@ class _SongBookState extends State<SongBook> {
             title: Text('Smazat ' + song.name + '?'),
             actions: <Widget>[
               OutlineButton(
+                textColor: config.primary,
+                highlightedBorderColor: config.primary,
                 child: Text('Zrušit'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               RaisedButton(
+                  highlightColor: config.primary,
+                  color: config.primary,
                   child:
                       Text('Potvrdit', style: TextStyle(color: Colors.white)),
                   onPressed: () {
@@ -125,7 +131,7 @@ class _SongBookState extends State<SongBook> {
                     Navigator.of(context).pop();
                     setState(() {
                       _saved.remove(song);
-                      preferences?.setString(
+                      preferences.setString(
                           'favorites', json.encode(_saved.toList()));
                     });
                   }),
@@ -137,7 +143,6 @@ class _SongBookState extends State<SongBook> {
   _pushSaved() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        settings: RouteSettings(name: '/liked'),
         builder: (BuildContext context) {
           List<Song> saved = _saved.toList();
           saved.sort((a, b) {
@@ -164,6 +169,7 @@ class _SongBookState extends State<SongBook> {
           ).toList();
           return Scaffold(
             appBar: AppBar(
+              backgroundColor: config.primary,
               title: Text('Oblíbené'),
             ),
             body: ListView(children: divided),
@@ -187,10 +193,11 @@ class _SongBookState extends State<SongBook> {
         future: _loadSongs(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.data == null) {
-            return LinearProgressIndicator();
+            return SpinKitFadingCircle(
+                color: Theme.of(context).secondaryHeaderColor);
           }
           return (DraggableScrollbar.arrows(
-              backgroundColor: Colors.green[800],
+              backgroundColor: Theme.of(context).secondaryHeaderColor,
               padding: EdgeInsets.only(right: 4.0),
               labelTextBuilder: (double offset) => Text(
                   ((offset ~/ 92) + 1).toString(),
@@ -225,7 +232,7 @@ class _SongBookState extends State<SongBook> {
                                 } else {
                                   _saved.add(song);
                                 }
-                                preferences?.setString(
+                                preferences.setString(
                                     'favorites', json.encode(_saved.toList()));
                               });
                             }));

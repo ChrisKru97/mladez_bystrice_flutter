@@ -59,7 +59,7 @@ class _EventsState extends State<Events> {
 
   @override
   void initState() {
-    String asString = preferences?.getString('events') ?? '';
+    String asString = preferences.getString('events') ?? '';
     if (asString != '') {
       List<Event> events = [];
       var data = json.decode(asString);
@@ -107,10 +107,11 @@ class _EventsState extends State<Events> {
         future: _getEvents(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.data == null && _cacheEvents == null) {
-            return SpinKitWave(color: Colors.green[500]);
+            return SpinKitDualRing(
+                color: Theme.of(context).secondaryHeaderColor);
           }
           if (snapshot.data != null) {
-            preferences?.setString('events', json.encode(snapshot.data));
+            preferences.setString('events', json.encode(snapshot.data));
           }
           return LiquidPullToRefresh(
             onRefresh: () {
@@ -138,28 +139,32 @@ class _EventsState extends State<Events> {
                                 event.title,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 20.0),
+                                    fontSize: (config.textSize + 6).toDouble()),
                               ),
                             ),
                             Divider(color: Colors.black),
                             Padding(
                               padding: _myPadding,
                               child: Linkify(
-                                text: event.description,
-                                onOpen: (link) async {
-                                  if (await canLaunch(link.url)) {
-                                    await launch(link.url);
-                                  } else {
-                                    throw 'Could not launch ' + link.url;
-                                  }
-                                },
-                                humanize: true,
-                              ),
+                                  text: event.description,
+                                  onOpen: (link) async {
+                                    if (await canLaunch(link.url)) {
+                                      await launch(link.url);
+                                    } else {
+                                      throw 'Could not launch ' + link.url;
+                                    }
+                                  },
+                                  humanize: true,
+                                  style: TextStyle(
+                                      fontSize: config.textSize.toDouble())),
                             ),
                             Padding(
                               padding: _myPadding,
-                              child:
-                                  Text(_myDateFormat.format(event.date.value)),
+                              child: Text(
+                                _myDateFormat.format(event.date.value),
+                                style: TextStyle(
+                                    fontSize: config.textSize.toDouble()),
+                              ),
                             ),
                             event.show
                                 ? Padding(
@@ -167,7 +172,8 @@ class _EventsState extends State<Events> {
                                     child: Text(
                                       event.author,
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: config.textSize.toDouble()),
                                     ))
                                 : Center()
                           ]));

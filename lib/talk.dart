@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -44,7 +45,7 @@ class _TalkState extends State<Talk> {
 
   @override
   void initState() {
-    String asString = preferences?.getString('talk') ?? '';
+    String asString = preferences.getString('talk') ?? '';
     if (asString != '') {
       List<Message> messages = [];
       var data = json.decode(asString);
@@ -83,10 +84,11 @@ class _TalkState extends State<Talk> {
         future: _getMessages(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.data == null && _cacheMessages == null) {
-            return LinearProgressIndicator();
+            return SpinKitCubeGrid(
+                color: Theme.of(context).secondaryHeaderColor);
           }
           if (snapshot.data != null) {
-            preferences?.setString('talk', json.encode(snapshot.data));
+            preferences.setString('talk', json.encode(snapshot.data));
           }
           return LiquidPullToRefresh(
             onRefresh: () {
@@ -109,27 +111,32 @@ class _TalkState extends State<Talk> {
                           Padding(
                             padding: _myPadding,
                             child: Linkify(
-                              text: message.message,
-                              onOpen: (link) async {
-                                if (await canLaunch(link.url)) {
-                                  await launch(link.url);
-                                } else {
-                                  throw 'Could not launch ' + link.url;
-                                }
-                              },
-                              humanize: true,
-                            ),
+                                text: message.message,
+                                onOpen: (link) async {
+                                  if (await canLaunch(link.url)) {
+                                    await launch(link.url);
+                                  } else {
+                                    throw 'Could not launch ' + link.url;
+                                  }
+                                },
+                                humanize: true,
+                                style: TextStyle(
+                                    fontSize: config.textSize.toDouble())),
                           ),
                           Padding(
                             padding: _myPadding,
-                            child:
-                                Text(_myDateFormat.format(message.date.value)),
+                            child: Text(
+                                _myDateFormat.format(message.date.value),
+                                style: TextStyle(
+                                    fontSize: config.textSize.toDouble())),
                           ),
                           Padding(
                               padding: _myPadding,
                               child: Text(
                                 message.sender,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: config.textSize.toDouble()),
                               ))
                         ],
                       ));

@@ -19,10 +19,10 @@ class Social extends StatefulWidget {
 class _SocialState extends State<Social> {
   final SharedPreferences preferences;
   final Config config;
-  bool _showFAB = false;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
+  bool _showFAB = false;
 
   _SocialState({this.preferences, this.config});
 
@@ -33,7 +33,8 @@ class _SocialState extends State<Social> {
           return Dialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                side: BorderSide(color: Colors.blue, width: 3.0)),
+                side: BorderSide(
+                    color: Theme.of(context).primaryColor, width: 3.0)),
             elevation: 5,
             child: Padding(
                 padding: EdgeInsets.all(15.0),
@@ -74,7 +75,8 @@ class _SocialState extends State<Social> {
                                       decoration: InputDecoration(
                                           border: OutlineInputBorder(
                                               borderSide: BorderSide(
-                                                  color: Colors.blue)),
+                                                  color: Theme.of(context)
+                                                      .primaryColor)),
                                           labelText: 'Tvé jméno')))),
                           Padding(
                               padding: EdgeInsets.symmetric(vertical: 5.0),
@@ -83,14 +85,18 @@ class _SocialState extends State<Social> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     OutlineButton(
-                                      textColor: Colors.blue,
+                                      highlightedBorderColor:
+                                          Theme.of(context).primaryColor,
+                                      textColor: Theme.of(context).primaryColor,
                                       child: Text('Zrušit'),
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
                                     ),
                                     RaisedButton(
-                                        color: Colors.blue,
+                                        highlightColor:
+                                            Theme.of(context).primaryColor,
+                                        color: Theme.of(context).primaryColor,
                                         textColor: Colors.white,
                                         child: Text('Poslat'),
                                         onPressed: () {
@@ -146,6 +152,7 @@ class _SocialState extends State<Social> {
         child: Scaffold(
             floatingActionButton: _showFAB
                 ? FloatingActionButton(
+                    backgroundColor: Theme.of(context).secondaryHeaderColor,
                     child: Icon(Icons.add),
                     onPressed: () {
                       _openNewMessage(context);
@@ -155,17 +162,34 @@ class _SocialState extends State<Social> {
             backgroundColor: Colors.black12,
 //        backgroundColor: config.darkMode ? Colors.black87 : Colors.white,
             appBar: AppBar(
-                bottom: TabBar(
-              onTap: (index) {
-                setState(() {
-                  _showFAB = index == 1;
-                });
-              },
-              tabs: <Widget>[
-                Tab(icon: Icon(Icons.date_range)),
-                Tab(icon: Icon(Icons.chat)),
-              ],
-            )),
-            body: TabBarView(children: <Widget>[Events(), Talk()])));
+              flexibleSpace: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TabBar(
+                    unselectedLabelColor: Colors.black,
+                    indicatorColor: Theme.of(context).primaryColor,
+                    onTap: (index) {
+                      setState(() {
+                        _showFAB = index == 1;
+                      });
+                    },
+                    tabs: <Widget>[
+                      Tab(icon: Icon(Icons.date_range)),
+                      Tab(icon: Icon(Icons.chat)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            body: TabBarView(children: <Widget>[
+              Events(
+                preferences: preferences,
+                config: config,
+              ),
+              Talk(
+                preferences: preferences,
+                config: config,
+              )
+            ])));
   }
 }
