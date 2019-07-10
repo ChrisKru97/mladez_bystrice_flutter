@@ -10,6 +10,7 @@ class Settings extends StatefulWidget {
   final SharedPreferences preferences;
   final Config config;
   final saveSettings;
+
   @override
   _SettingsState createState() => _SettingsState(
       preferences: this.preferences,
@@ -29,23 +30,22 @@ class _SettingsState extends State<Settings> {
 
   @override
   void initState() {
-    _textSize = config.textSize;
-    _songFontSize = config.songFontSize;
-//    _darkMode = config.darkMode;
-    _red = config.primary.red;
-    _blue = config.primary.blue;
-    _green = config.primary.green;
-    _redL = config.secondary.red;
-    _blueL = config.secondary.blue;
-    _greenL = config.secondary.green;
+    _textSize = config.textSize ?? 14;
+    _darkMode = config.darkMode ?? false;
+    _red = config.primary.red ?? 33;
+    _blue = config.primary.blue ?? 243;
+    _green = config.primary.green ?? 150;
+    _redL = config.secondary.red ?? 46;
+    _blueL = config.secondary.blue ?? 50;
+    _greenL = config.secondary.green ?? 125;
+    _showChords = config.showChords ?? false;
     super.initState();
   }
 
   _SettingsState({this.preferences, this.config, this.saveSettings});
 
   int _textSize;
-  int _songFontSize;
-//  bool _darkMode;
+  bool _darkMode;
   int _red;
   int _green;
   int _blue;
@@ -53,6 +53,8 @@ class _SettingsState extends State<Settings> {
   int _greenL;
   int _blueL;
   bool _bar = false;
+  bool _showChords;
+
   @override
   Widget build(BuildContext context) {
 //    TextStyle textStyle =
@@ -65,26 +67,6 @@ class _SettingsState extends State<Settings> {
                 child: Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Column(children: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.all(20.0),
-                          child: Text(
-                            'Velikost textu písně',
-                            style:
-                                TextStyle(fontSize: _songFontSize.toDouble()),
-                          )),
-                      Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 0.0, horizontal: 20.0),
-                          child: FluidSlider(
-                            value: _songFontSize.toDouble(),
-                            onChanged: (double newValue) {
-                              setState(() {
-                                _songFontSize = newValue.truncate();
-                              });
-                            },
-                            min: 10.0,
-                            max: 40.0,
-                          )),
                       Padding(
                           padding: EdgeInsets.all(20.0),
                           child: Text(
@@ -104,51 +86,59 @@ class _SettingsState extends State<Settings> {
                             min: 6.0,
                             max: 32.0,
                           )),
-//                      Padding(
-//                          padding: EdgeInsets.all(15.0),
-//                          child: Text(
-//                            'Pozadí aplikace',
-////                            style: textStyle,
-//                          )),
-//                      Row(
-//                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                        children: <Widget>[
-//                          Text(
-//                            'Světlé',
-////                            style: textStyle,
-//                          ),
-//                          Switch(
-//                            value: _darkMode ?? config.darkMode,
-//                            inactiveThumbColor: Theme.of(context).primaryColor,
-//                            inactiveTrackColor:
-//                                Theme.of(context).primaryColor.withOpacity(0.6),
-//                            activeTrackColor:
-//                                Theme.of(context).primaryColor.withOpacity(0.6),
-//                            activeColor: Theme.of(context).primaryColor,
-//                            onChanged: (bool value) {
-//                              setState(() {
-//                                _darkMode = value;
-//                              });
-//                            },
-//                          ),
-//                          Text(
-//                            'Tmavé',
-////                            style: textStyle,
-//                          ),
-//                        ],
-//                      ),
+                      Padding(
+                          padding: EdgeInsets.all(15.0),
+                          child: Text(
+                            'Pozadí aplikace',
+                          )),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Text(
+                            'Světlé',
+                          ),
+                          Switch(
+                            value: _darkMode,
+                            activeTrackColor:
+                                Theme.of(context).primaryColor.withOpacity(0.6),
+                            activeColor: Theme.of(context).primaryColor,
+                            onChanged: (bool value) {
+                              setState(() {
+                                _darkMode = value;
+                              });
+                            },
+                          ),
+                          Text(
+                            'Tmavé',
+                          ),
+                        ],
+                      ),
+                      Padding(
+                          padding: EdgeInsets.all(15.0),
+                          child: Text(
+                            'Ukázat akordy',
+                          )),
+                      Switch(
+                        value: _showChords,
+                        activeTrackColor:
+                            Theme.of(context).primaryColor.withOpacity(0.6),
+                        activeColor: Theme.of(context).primaryColor,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _showChords = value;
+                          });
+                        },
+                      ),
                       Padding(
                           padding: EdgeInsets.all(15.0),
                           child: Text(
                             'Výběr barev aplikací',
-//                            style: textStyle,
                           )),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Text(
                             'Primární',
-//                            style: textStyle,
                           ),
                           Switch(
                             value: _bar,
@@ -168,7 +158,6 @@ class _SettingsState extends State<Settings> {
                           ),
                           Text(
                             'Sekundární',
-//                            style: textStyle,
                           ),
                         ],
                       ),
@@ -240,15 +229,16 @@ class _SettingsState extends State<Settings> {
 //                                      : Colors.white),
                             ),
                             onPressed: () {
-                              Config config = Config(
+                              Config newConfig = Config(
                                   Color.fromRGBO(_red, _green, _blue, 1.0),
                                   Color.fromRGBO(_redL, _greenL, _blueL, 1.0),
-//                                  _darkMode,
-                                  _songFontSize,
-                                  _textSize);
-                              saveSettings(config);
+                                  _darkMode,
+                                  config.songFontSize,
+                                  _textSize,
+                                  _showChords);
+                              saveSettings(newConfig);
                               preferences.setString(
-                                  'config', jsonEncode(config));
+                                  'config', jsonEncode(newConfig));
                               Scaffold.of(context).showSnackBar(snackBar);
                             },
                           )),

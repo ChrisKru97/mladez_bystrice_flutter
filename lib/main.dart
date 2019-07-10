@@ -34,12 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   SharedPreferences _preferences;
-  Config _config = Config(
-      Colors.blue,
-      Colors.green[800],
-//      false,
-      28,
-      14);
+  Config _config = Config(Colors.blue, Colors.green[800], false, 28, 14, false);
 
   _saveSettings(Config config) {
     this.setState(() {
@@ -59,9 +54,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   data['primary']['blue'], 1.0),
               Color.fromRGBO(data['secondary']['red'],
                   data['secondary']['green'], data['secondary']['blue'], 1.0),
-//              data['darkMode'],
+              data['darkMode'],
               data['songFontSize'],
-              data['textSize']);
+              data['textSize'],
+              data['showChords']);
           _preferences = value;
         });
       } else {
@@ -96,6 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
         myWidget = SongBook(
           preferences: _preferences,
           config: _config,
+          saveSettings: _saveSettings,
         );
         break;
       case 2:

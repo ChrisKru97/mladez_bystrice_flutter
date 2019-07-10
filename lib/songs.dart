@@ -7,12 +7,16 @@ import 'package:mladez_zpevnik/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SongBook extends StatefulWidget {
-  SongBook({Key key, this.preferences, this.config}) : super(key: key);
+  SongBook({Key key, this.preferences, this.config, this.saveSettings})
+      : super(key: key);
   final SharedPreferences preferences;
   final Config config;
+  final saveSettings;
   @override
-  _SongBookState createState() =>
-      _SongBookState(preferences: this.preferences, config: this.config);
+  _SongBookState createState() => _SongBookState(
+      preferences: this.preferences,
+      config: this.config,
+      saveSettings: this.saveSettings);
 }
 
 class Song {
@@ -27,9 +31,7 @@ class Song {
       identical(this, other) ||
       other is Song &&
           runtimeType == other.runtimeType &&
-          number == other.number &&
-          name == other.name &&
-          song == other.song;
+          number == other.number;
 
   @override
   int get hashCode => name.hashCode ^ song.hashCode ^ number.hashCode;
@@ -50,11 +52,13 @@ class Song {
 class _SongBookState extends State<SongBook> {
   SharedPreferences preferences;
   Config config;
+  var saveSettings;
 
-  _SongBookState({this.preferences, this.config});
+  _SongBookState({this.preferences, this.config, this.saveSettings});
 
   @override
   void initState() {
+    _songFontSize = config.songFontSize ?? 28;
     String asString = preferences.getString('favorites') ?? '';
     if (asString != '') {
       var data = json.decode(asString);
@@ -69,11 +73,18 @@ class _SongBookState extends State<SongBook> {
     super.initState();
   }
 
+  int _songFontSize;
+  int _previousFontSize;
   final Set<Song> _saved = Set<Song>();
   final ScrollController _controller = ScrollController();
 
   Future<List<Song>> _loadSongs() async {
-    String data = await rootBundle.loadString('assets/zpevnik.json');
+    String data;
+    if (config.showChords ?? false)
+      data = await rootBundle.loadString('assets/zpevnik.json');
+    else {
+      data = await rootBundle.loadString('assets/noChords.json');
+    }
     var decoded = await json.decode(data);
     List<Song> songs = [];
     for (var s in decoded) {
@@ -92,12 +103,34 @@ class _SongBookState extends State<SongBook> {
             title: Text(song.number.toString() + '. ' + song.name),
           ),
           body: SingleChildScrollView(
-              child: Center(
-                  child: Text(
-                song.song,
-                style: TextStyle(fontSize: config.songFontSize.toDouble()),
-                textAlign: TextAlign.center,
-              )),
+              child: GestureDetector(
+                  onScaleStart: (scaleDetails) =>
+                      setState(() => _previousFontSize = _songFontSize),
+                  onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
+                    setState(() {
+                      int newFontSize =
+                          (_previousFontSize / scaleDetails.scale).round();
+                      if (newFontSize >= 40 && newFontSize <= 12) {
+                        _songFontSize = newFontSize;
+                      }
+//                      Config newConfig = Config(
+//                          config.primary,
+//                          config.secondary,
+//                          config.darkMode,
+//                          newFontSize,
+//                          config.textSize,
+//                          config.showChords);
+//                      saveSettings(newConfig);
+//                      preferences.setString('config', json.encode(newConfig));
+//                      debugPrint(newFontSize.toString());
+                    });
+                  },
+                  child: Center(
+                      child: Text(
+                    song.song,
+                    style: TextStyle(fontSize: _songFontSize.toDouble()),
+                    textAlign: TextAlign.center,
+                  ))),
               padding: EdgeInsets.all(5.0)),
         );
       },

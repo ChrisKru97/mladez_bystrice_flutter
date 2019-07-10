@@ -750,8 +750,8 @@
     "number": 150
   },
   {
-    "name": "Tak",
-    "song": "Cię kocham \nCmaj\nUsłysz Panie mego serca głos, \nFmaj\nkażda o Tobie myśl porusza je. \n G C \nTak Cię kocham, Jezu, tak Cię kocham. \n \nKocham Ciebie o tym śpiewać chcę, \nna skrzydłach chwały Twej mą duszę nieś. \nTak Cię kocham, Jezu, tak Cię kocham. \n \n Ami Emi \nTak bym chciał wiecznie już, \n Fmaj C \nWciąż bez końca Cię wywyższać, \n F G E\nsus\n E Ami \nW obecności i chwale Twej. \n \nWznoszę głos, ręce swe, \nwznoszę serce wprost do nieba, \nTyś jest słońcem i cieniem mym. \n \n(Dmi G\n)",
+    "name": "Tak Cię kocham",
+    "song": "Cmaj\nUsłysz Panie mego serca głos, \nFmaj\nkażda o Tobie myśl porusza je. \n G C \nTak Cię kocham, Jezu, tak Cię kocham. \n \nKocham Ciebie o tym śpiewać chcę, \nna skrzydłach chwały Twej mą duszę nieś. \nTak Cię kocham, Jezu, tak Cię kocham. \n \n Ami Emi \nTak bym chciał wiecznie już, \n Fmaj C \nWciąż bez końca Cię wywyższać, \n F G E\nsus\n E Ami \nW obecności i chwale Twej. \n \nWznoszę głos, ręce swe, \nwznoszę serce wprost do nieba, \nTyś jest słońcem i cieniem mym. \n \n(Dmi G\n)",
     "number": 151
   },
   {
@@ -983,5 +983,35 @@
     "name": "Život svůj chci Ti dát",
     "song": "C F \nRef.: Život svůj chci Ti dát, \nAmi C F Ami \ns Tebou být napořád, \n C F Ami \nTys můj Bůh, Tys můj Pán, \n C F Ami \nsrdce své Ti dávám. \n \n F C Dmi C \n1. Vzals tíhu mou na rámě své, \nF C Dmi G \ntoužím Tebou nechat se vést \n Ami Emi Dmi \nPane můj, \n Ami Emi Dmi \nBože můj. \n \n2. Chci vyprávěním o lásce Tvé \nvšem hledajícím ukázat cesty směr. \nPane můj Bože můj život svůj, chci Ti dát, \nchci Ti dát. \n \n C F Ami \n \nCODA: Život svůj chci Ti dát, \nG \n \nC \nchci Ti dát. \n \n \n\n \n",
     "number": 197
+  },
+  {
+    "name": "Duszo ma Pana chwal",
+    "song": "Ref. Duszo ma Pana chwal\nOddaj Bogu cześć\nŚwiętemu śpiewaj pieśń\nZ mocą wywyższaj Go\nDuszo ma\nUwielbiam Boże Cię\n\n1. Nowy dzień wraz ze wschodem słońca\nZnów nadszedł czas by Ci śpiewać pieśń\nCokolwiek jest już za mną i to wszystko co przede mną\nWiem, będę śpiewać gdy nadejdzie zmrok\n\n2. Bogaty w miłość gniew oddalasz Panie\nTwe serce miłe wielbię imię Twe\nZe względu na Twą dobroć będę śpiewać Tobie pieśni\nWiele powodów by uwielbiać Cię\n\n3. Przyjdzie dzień gdy bez sił zostanę \nNadejdzie czas mego końca tu\nDusza ma będzie już na zawsze Cię uwielbiać\nW wieczności z Tobą piękna zabrzmi pieśń",
+    "number": 200
+  },
+  {
+    "name": "PSALM 23",
+    "song": "Pan Bóg jest moim pasterzem\nNad wody spokojne mnie wiedzie\nNa łąkach zielonych mnie pasie\nNiczego dziś mi nie braknie\nDuszę moją pokrzepiasz\nTwa obietnica jest pewna\nBezpieczną mnie drogą prowadzisz\nPocieszasz, gdy smutek na twarzy\n\nRef: Choćbym szedł ciemną doliną\nZła się nie ulęknę, bo Ty jesteś ze mną\nChoćbym szedł ciemną doliną\nZła się nie ulęknę, bo Tyś ze mną jest\n\nOliwą mą głowę namaszczasz\nKielich bez końca napełniasz\nTwa dobroć i łaska na wieki już przy mnie są",
+    "number": 201
+  },
+  {
+    "name": "Bojujte, bojujte dál",
+    "song": "Bojujte, bojujte dál, bojujte, bojujte dál!\nPohleďte jen, v dálce svítá, pohleďte jen, den nás vítá,\nbojujte, bojujte dál!\n\nZpříma choďte, pozdvihněte hlavu,\ni když pro vás vavřín neroste,\nnechte mocným moc a slavným slávu,\no jejich se přízeň neproste.\n\nKdo se ani zlatem koupit nedá,\nnemlčí a s proudem nepluje,\nspravedlnost kdo ve světě hledá,\nv jedne řadě s námi bojuje.\n\nK útěku-li z boje chytrost radí, holubičí měje prostotu,\nopatrní buďte jako hadi, nezběhněte z cesty k životu.\n\nBojujte, však pomstu nechte Pánu,\nOn je soudce a sám určí trest, prohraje,\nkdo ránu splácí ránou, k nenávisti kdo se nechá svést.\n\nNezaspěte, ať vejdete zítra v zemi novou,\nv zaslíbenou vlast, nocí ať vás vede příslib jitra,\nvládou temna nenechte se zmást.",
+    "number": 202
+  },
+  {
+    "name": "Nasz Bóg",
+    "song": "Wodę zamieniłeś w wino\nŚlepi przy Tobie znów widzą, któż jest jak Ty? Tylko Ty?\nBlaskiem rozświetlasz ciemności\nCzłowiek powstaje z marności, któż jest jak Ty? Tylko Ty?\n\nRef: Nasz Bóg jest wielki, nasz Bóg jest silny\nBoże nikt inny nie równa się z Tobą.\nNasz Bóg uzdrawia, jest wszechmogący.\nNasz Bóg, Nasz Bóg.\n\nBlaskiem rozświetlasz ciemności.\nCzłowiek powstaje z marności, któż jest jak Ty? Tylko Ty?\n\nJeśli nasz Bóg jest przy nas już nic nas nie zatrzyma!\nJeśli nasz Bóg jest z nami, któż jest przeciwko nam? /x2\nKtóż jest przeciwko nam?",
+    "number": 203
+  },
+  {
+    "name": "Sláva Ti patří",
+    "song": "[e7]Přišel Bůh a život za mě [C]dal\n[G]amen, [D]amen.\nSvým [e7]tělem, krví vítězem se [C]stal\n[G]amen, [D]amen.\nNa [e7]kříži mřel, pak vzkříšen [C]byl\n[G]amen, [D]amen.\nPo [e7]pravici Otce vládne [C]dál\n[G]amen, [D]amen.\n\nRef.: [G]Sláva Ti [a]patří, Ty jsi [G]Bůh vždy [C]mocný,\n[G]sláva Ti [a]patří, Ty jsi [G]Pán.[C]\nTobě [G]celým srdcem [a]zpívám, že jsi [G]Bůh vždy [C]mocný,\n[C]velká je [D]sláva [G]Tvá.\n\nKrev [e7]rudá tekla z rukou bezhříš[C]ných\n[G]amen, [D]amen.\nVšak [e7]nezůstal tam viset na kří[C]ži\n[G]amen, [D]amen.\n[e7]Boží lásky proud teď smáčí [C]nás\n[G]amen, [D]amen.\n[e7]Haleluja, on se vrátí [C]zas\n[G]amen, [D]amen.\n\nCoda: Ty jsi ten, který [G]byl\nTy jsi ten, který [D]je\nTy jsi ten, co se [e]vrátí k [C]nám",
+    "number": 204
+  },
+  {
+    "name": "Chtěl bych být majákem",
+    "song": "[Dm]Chtěl bych být majákem, [Gm7]v příboji stát,\n[A7]chtěl bych být majákem, lodím směr [Dm]dát,\n[F]chtěl bych být [Gm]majákem [C]uprostřed [Am]vln\n[E7]a bývám [F]sám [Dm]zbloudilý [A7]prám.\n[Dm]Chtěl bych být majákem, [Bb]maj[A7]áke[Dm]m.\n\nChtěl bych i zvonem být, svou písní znět,\nchtěl bych i zvonem být, ať slyší svět,\nchtěl bych i zvonem být v bouřlivý čas\na bývám sám nejistý hlas.\nChtěl bych i zvonem být, zvonem být.\n\nChtěl bych být plamenem, když zebe chlad,\nchtěl bych být plamenem, svítit a hřát,\nchtěl bych být plamenem, noc měnit v den\na bývám sám nezapálen.\nChtěl bych být plamenem, plamenem.\n\nChtěl bych i mostem být pres dravý tok,\nchtěl bych i mostem být pro pevný krok,\nchtěl bych i mostem být ve službě všech\na často sám hledám svůj břeh.\nChtěl bych i mostem být, mostem být.\n\nJežíš nám majákem může se stát,\nduši mé zvonem být, píseň mi dát,\nsám je mi plamenem, noc mění v den.\nOn je můj Pán, není to sen.\nJežíš je vítězem, vítězem.",
+    "number": 205
   }
 ]

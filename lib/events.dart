@@ -161,7 +161,7 @@ class _EventsState extends State<Events> {
                             Padding(
                               padding: _myPadding,
                               child: Text(
-                                _myDateFormat.format(event.date.value),
+                                _myDateFormat.format(event.date.value.toLocal()),
                                 style: TextStyle(
                                     fontSize: config.textSize.toDouble()),
                               ),
