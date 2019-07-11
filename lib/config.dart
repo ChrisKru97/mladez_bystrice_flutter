@@ -4,13 +4,18 @@ import 'dart:ui';
 class Config {
   final Color primary;
   final Color secondary;
-  final bool darkMode;
+//  final bool darkMode;
   final int songFontSize;
   final int textSize;
   final bool showChords;
 
-  Config(this.primary, this.secondary, this.darkMode, this.songFontSize,
-      this.textSize, this.showChords);
+  Config(
+      this.primary,
+      this.secondary,
+//      this.darkMode,
+      this.songFontSize,
+      this.textSize,
+      this.showChords);
 
   toJson() {
     return {
@@ -24,7 +29,7 @@ class Config {
         'red': secondary.red,
         'blue': secondary.blue
       },
-      'darkMode': darkMode,
+//      'darkMode': darkMode,
       'songFontSize': songFontSize,
       'textSize': textSize,
       'showChords': showChords

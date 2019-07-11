@@ -4,6 +4,7 @@ import 'dart:convert' show json;
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mladez_zpevnik/config.dart';
+import 'package:mladez_zpevnik/songDisplay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SongBook extends StatefulWidget {
@@ -58,24 +59,23 @@ class _SongBookState extends State<SongBook> {
 
   @override
   void initState() {
-    _songFontSize = config.songFontSize ?? 28;
     String asString = preferences.getString('favorites') ?? '';
     if (asString != '') {
       var data = json.decode(asString);
-      for (var e in data) {
-        _saved.add(Song(
-          e['number'],
-          e['name'],
-          e['song'],
-        ));
+      if ((data as List).first.runtimeType.toString() == 'int') {
+        for (var e in data) {
+          _saved.add(e);
+        }
+      } else {
+        for (var e in data) {
+          _saved.add(e['number']);
+        }
       }
     }
     super.initState();
   }
 
-  int _songFontSize;
-  int _previousFontSize;
-  final Set<Song> _saved = Set<Song>();
+  final Set<int> _saved = Set<int>();
   final ScrollController _controller = ScrollController();
 
   Future<List<Song>> _loadSongs() async {
@@ -96,43 +96,11 @@ class _SongBookState extends State<SongBook> {
   _openSong(Song song) {
     Navigator.of(context).push(MaterialPageRoute<void>(
       builder: (BuildContext context) {
-        return Scaffold(
-//          backgroundColor: config.darkMode ? Colors.black26 : Colors.white,
-          appBar: AppBar(
-            backgroundColor: config.primary,
-            title: Text(song.number.toString() + '. ' + song.name),
-          ),
-          body: SingleChildScrollView(
-              child: GestureDetector(
-                  onScaleStart: (scaleDetails) =>
-                      setState(() => _previousFontSize = _songFontSize),
-                  onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
-                    setState(() {
-                      int newFontSize =
-                          (_previousFontSize / scaleDetails.scale).round();
-                      if (newFontSize >= 40 && newFontSize <= 12) {
-                        _songFontSize = newFontSize;
-                      }
-//                      Config newConfig = Config(
-//                          config.primary,
-//                          config.secondary,
-//                          config.darkMode,
-//                          newFontSize,
-//                          config.textSize,
-//                          config.showChords);
-//                      saveSettings(newConfig);
-//                      preferences.setString('config', json.encode(newConfig));
-//                      debugPrint(newFontSize.toString());
-                    });
-                  },
-                  child: Center(
-                      child: Text(
-                    song.song,
-                    style: TextStyle(fontSize: _songFontSize.toDouble()),
-                    textAlign: TextAlign.center,
-                  ))),
-              padding: EdgeInsets.all(5.0)),
-        );
+        return SongDisplay(
+            song: song,
+            preferences: preferences,
+            config: config,
+            saveSettings: saveSettings);
       },
     ));
   }
@@ -177,36 +145,47 @@ class _SongBookState extends State<SongBook> {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          List<Song> saved = _saved.toList();
-          saved.sort((a, b) {
-            return a.number.compareTo(b.number);
-          });
-          final Iterable<ListTile> tiles = saved.map(
-            (Song song) {
-              return ListTile(
-                title: Text(
-                  song.number.toString() + '. ' + song.name,
-                ),
-                onTap: () {
-                  _openSong(song);
-                },
-                onLongPress: () {
-                  _showDialog(song);
-                },
-              );
-            },
-          );
-          final List<Widget> divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles,
-          ).toList();
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: config.primary,
-              title: Text('Oblíbené'),
-            ),
-            body: ListView(children: divided),
-          );
+          return FutureBuilder(
+              future: _loadSongs(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.data == null) {
+                  return SpinKitDoubleBounce(
+                      color: Theme.of(context).secondaryHeaderColor);
+                }
+                List<int> saved = _saved.toList();
+                saved.sort((a, b) {
+                  return a.compareTo(b);
+                });
+                final Iterable<ListTile> tiles = saved.map(
+                  (int number) {
+                    if (number > 196) number = number - 4;
+                    Song song =
+                        (snapshot.data as List<Song>).elementAt(number + 1);
+                    return ListTile(
+                      title: Text(
+                        song.number.toString() + '. ' + song.name,
+                      ),
+                      onTap: () {
+                        _openSong(song);
+                      },
+                      onLongPress: () {
+                        _showDialog(song);
+                      },
+                    );
+                  },
+                );
+                final List<Widget> divided = ListTile.divideTiles(
+                  context: context,
+                  tiles: tiles,
+                ).toList();
+                return Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: config.primary,
+                    title: Text('Oblíbené'),
+                  ),
+                  body: ListView(children: divided),
+                );
+              });
         },
       ),
     );
@@ -229,7 +208,7 @@ class _SongBookState extends State<SongBook> {
             return SpinKitFadingCircle(
                 color: Theme.of(context).secondaryHeaderColor);
           }
-          return (DraggableScrollbar.arrows(
+          return DraggableScrollbar.arrows(
               backgroundColor: Theme.of(context).secondaryHeaderColor,
               padding: EdgeInsets.only(right: 4.0),
               labelTextBuilder: (double offset) => Text(
@@ -244,7 +223,7 @@ class _SongBookState extends State<SongBook> {
                   itemCount: snapshot.data.length,
                   itemBuilder: (BuildContext context, int index) {
                     Song song = snapshot.data[index];
-                    final bool alreadySaved = _saved.contains(song);
+                    final bool alreadySaved = _saved.contains(song.number);
                     return ListTile(
                         contentPadding: EdgeInsets.all(10.0),
                         title: Text(song.number.toString() + '. ' + song.name),
@@ -261,15 +240,15 @@ class _SongBookState extends State<SongBook> {
                             onPressed: () {
                               setState(() {
                                 if (alreadySaved) {
-                                  _saved.remove(song);
+                                  _saved.remove(song.number);
                                 } else {
-                                  _saved.add(song);
+                                  _saved.add(song.number);
                                 }
                                 preferences.setString(
                                     'favorites', json.encode(_saved.toList()));
                               });
                             }));
-                  })));
+                  }));
         },
       ),
     );

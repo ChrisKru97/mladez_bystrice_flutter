@@ -31,7 +31,7 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     _textSize = config.textSize ?? 14;
-    _darkMode = config.darkMode ?? false;
+//    _darkMode = config.darkMode ?? false;
     _red = config.primary.red ?? 33;
     _blue = config.primary.blue ?? 243;
     _green = config.primary.green ?? 150;
@@ -45,7 +45,7 @@ class _SettingsState extends State<Settings> {
   _SettingsState({this.preferences, this.config, this.saveSettings});
 
   int _textSize;
-  bool _darkMode;
+//  bool _darkMode;
   int _red;
   int _green;
   int _blue;
@@ -86,33 +86,49 @@ class _SettingsState extends State<Settings> {
                             min: 6.0,
                             max: 32.0,
                           )),
-                      Padding(
-                          padding: EdgeInsets.all(15.0),
-                          child: Text(
-                            'Pozadí aplikace',
-                          )),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Text(
-                            'Světlé',
-                          ),
-                          Switch(
-                            value: _darkMode,
-                            activeTrackColor:
-                                Theme.of(context).primaryColor.withOpacity(0.6),
-                            activeColor: Theme.of(context).primaryColor,
-                            onChanged: (bool value) {
-                              setState(() {
-                                _darkMode = value;
-                              });
-                            },
-                          ),
-                          Text(
-                            'Tmavé',
-                          ),
-                        ],
-                      ),
+//                      Padding(
+//                          padding: EdgeInsets.all(15.0),
+//                          child: Text(
+//                            'Pozadí aplikace',
+//                          )),
+//                      Row(
+//                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                        children: <Widget>[
+//                          Text(
+//                            'Světlé',
+//                          ),
+//                          Switch(
+//                            value: _darkMode,
+//                            activeTrackColor:
+//                                Theme.of(context).primaryColor.withOpacity(0.6),
+//                            activeColor: Theme.of(context).primaryColor,
+//                            onChanged: (bool value) {
+//                              setState(() {
+//                                if (value) {
+//                                  _darkMode = true;
+//                                  _red = 222;
+//                                  _blue = 12;
+//                                  _green = 105;
+//                                  _redL = 209;
+//                                  _blueL = 215;
+//                                  _greenL = 130;
+//                                } else {
+//                                  _darkMode = false;
+//                                  _red = 33;
+//                                  _blue = 243;
+//                                  _green = 150;
+//                                  _redL = 46;
+//                                  _blueL = 50;
+//                                  _greenL = 125;
+//                                }
+//                              });
+//                            },
+//                          ),
+//                          Text(
+//                            'Tmavé',
+//                          ),
+//                        ],
+//                      ),
                       Padding(
                           padding: EdgeInsets.all(15.0),
                           child: Text(
@@ -232,7 +248,7 @@ class _SettingsState extends State<Settings> {
                               Config newConfig = Config(
                                   Color.fromRGBO(_red, _green, _blue, 1.0),
                                   Color.fromRGBO(_redL, _greenL, _blueL, 1.0),
-                                  _darkMode,
+//                                  _darkMode,
                                   config.songFontSize,
                                   _textSize,
                                   _showChords);
