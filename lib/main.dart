@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -6,7 +7,6 @@ import 'package:mladez_zpevnik/config.dart';
 import 'package:mladez_zpevnik/social.dart';
 import 'package:mladez_zpevnik/songs.dart';
 import 'package:mladez_zpevnik/settings.dart';
-import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MyApp());
@@ -127,26 +127,26 @@ class _MyHomePageState extends State<MyHomePage> {
 //                color: _config.darkMode ? Colors.white : Colors.black),
         child: Scaffold(
             body: Center(child: myWidget),
-            bottomNavigationBar: FancyBottomNavigation(
-              tabs: [
-                TabData(iconData: Icons.people, title: "Aktuality"),
-//            TabData(iconData: Icons.mic, title: "Nahrávky"),
-                TabData(iconData: Icons.audiotrack, title: "Zpěvník"),
-                TabData(iconData: Icons.settings, title: "Nastavení"),
+            bottomNavigationBar: CurvedNavigationBar(
+              backgroundColor: _config.secondary.withOpacity(0.8),
+              color: _config.primary,
+              items: <Widget>[
+                Icon(Icons.people, color: Colors.white70, size: 38),
+//                Icon(Icons.mic),
+                Icon(Icons.audiotrack, color: Colors.white70, size: 38),
+                Icon(
+                  Icons.settings,
+                  color: Colors.white70,
+                  size: 38,
+                )
               ],
-              onTabChangedListener: (int position) {
+              onTap: (int index) {
                 setState(() {
-                  _selectedIndex = position;
+                  _selectedIndex = index;
                 });
               },
-              barBackgroundColor: _config.primary,
-              inactiveIconColor:
-//                      _config.darkMode ? Colors.cyan[50] :
-                  Colors.black,
-              circleColor: _config.secondary,
-              textColor:
-//                  _config.darkMode ? Colors.white :
-                  Colors.black,
+              index: _selectedIndex,
+              animationCurve: Curves.elasticOut,
             )));
   }
 }

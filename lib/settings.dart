@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_fluid_slider/flutter_fluid_slider.dart';
 import 'package:mladez_zpevnik/config.dart';
@@ -32,12 +33,8 @@ class _SettingsState extends State<Settings> {
   void initState() {
     _textSize = config.textSize ?? 14;
 //    _darkMode = config.darkMode ?? false;
-    _red = config.primary.red ?? 33;
-    _blue = config.primary.blue ?? 243;
-    _green = config.primary.green ?? 150;
-    _redL = config.secondary.red ?? 46;
-    _blueL = config.secondary.blue ?? 50;
-    _greenL = config.secondary.green ?? 125;
+    _primary = config.primary ?? Colors.blue;
+    _secondary = config.secondary ?? Colors.green[800];
     _showChords = config.showChords ?? false;
     super.initState();
   }
@@ -46,14 +43,49 @@ class _SettingsState extends State<Settings> {
 
   int _textSize;
 //  bool _darkMode;
-  int _red;
-  int _green;
-  int _blue;
-  int _redL;
-  int _greenL;
-  int _blueL;
-  bool _bar = false;
+  Color _primary;
+  Color _secondary;
   bool _showChords;
+
+  _selectColor(parentContext, secondary) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: BorderSide(
+                      color: secondary
+                          ? Theme.of(context).secondaryHeaderColor
+                          : Theme.of(context).primaryColor,
+                      width: 3.0)),
+              elevation: 5,
+              child: Padding(
+                  padding: EdgeInsets.all(15.0),
+                  child: Column(children: <Widget>[
+                    MaterialColorPicker(
+                      selectedColor: secondary ? _secondary : _primary,
+                      onColorChange: (Color color) {
+                        setState(() {
+                          if (secondary) {
+                            _secondary = color;
+                          } else {
+                            _primary = color;
+                          }
+                        });
+                      },
+                    ),
+                    RaisedButton(
+                      color: secondary ? _secondary : _primary,
+                      textColor: Colors.white,
+                      child: Text("Zavřít"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    )
+                  ])));
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +165,7 @@ class _SettingsState extends State<Settings> {
                           padding: EdgeInsets.all(15.0),
                           child: Text(
                             'Ukázat akordy',
+                            style: TextStyle(fontSize: 22),
                           )),
                       Switch(
                         value: _showChords,
@@ -149,94 +182,57 @@ class _SettingsState extends State<Settings> {
                           padding: EdgeInsets.all(15.0),
                           child: Text(
                             'Výběr barev aplikací',
+                            style: TextStyle(fontSize: 22),
                           )),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Text(
-                            'Primární',
-                          ),
-                          Switch(
-                            value: _bar,
-                            inactiveThumbColor:
-                                Color.fromRGBO(_red, _green, _blue, 1.0),
-                            inactiveTrackColor:
-                                Color.fromRGBO(_red, _green, _blue, 0.55),
-                            activeTrackColor:
-                                Color.fromRGBO(_redL, _greenL, _blueL, 0.55),
-                            activeColor:
-                                Color.fromRGBO(_redL, _greenL, _blueL, 1.0),
-                            onChanged: (bool value) {
-                              setState(() {
-                                _bar = value;
-                              });
-                            },
-                          ),
-                          Text(
-                            'Sekundární',
-                          ),
-                        ],
-                      ),
-                      FluidSlider(
-                        valueTextStyle: TextStyle(color: Colors.transparent),
-                        sliderColor: Colors.red,
-                        value: (_bar ? _redL : _red).toDouble(),
-                        onChanged: (double newValue) {
-                          setState(() {
-                            if (_bar) {
-                              _redL = newValue.truncate();
-                            } else {
-                              _red = newValue.truncate();
-                            }
-                          });
-                        },
-                        min: 0.0,
-                        max: 255.0,
-                        start: Center(),
-                        end: Center(),
-                      ),
-                      FluidSlider(
-                        valueTextStyle: TextStyle(color: Colors.transparent),
-                        sliderColor: Colors.green,
-                        value: (_bar ? _greenL : _green).toDouble(),
-                        onChanged: (double newValue) {
-                          setState(() {
-                            if (_bar) {
-                              _greenL = newValue.truncate();
-                            } else {
-                              _green = newValue.truncate();
-                            }
-                          });
-                        },
-                        min: 0.0,
-                        max: 255.0,
-                        start: Center(),
-                        end: Center(),
-                      ),
-                      FluidSlider(
-                        valueTextStyle: TextStyle(color: Colors.transparent),
-                        sliderColor: Colors.blue,
-                        value: (_bar ? _blueL : _blue).toDouble(),
-                        onChanged: (double newValue) {
-                          setState(() {
-                            if (_bar) {
-                              _blueL = newValue.truncate();
-                            } else {
-                              _blue = newValue.truncate();
-                            }
-                          });
-                        },
-                        min: 0.0,
-                        max: 255.0,
-                        start: Center(),
-                        end: Center(),
-                      ),
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text("Primární barva"),
+                            RaisedButton(
+                              color: _primary,
+                              child: Text("Vybrat"),
+                              textColor: Colors.white,
+                              onPressed: () {
+                                _selectColor(context, false);
+                              },
+                            )
+                          ]),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text("Sekundární barva"),
+                            RaisedButton(
+                              color: _primary,
+                              textColor: Colors.white,
+                              child: Text("Vybrat"),
+                              onPressed: () {
+                                _selectColor(context, true);
+                              },
+                            )
+                          ]),
+//                      FluidSlider(
+//                        valueTextStyle: TextStyle(color: Colors.transparent),
+//                        sliderColor: Colors.red,
+//                        value: (_bar ? _redL : _red).toDouble(),
+//                        onChanged: (double newValue) {
+//                          setState(() {
+//                            if (_bar) {
+//                              _redL = newValue.truncate();
+//                            } else {
+//                              _red = newValue.truncate();
+//                            }
+//                          });
+//                        },
+//                        min: 0.0,
+//                        max: 255.0,
+//                        start: Center(),
+//                        end: Center(),
+//                      ),
                       Padding(
                           padding: EdgeInsets.all(15.0),
                           child: RaisedButton(
-                            color: _bar
-                                ? Color.fromRGBO(_redL, _greenL, _blueL, 1.0)
-                                : Color.fromRGBO(_red, _green, _blue, 1.0),
+                            color: _primary,
+                            textColor: Colors.white,
                             child: Text(
                               'Uložit',
 //                              style: TextStyle(
@@ -246,8 +242,8 @@ class _SettingsState extends State<Settings> {
                             ),
                             onPressed: () {
                               Config newConfig = Config(
-                                  Color.fromRGBO(_red, _green, _blue, 1.0),
-                                  Color.fromRGBO(_redL, _greenL, _blueL, 1.0),
+                                  _primary,
+                                  _secondary,
 //                                  _darkMode,
                                   config.songFontSize,
                                   _textSize,

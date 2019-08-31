@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/config.dart';
 import 'package:mladez_zpevnik/songs.dart';
@@ -48,41 +47,41 @@ class _SongDisplayState extends State<SongDisplay> {
         backgroundColor: config.primary,
         title: Text(song.number.toString() + '. ' + song.name),
       ),
-      body: SingleChildScrollView(
-          child: GestureDetector(
-              onScaleStart: (ScaleStartDetails scaleDetails) => setState(() {
+      body: GestureDetector(
+        onScaleStart: (ScaleStartDetails scaleDetails) => setState(() {
 //                        debugPrint(scaleDetails.toString());
-                    _previousFontSize = _songFontSize;
-                  }),
-              onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
-                int newFontSize =
-                    (_previousFontSize * scaleDetails.scale).round();
-                setState(() {
-                  if (newFontSize >= 40) {
-                    _songFontSize = 40;
-                  } else if (newFontSize <= 12) {
-                    _songFontSize = 12;
-                  } else {
-                    _songFontSize = newFontSize;
-                  }
-                });
-                Config newConfig = Config(
-                    config.primary,
-                    config.secondary,
+          _previousFontSize = _songFontSize;
+        }),
+        onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
+          int newFontSize = (_previousFontSize * scaleDetails.scale).round();
+          setState(() {
+            if (newFontSize >= 40) {
+              _songFontSize = 40;
+            } else if (newFontSize <= 12) {
+              _songFontSize = 12;
+            } else {
+              _songFontSize = newFontSize;
+            }
+          });
+          Config newConfig = Config(
+              config.primary,
+              config.secondary,
 //                    config.darkMode,
-                    newFontSize,
-                    config.textSize,
-                    config.showChords);
-                saveSettings(newConfig);
-                preferences.setString('config', jsonEncode(newConfig));
-              },
-              child: Center(
-                  child: Text(
-                song.song,
-                style: TextStyle(fontSize: _songFontSize.toDouble()),
-                textAlign: TextAlign.center,
-              ))),
-          padding: EdgeInsets.all(5.0)),
+              newFontSize,
+              config.textSize,
+              config.showChords);
+          saveSettings(newConfig);
+          preferences.setString('config', jsonEncode(newConfig));
+        },
+        child: SingleChildScrollView(
+            child: Center(
+                child: Text(
+              song.song,
+              style: TextStyle(fontSize: _songFontSize.toDouble()),
+              textAlign: TextAlign.center,
+            )),
+            padding: EdgeInsets.all(5.0)),
+      ),
     );
   }
 }

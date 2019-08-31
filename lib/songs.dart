@@ -4,6 +4,7 @@ import 'dart:convert' show json;
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mladez_zpevnik/config.dart';
+import 'package:mladez_zpevnik/numberSelect.dart';
 import 'package:mladez_zpevnik/songDisplay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -75,6 +76,8 @@ class _SongBookState extends State<SongBook> {
     super.initState();
   }
 
+  bool _searchOpen = false;
+  String _search = "";
   final Set<int> _saved = Set<int>();
   final ScrollController _controller = ScrollController();
 
@@ -191,12 +194,56 @@ class _SongBookState extends State<SongBook> {
     );
   }
 
+  _chooseNumber() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return FutureBuilder(
+              future: _loadSongs(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.data == null) {
+                  return SpinKitFadingCircle(
+                      color: Theme.of(context).secondaryHeaderColor);
+                }
+                return NumberSelect(
+                    songs: snapshot.data,
+                    preferences: preferences,
+                    config: config,
+                    saveSettings: saveSettings);
+              });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Písně'),
+        title: _searchOpen
+            ? TextField(
+                autofocus: true,
+                onChanged: (String search) {
+                  setState(() {
+                    _search = search;
+                  });
+                },
+                decoration: InputDecoration(
+                    labelStyle: new TextStyle(color: Colors.white),
+                    hintText: "Hledej...",
+                    hintStyle: new TextStyle(color: Colors.white)))
+            : Text('Písně'),
+        leading:
+            IconButton(icon: Icon(Icons.keyboard), onPressed: _chooseNumber),
         actions: (<Widget>[
+          IconButton(
+              icon: Icon(_searchOpen ? Icons.close : Icons.search),
+              onPressed: () {
+                setState(() {
+                  if (_searchOpen) {
+                    _search = "";
+                  }
+                  _searchOpen = !_searchOpen;
+                });
+              }),
           IconButton(
               icon: Icon(Icons.format_list_bulleted), onPressed: _pushSaved),
         ]),
@@ -208,11 +255,20 @@ class _SongBookState extends State<SongBook> {
             return SpinKitFadingCircle(
                 color: Theme.of(context).secondaryHeaderColor);
           }
+          List<Song> songs = snapshot.data;
+          if (_search.length > 0) {
+            songs = songs
+                .where((Song song) =>
+                    song.name.toLowerCase().contains(_search.toLowerCase()) ||
+                    song.song.toLowerCase().contains(_search.toLowerCase()) ||
+                    song.number.toString().contains(_search.toLowerCase()))
+                .toList();
+          }
           return DraggableScrollbar.arrows(
               backgroundColor: Theme.of(context).secondaryHeaderColor,
               padding: EdgeInsets.only(right: 4.0),
               labelTextBuilder: (double offset) => Text(
-                  ((offset ~/ 92) + 1).toString(),
+                  ((offset ~/ 91) + 1).toString(),
                   style: TextStyle(color: Colors.white)),
               controller: _controller,
               child: ListView.separated(
@@ -220,9 +276,9 @@ class _SongBookState extends State<SongBook> {
                   separatorBuilder: (context, index) => Divider(
                         color: Colors.black12,
                       ),
-                  itemCount: snapshot.data.length,
+                  itemCount: songs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Song song = snapshot.data[index];
+                    Song song = songs[index];
                     final bool alreadySaved = _saved.contains(song.number);
                     return ListTile(
                         contentPadding: EdgeInsets.all(10.0),
