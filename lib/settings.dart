@@ -202,7 +202,7 @@ class _SettingsState extends State<Settings> {
                           children: <Widget>[
                             Text("Sekundární barva"),
                             RaisedButton(
-                              color: _primary,
+                              color: _secondary,
                               textColor: Colors.white,
                               child: Text("Vybrat"),
                               onPressed: () {

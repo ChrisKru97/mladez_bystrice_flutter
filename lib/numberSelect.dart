@@ -182,18 +182,23 @@ class _NumberSelectState extends State<NumberSelect> {
                         }
                         setState(() {
                           _number = "";
-                          if (number < 206 && number > 0) {
+                          if (number < 206 &&
+                              number > 0 &&
+                              (number > 199 || number < 198)) {
                             Navigator.of(context).push(MaterialPageRoute<void>(
                               builder: (BuildContext context) {
                                 return SongDisplay(
-                                    song: songs[number - 1],
+                                    song:
+                                        songs[number - (number < 198 ? 1 : 3)],
                                     preferences: preferences,
                                     config: config,
                                     saveSettings: saveSettings);
                               },
                             ));
                           } else {
-                            Navigator.pop(context);
+                            setState(() {
+                              _number = "";
+                            });
                           }
                         });
                       },

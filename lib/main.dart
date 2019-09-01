@@ -146,7 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
               index: _selectedIndex,
-              animationCurve: Curves.elasticOut,
             )));
   }
 }
