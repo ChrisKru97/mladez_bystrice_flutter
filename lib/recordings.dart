@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:file_picker/file_picker.dart';
+//import 'package:file_picker/file_picker.dart';
 
 class Recordings extends StatefulWidget {
   Recordings({Key key, this.preferences, this.config}) : super(key: key);
@@ -29,9 +29,9 @@ class _RecordingsState extends State<Recordings> {
         body: Center(
             child: RaisedButton(
                 onPressed: () {
-                  FilePicker.getFilePath(type: FileType.AUDIO).then((value) {
-                    debugPrint(value.toString());
-                  });
+//                  FilePicker.getFilePath(type: FileType.AUDIO).then((value) {
+//                    debugPrint(value.toString());
+//                  });
                 },
                 child: Text('Vybrat soubor'))));
   }
