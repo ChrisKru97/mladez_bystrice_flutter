@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,7 +33,7 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     _textSize = config.textSize ?? 14;
-//    _darkMode = config.darkMode ?? false;
+    _darkMode = config.darkMode ?? false;
     _primary = config.primary ?? Colors.blue;
     _secondary = config.secondary ?? Colors.green[800];
     _showChords = config.showChords ?? false;
@@ -42,7 +43,7 @@ class _SettingsState extends State<Settings> {
   _SettingsState({this.preferences, this.config, this.saveSettings});
 
   int _textSize;
-//  bool _darkMode;
+  bool _darkMode;
   Color _primary;
   Color _secondary;
   bool _showChords;
@@ -56,8 +57,10 @@ class _SettingsState extends State<Settings> {
                   borderRadius: BorderRadius.circular(8.0),
                   side: BorderSide(
                       color: secondary
-                          ? Theme.of(context).secondaryHeaderColor
-                          : Theme.of(context).primaryColor,
+                          ? DynamicTheme.of(parentContext)
+                              .data
+                              .secondaryHeaderColor
+                          : DynamicTheme.of(parentContext).data.primaryColor,
                       width: 3.0)),
               elevation: 5,
               child: Padding(
@@ -89,11 +92,10 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-//    TextStyle textStyle =
-//        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold);
     return Scaffold(
-//        backgroundColor: config.darkMode ? Colors.black87 : Colors.white,
-        appBar: AppBar(title: Text('Nastavení')),
+        appBar: AppBar(
+            backgroundColor: DynamicTheme.of(context).data.primaryColor,
+            title: Text('Nastavení')),
         body: SingleChildScrollView(
             child: Center(
                 child: Padding(
@@ -109,7 +111,13 @@ class _SettingsState extends State<Settings> {
                           padding: EdgeInsets.symmetric(
                               vertical: 0.0, horizontal: 20.0),
                           child: FluidSlider(
+                            sliderColor: _primary,
                             value: _textSize.toDouble(),
+                            labelsTextStyle: TextStyle(
+                                color: DynamicTheme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.black
+                                    : Colors.white),
                             onChanged: (double newValue) {
                               setState(() {
                                 _textSize = newValue.truncate();
@@ -118,49 +126,35 @@ class _SettingsState extends State<Settings> {
                             min: 6.0,
                             max: 32.0,
                           )),
-//                      Padding(
-//                          padding: EdgeInsets.all(15.0),
-//                          child: Text(
-//                            'Pozadí aplikace',
-//                          )),
-//                      Row(
-//                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                        children: <Widget>[
-//                          Text(
-//                            'Světlé',
-//                          ),
-//                          Switch(
-//                            value: _darkMode,
-//                            activeTrackColor:
-//                                Theme.of(context).primaryColor.withOpacity(0.6),
-//                            activeColor: Theme.of(context).primaryColor,
-//                            onChanged: (bool value) {
-//                              setState(() {
-//                                if (value) {
-//                                  _darkMode = true;
-//                                  _red = 222;
-//                                  _blue = 12;
-//                                  _green = 105;
-//                                  _redL = 209;
-//                                  _blueL = 215;
-//                                  _greenL = 130;
-//                                } else {
-//                                  _darkMode = false;
-//                                  _red = 33;
-//                                  _blue = 243;
-//                                  _green = 150;
-//                                  _redL = 46;
-//                                  _blueL = 50;
-//                                  _greenL = 125;
-//                                }
-//                              });
-//                            },
-//                          ),
-//                          Text(
-//                            'Tmavé',
-//                          ),
-//                        ],
-//                      ),
+                      Padding(
+                          padding: EdgeInsets.all(15.0),
+                          child: Text('Pozadí aplikace',
+                              style: TextStyle(fontSize: 22))),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Text(
+                            'Světlé',
+                          ),
+                          Switch(
+                            value: _darkMode,
+                            activeTrackColor: _primary.withOpacity(0.6),
+                            activeColor: _primary,
+                            onChanged: (bool value) {
+                              setState(() {
+                                if (value) {
+                                  _darkMode = true;
+                                } else {
+                                  _darkMode = false;
+                                }
+                              });
+                            },
+                          ),
+                          Text(
+                            'Tmavé',
+                          ),
+                        ],
+                      ),
                       Padding(
                           padding: EdgeInsets.all(15.0),
                           child: Text(
@@ -169,65 +163,49 @@ class _SettingsState extends State<Settings> {
                           )),
                       Switch(
                         value: _showChords,
-                        activeTrackColor:
-                            Theme.of(context).primaryColor.withOpacity(0.6),
-                        activeColor: Theme.of(context).primaryColor,
+                        activeTrackColor: _primary.withOpacity(0.6),
+                        activeColor: _primary,
                         onChanged: (bool value) {
                           setState(() {
                             _showChords = value;
                           });
                         },
                       ),
-                      Padding(
-                          padding: EdgeInsets.all(15.0),
-                          child: Text(
-                            'Výběr barev aplikací',
-                            style: TextStyle(fontSize: 22),
-                          )),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text("Primární barva"),
-                            RaisedButton(
-                              color: _primary,
-                              child: Text("Vybrat"),
-                              textColor: Colors.white,
-                              onPressed: () {
-                                _selectColor(context, false);
-                              },
-                            )
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text("Sekundární barva"),
-                            RaisedButton(
-                              color: _secondary,
-                              textColor: Colors.white,
-                              child: Text("Vybrat"),
-                              onPressed: () {
-                                _selectColor(context, true);
-                              },
-                            )
-                          ]),
-//                      FluidSlider(
-//                        valueTextStyle: TextStyle(color: Colors.transparent),
-//                        sliderColor: Colors.red,
-//                        value: (_bar ? _redL : _red).toDouble(),
-//                        onChanged: (double newValue) {
-//                          setState(() {
-//                            if (_bar) {
-//                              _redL = newValue.truncate();
-//                            } else {
-//                              _red = newValue.truncate();
-//                            }
-//                          });
-//                        },
-//                        min: 0.0,
-//                        max: 255.0,
-//                        start: Center(),
-//                        end: Center(),
-//                      ),
+                      if (!_darkMode)
+                        Padding(
+                            padding: EdgeInsets.all(15.0),
+                            child: Text(
+                              'Výběr barev aplikací',
+                              style: TextStyle(fontSize: 22),
+                            )),
+                      if (!_darkMode)
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text("Primární barva"),
+                              RaisedButton(
+                                color: _primary,
+                                child: Text("Vybrat"),
+                                textColor: Colors.white,
+                                onPressed: () {
+                                  _selectColor(context, false);
+                                },
+                              )
+                            ]),
+                      if (!_darkMode)
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text("Sekundární barva"),
+                              RaisedButton(
+                                color: _secondary,
+                                textColor: Colors.white,
+                                child: Text("Vybrat"),
+                                onPressed: () {
+                                  _selectColor(context, true);
+                                },
+                              )
+                            ]),
                       Padding(
                           padding: EdgeInsets.all(15.0),
                           child: RaisedButton(
@@ -235,19 +213,26 @@ class _SettingsState extends State<Settings> {
                             textColor: Colors.white,
                             child: Text(
                               'Uložit',
-//                              style: TextStyle(
-//                                  color: config.darkMode
-//                                      ? Colors.black
-//                                      : Colors.white),
                             ),
                             onPressed: () {
                               Config newConfig = Config(
                                   _primary,
                                   _secondary,
-//                                  _darkMode,
+                                  _darkMode,
                                   config.songFontSize,
                                   _textSize,
                                   _showChords);
+                              if (_darkMode) {
+                                DynamicTheme.of(context)
+                                    .setBrightness(Brightness.dark);
+                              } else {
+                                DynamicTheme.of(context)
+                                    .setBrightness(Brightness.light);
+                                DynamicTheme.of(context).setThemeData(ThemeData(
+                                    brightness: Brightness.light,
+                                    primaryColor: _primary,
+                                    secondaryHeaderColor: _secondary));
+                              }
                               saveSettings(newConfig);
                               preferences.setString(
                                   'config', jsonEncode(newConfig));

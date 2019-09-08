@@ -1,4 +1,5 @@
 import 'dart:convert' show json;
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -108,7 +109,7 @@ class _EventsState extends State<Events> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.data == null && _cacheEvents == null) {
             return SpinKitDualRing(
-                color: Theme.of(context).secondaryHeaderColor);
+                color: DynamicTheme.of(context).data.secondaryHeaderColor);
           }
           if (snapshot.data != null) {
             preferences.setString('events', json.encode(snapshot.data));
@@ -126,7 +127,6 @@ class _EventsState extends State<Events> {
                 itemBuilder: (BuildContext context, int index) {
                   Event event = (snapshot.data ?? _cacheEvents)[index];
                   return Card(
-//                color: config.darkMode ? Colors.black87 : Colors.white,
                       elevation: 5,
                       margin: EdgeInsets.all(15.0),
                       child: Column(

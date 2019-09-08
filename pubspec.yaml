@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.2.0+1
 
 environment:
-  sdk: ">=2.2.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -31,8 +31,11 @@ dependencies:
 #  file_picker: ^1.4.0
   flutter_spinkit: ^4.0.0
   flutter_material_color_picker: ^1.0.3
-  curved_navigation_bar: ^0.3.1
+#  curved_navigation_bar: ^0.3.1
   flutter_launcher_icons: ^0.7.2+1
+  dynamic_theme: ^1.0.1
+  fancy_bottom_navigation: ^0.3.2
+
 
 
 dev_dependencies:

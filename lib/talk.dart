@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
@@ -85,7 +86,7 @@ class _TalkState extends State<Talk> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.data == null && _cacheMessages == null) {
             return SpinKitCubeGrid(
-                color: Theme.of(context).secondaryHeaderColor);
+                color: DynamicTheme.of(context).data.secondaryHeaderColor);
           }
           if (snapshot.data != null) {
             preferences.setString('talk', json.encode(snapshot.data));

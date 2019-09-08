@@ -1,3 +1,4 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert' show json;
@@ -115,29 +116,30 @@ class _SongBookState extends State<SongBook> {
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            title: Text('Smazat ' + song.name + '?'),
+            title: Text('Odebrat z oblíbených ' + song.name + '?'),
             actions: <Widget>[
               OutlineButton(
-                textColor: config.primary,
-                highlightedBorderColor: config.primary,
+                textColor: config.darkMode ? Colors.white : config.primary,
+                highlightedBorderColor:
+                    config.darkMode ? Colors.white : config.primary,
                 child: Text('Zrušit'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               RaisedButton(
-                  highlightColor: config.primary,
-                  color: config.primary,
+                  highlightColor: config.secondary,
+                  color: config.darkMode ? Colors.black38 : config.primary,
                   child:
                       Text('Potvrdit', style: TextStyle(color: Colors.white)),
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
                     setState(() {
-                      _saved.remove(song);
+                      _saved.remove(song.number);
                       preferences.setString(
                           'favorites', json.encode(_saved.toList()));
                     });
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                   }),
             ],
           );
@@ -152,8 +154,7 @@ class _SongBookState extends State<SongBook> {
               future: _loadSongs(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.data == null) {
-                  return SpinKitDoubleBounce(
-                      color: Theme.of(context).secondaryHeaderColor);
+                  return SpinKitDoubleBounce(color: config.secondary);
                 }
                 List<int> saved = _saved.toList();
                 saved.sort((a, b) {
@@ -161,9 +162,9 @@ class _SongBookState extends State<SongBook> {
                 });
                 final Iterable<ListTile> tiles = saved.map(
                   (int number) {
-                    if (number > 196) number = number - 4;
+                    if (number > 197) number = number - 2;
                     Song song =
-                        (snapshot.data as List<Song>).elementAt(number + 1);
+                        (snapshot.data as List<Song>).elementAt(number - 1);
                     return ListTile(
                       title: Text(
                         song.number.toString() + '. ' + song.name,
@@ -183,7 +184,8 @@ class _SongBookState extends State<SongBook> {
                 ).toList();
                 return Scaffold(
                   appBar: AppBar(
-                    backgroundColor: config.primary,
+                    backgroundColor:
+                        config.darkMode ? Colors.black12 : config.primary,
                     title: Text('Oblíbené'),
                   ),
                   body: ListView(children: divided),
@@ -194,16 +196,18 @@ class _SongBookState extends State<SongBook> {
     );
   }
 
-  _chooseNumber() {
+  _chooseNumber(parentContext) {
     showDialog(
-        context: context,
+        context: parentContext,
         builder: (BuildContext context) {
           return FutureBuilder(
               future: _loadSongs(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.data == null) {
                   return SpinKitFadingCircle(
-                      color: Theme.of(context).secondaryHeaderColor);
+                      color: DynamicTheme.of(parentContext)
+                          .data
+                          .secondaryHeaderColor);
                 }
                 return NumberSelect(
                     songs: snapshot.data,
@@ -218,6 +222,7 @@ class _SongBookState extends State<SongBook> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: DynamicTheme.of(context).data.primaryColor,
         title: _searchOpen
             ? TextField(
                 autofocus: true,
@@ -231,8 +236,11 @@ class _SongBookState extends State<SongBook> {
                     hintText: "Hledej...",
                     hintStyle: new TextStyle(color: Colors.white)))
             : Text('Písně'),
-        leading:
-            IconButton(icon: Icon(Icons.keyboard), onPressed: _chooseNumber),
+        leading: IconButton(
+            icon: Icon(Icons.keyboard),
+            onPressed: () {
+              _chooseNumber(context);
+            }),
         actions: (<Widget>[
           IconButton(
               icon: Icon(_searchOpen ? Icons.close : Icons.search),
@@ -253,7 +261,7 @@ class _SongBookState extends State<SongBook> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.data == null) {
             return SpinKitFadingCircle(
-                color: Theme.of(context).secondaryHeaderColor);
+                color: DynamicTheme.of(context).data.secondaryHeaderColor);
           }
           List<Song> songs = snapshot.data;
           if (_search.length > 0) {
@@ -265,7 +273,8 @@ class _SongBookState extends State<SongBook> {
                 .toList();
           }
           return DraggableScrollbar.arrows(
-              backgroundColor: Theme.of(context).secondaryHeaderColor,
+              backgroundColor:
+                  DynamicTheme.of(context).data.secondaryHeaderColor,
               padding: EdgeInsets.only(right: 4.0),
               labelTextBuilder: (double offset) => Text(
                   ((offset ~/ 91) + 1).toString(),
@@ -291,8 +300,12 @@ class _SongBookState extends State<SongBook> {
                                 alreadySaved
                                     ? Icons.favorite
                                     : Icons.favorite_border,
-                                color:
-                                    alreadySaved ? Colors.red : Colors.black),
+                                color: alreadySaved
+                                    ? Colors.red
+                                    : DynamicTheme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black),
                             onPressed: () {
                               setState(() {
                                 if (alreadySaved) {

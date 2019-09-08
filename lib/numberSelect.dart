@@ -1,3 +1,4 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/config.dart';
 import 'package:mladez_zpevnik/songDisplay.dart';
@@ -29,193 +30,120 @@ class _NumberSelectState extends State<NumberSelect> {
   SharedPreferences preferences;
   Config config;
   var saveSettings;
+  TextEditingController fieldController = TextEditingController();
 
-  String _number = "";
+  openSong(String number) {
+    int parsedNumber;
+    try {
+      parsedNumber = int.parse(number);
+    } catch (e) {
+      Navigator.pop(context);
+    }
+    setState(() {
+      fieldController.text = "";
+      if (!parsedNumber.isNaN) {
+        Navigator.of(context).push(MaterialPageRoute<void>(
+          builder: (BuildContext context) {
+            return SongDisplay(
+                song: songs[parsedNumber - (parsedNumber < 198 ? 1 : 3)],
+                preferences: preferences,
+                config: config,
+                saveSettings: saveSettings);
+          },
+        ));
+      } else {
+        Navigator.pop(context);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            side:
-                BorderSide(color: Theme.of(context).primaryColor, width: 3.0)),
-        elevation: 5,
-        child: Padding(
-            padding: EdgeInsets.all(15.0),
-            child: Column(
-              children: <Widget>[
-                Text(_number, style: TextStyle(fontSize: 22)),
-                Row(
-                  children: <Widget>[
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text("1"),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number + "1";
-                        });
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text("2"),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number + "2";
-                        });
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text("3"),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number + "3";
-                        });
-                      },
-                    )
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text("4"),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number + "4";
-                        });
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text("5"),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number + "5";
-                        });
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text("6"),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number + "6";
-                        });
-                      },
-                    )
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text("7"),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number + "7";
-                        });
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text("8"),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number + "8";
-                        });
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text("9"),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number + "9";
-                        });
-                      },
-                    )
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Text("0"),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number + "0";
-                        });
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Icon(Icons.backspace),
-                      onPressed: () {
-                        setState(() {
-                          _number = _number.substring(0, _number.length - 1);
-                        });
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      child: Icon(Icons.subdirectory_arrow_left),
-                      onPressed: () {
-                        int number;
-                        try {
-                          number = int.parse(_number);
-                        } catch (e) {
-                          Navigator.pop(context);
-                        }
-                        setState(() {
-                          _number = "";
-                          if (number < 206 &&
-                              number > 0 &&
-                              (number > 199 || number < 198)) {
-                            Navigator.of(context).push(MaterialPageRoute<void>(
-                              builder: (BuildContext context) {
-                                return SongDisplay(
-                                    song:
-                                        songs[number - (number < 198 ? 1 : 3)],
-                                    preferences: preferences,
-                                    config: config,
-                                    saveSettings: saveSettings);
-                              },
-                            ));
-                          } else {
-                            setState(() {
-                              _number = "";
-                            });
-                          }
-                        });
-                      },
-                    )
-                  ],
-                ),
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  textColor: Colors.white,
-                  child: Text("Zavřít"),
-                  onPressed: () {
-                    setState(() {
-                      Navigator.pop(context);
-                    });
-                  },
-                )
-              ],
-            )));
+    Map<int, Color> primary = {
+      50: config.primary.withOpacity(.1),
+      100: config.primary.withOpacity(.2),
+      200: config.primary.withOpacity(.3),
+      300: config.primary.withOpacity(.4),
+      400: config.primary.withOpacity(.5),
+      500: config.primary.withOpacity(.6),
+      600: config.primary.withOpacity(.7),
+      700: config.primary.withOpacity(.8),
+      800: config.primary.withOpacity(.9),
+      900: config.primary.withOpacity(1),
+    };
+    return DynamicTheme(
+        defaultBrightness: Brightness.light,
+        data: (brightness) => ThemeData(
+            primarySwatch: MaterialColor(config.primary.value, primary),
+            brightness: brightness,
+            secondaryHeaderColor: config.secondary),
+        themedWidgetBuilder: (BuildContext context, ThemeData theme) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Dialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      side: BorderSide(color: theme.primaryColor, width: 3.0)),
+                  elevation: 5,
+                  child: Padding(
+                      padding: EdgeInsets.all(15.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          TextField(
+                            decoration: InputDecoration(
+                                counterText: "", border: InputBorder.none),
+                            cursorColor: theme.primaryColor,
+                            controller: fieldController,
+                            autofocus: true,
+                            keyboardType: TextInputType.number,
+                            onSubmitted: openSong,
+                            textAlign: TextAlign.center,
+                            maxLength: 3,
+                            onChanged: (String data) {
+                              int number;
+                              try {
+                                number = int.parse(data);
+                              } catch (e) {
+                                fieldController.text =
+                                    data.substring(0, data.length - 1);
+                              }
+                              if (number > 205 ||
+                                  number < 1 ||
+                                  (number < 200 && number > 197)) {
+                                fieldController.text =
+                                    data.substring(0, data.length - 1);
+                              }
+                            },
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              RaisedButton(
+                                color: theme.primaryColor,
+                                textColor: Colors.white,
+                                child: Text("Otevřít"),
+                                onPressed: () {
+                                  openSong(fieldController.text);
+                                },
+                              ),
+                              RaisedButton(
+                                color: theme.primaryColor,
+                                textColor: Colors.white,
+                                child: Text("Zavřít"),
+                                onPressed: () {
+                                  setState(() {
+                                    Navigator.pop(context);
+                                  });
+                                },
+                              )
+                            ],
+                          )
+                        ],
+                      )))
+            ],
+          );
+        });
   }
 }

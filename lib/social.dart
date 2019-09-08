@@ -1,3 +1,4 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/config.dart';
 import 'package:mladez_zpevnik/events.dart';
@@ -30,19 +31,23 @@ class _SocialState extends State<Social> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                side: BorderSide(
-                    color: Theme.of(context).primaryColor, width: 3.0)),
-            elevation: 5,
-            child: Padding(
-                padding: EdgeInsets.all(15.0),
-                child: Form(
-                    key: _formKey,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: BorderSide(
+                        color: DynamicTheme.of(parentContext).data.primaryColor,
+                        width: 3.0)),
+                elevation: 5,
+                child: Padding(
+                    padding: EdgeInsets.all(15.0),
+                    child: Form(
+                        key: _formKey,
+                        child:
+                            Column(mainAxisSize: MainAxisSize.min, children: <
+                                Widget>[
                           Flexible(
                               child: Padding(
                                   padding: EdgeInsets.symmetric(vertical: 5.0),
@@ -75,7 +80,9 @@ class _SocialState extends State<Social> {
                                       decoration: InputDecoration(
                                           border: OutlineInputBorder(
                                               borderSide: BorderSide(
-                                                  color: Theme.of(context)
+                                                  color: DynamicTheme.of(
+                                                          parentContext)
+                                                      .data
                                                       .primaryColor)),
                                           labelText: 'Tvé jméno')))),
                           Padding(
@@ -86,8 +93,12 @@ class _SocialState extends State<Social> {
                                   children: <Widget>[
                                     OutlineButton(
                                       highlightedBorderColor:
-                                          Theme.of(context).primaryColor,
-                                      textColor: Theme.of(context).primaryColor,
+                                          DynamicTheme.of(parentContext)
+                                              .data
+                                              .primaryColor,
+                                      textColor: DynamicTheme.of(parentContext)
+                                          .data
+                                          .primaryColor,
                                       child: Text('Zrušit'),
                                       onPressed: () {
                                         Navigator.pop(context);
@@ -95,8 +106,12 @@ class _SocialState extends State<Social> {
                                     ),
                                     RaisedButton(
                                         highlightColor:
-                                            Theme.of(context).primaryColor,
-                                        color: Theme.of(context).primaryColor,
+                                            DynamicTheme.of(parentContext)
+                                                .data
+                                                .primaryColor,
+                                        color: DynamicTheme.of(parentContext)
+                                            .data
+                                            .primaryColor,
                                         textColor: Colors.white,
                                         child: Text('Poslat'),
                                         onPressed: () {
@@ -141,6 +156,8 @@ class _SocialState extends State<Social> {
                                         })
                                   ])),
                         ]))),
+              )
+            ],
           );
         });
   }
@@ -152,22 +169,22 @@ class _SocialState extends State<Social> {
         child: Scaffold(
             floatingActionButton: _showFAB
                 ? FloatingActionButton(
-                    backgroundColor: Theme.of(context).secondaryHeaderColor,
+                    backgroundColor:
+                        DynamicTheme.of(context).data.secondaryHeaderColor,
                     child: Icon(Icons.add),
                     onPressed: () {
                       _openNewMessage(context);
                     },
                   )
                 : Center(),
-            backgroundColor: Colors.black12,
-//        backgroundColor: config.darkMode ? Colors.black87 : Colors.white,
             appBar: AppBar(
+              backgroundColor: DynamicTheme.of(context).data.primaryColor,
               flexibleSpace: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TabBar(
                     unselectedLabelColor: Colors.black,
-                    indicatorColor: Theme.of(context).primaryColor,
+                    indicatorColor: DynamicTheme.of(context).data.primaryColor,
                     onTap: (index) {
                       setState(() {
                         _showFAB = index == 1;
