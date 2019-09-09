@@ -33,7 +33,7 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     _textSize = config.textSize ?? 14;
-    _darkMode = config.darkMode ?? false;
+    _darkMode = DynamicTheme.of(context).brightness == Brightness.dark;
     _primary = config.primary ?? Colors.blue;
     _secondary = config.secondary ?? Colors.green[800];
     _showChords = config.showChords ?? false;
@@ -215,25 +215,34 @@ class _SettingsState extends State<Settings> {
                               'Uložit',
                             ),
                             onPressed: () {
-                              Config newConfig = Config(
-                                  _primary,
-                                  _secondary,
-                                  _darkMode,
-                                  config.songFontSize,
-                                  _textSize,
-                                  _showChords);
+                              Config newConfig = Config(_primary, _secondary,
+                                  config.songFontSize, _textSize, _showChords);
                               if (_darkMode) {
+                                DynamicTheme.of(context).setThemeData(ThemeData(
+                                    primaryColor: _primary,
+                                    textTheme: TextTheme(
+                                        display3: TextStyle(
+                                            fontSize: _textSize.toDouble() + 6,
+                                            fontWeight: FontWeight.bold),
+                                        display4: TextStyle(
+                                            fontSize: _textSize.toDouble())),
+                                    secondaryHeaderColor: _secondary));
                                 DynamicTheme.of(context)
                                     .setBrightness(Brightness.dark);
                               } else {
                                 DynamicTheme.of(context)
                                     .setBrightness(Brightness.light);
                                 DynamicTheme.of(context).setThemeData(ThemeData(
-                                    brightness: Brightness.light,
                                     primaryColor: _primary,
+                                    textTheme: TextTheme(
+                                        display3: TextStyle(
+                                            fontSize: _textSize.toDouble() + 6,
+                                            fontWeight: FontWeight.bold),
+                                        display4: TextStyle(
+                                            fontSize: _textSize.toDouble())),
                                     secondaryHeaderColor: _secondary));
                               }
-                              saveSettings(newConfig);
+                              saveSettings('config', newConfig);
                               preferences.setString(
                                   'config', jsonEncode(newConfig));
                               Scaffold.of(context).showSnackBar(snackBar);

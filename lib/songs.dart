@@ -3,22 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert' show json;
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:mladez_zpevnik/config.dart';
 import 'package:mladez_zpevnik/numberSelect.dart';
 import 'package:mladez_zpevnik/songDisplay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SongBook extends StatefulWidget {
-  SongBook({Key key, this.preferences, this.config, this.saveSettings})
+  SongBook(
+      {Key key,
+      this.preferences,
+      this.songFontSize,
+      this.showChords,
+      this.saveSettings})
       : super(key: key);
   final SharedPreferences preferences;
-  final Config config;
+  final double songFontSize;
+  final bool showChords;
   final saveSettings;
   @override
   _SongBookState createState() => _SongBookState(
       preferences: this.preferences,
-      config: this.config,
+      songFontSize: this.songFontSize,
+      showChords: this.showChords,
       saveSettings: this.saveSettings);
 }
 
@@ -54,10 +61,15 @@ class Song {
 
 class _SongBookState extends State<SongBook> {
   SharedPreferences preferences;
-  Config config;
+  double songFontSize;
+  bool showChords;
   var saveSettings;
 
-  _SongBookState({this.preferences, this.config, this.saveSettings});
+  _SongBookState(
+      {this.preferences,
+      this.songFontSize,
+      this.showChords,
+      this.saveSettings});
 
   @override
   void initState() {
@@ -84,7 +96,7 @@ class _SongBookState extends State<SongBook> {
 
   Future<List<Song>> _loadSongs() async {
     String data;
-    if (config.showChords ?? false)
+    if (showChords)
       data = await rootBundle.loadString('assets/zpevnik.json');
     else {
       data = await rootBundle.loadString('assets/noChords.json');
@@ -103,7 +115,8 @@ class _SongBookState extends State<SongBook> {
         return SongDisplay(
             song: song,
             preferences: preferences,
-            config: config,
+            songFontSize: songFontSize,
+            showChords: showChords,
             saveSettings: saveSettings);
       },
     ));
@@ -113,23 +126,28 @@ class _SongBookState extends State<SongBook> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
+          Color primary = DynamicTheme.of(context).data.primaryColor;
+          Color secondary = DynamicTheme.of(context).data.secondaryHeaderColor;
+          Brightness brightness = DynamicTheme.of(context).brightness;
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
             title: Text('Odebrat z oblíbených ' + song.name + '?'),
             actions: <Widget>[
               OutlineButton(
-                textColor: config.darkMode ? Colors.white : config.primary,
+                textColor:
+                    brightness == Brightness.dark ? Colors.white : primary,
                 highlightedBorderColor:
-                    config.darkMode ? Colors.white : config.primary,
+                    brightness == Brightness.dark ? Colors.white : primary,
                 child: Text('Zrušit'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               RaisedButton(
-                  highlightColor: config.secondary,
-                  color: config.darkMode ? Colors.black38 : config.primary,
+                  highlightColor: secondary,
+                  color:
+                      brightness == Brightness.dark ? Colors.black38 : primary,
                   child:
                       Text('Potvrdit', style: TextStyle(color: Colors.white)),
                   onPressed: () {
@@ -153,8 +171,12 @@ class _SongBookState extends State<SongBook> {
           return FutureBuilder(
               future: _loadSongs(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
+                Color primary = DynamicTheme.of(context).data.primaryColor;
+                Color secondary =
+                    DynamicTheme.of(context).data.secondaryHeaderColor;
+                Brightness brightness = DynamicTheme.of(context).brightness;
                 if (snapshot.data == null) {
-                  return SpinKitDoubleBounce(color: config.secondary);
+                  return SpinKitDoubleBounce(color: secondary);
                 }
                 List<int> saved = _saved.toList();
                 saved.sort((a, b) {
@@ -184,8 +206,9 @@ class _SongBookState extends State<SongBook> {
                 ).toList();
                 return Scaffold(
                   appBar: AppBar(
-                    backgroundColor:
-                        config.darkMode ? Colors.black12 : config.primary,
+                    backgroundColor: brightness == Brightness.dark
+                        ? Colors.black12
+                        : primary,
                     title: Text('Oblíbené'),
                   ),
                   body: ListView(children: divided),
@@ -196,23 +219,23 @@ class _SongBookState extends State<SongBook> {
     );
   }
 
-  _chooseNumber(parentContext) {
+  _chooseNumber() {
     showDialog(
-        context: parentContext,
+        context: context,
         builder: (BuildContext context) {
           return FutureBuilder(
               future: _loadSongs(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.data == null) {
                   return SpinKitFadingCircle(
-                      color: DynamicTheme.of(parentContext)
-                          .data
-                          .secondaryHeaderColor);
+                      color:
+                          DynamicTheme.of(context).data.secondaryHeaderColor);
                 }
                 return NumberSelect(
                     songs: snapshot.data,
                     preferences: preferences,
-                    config: config,
+                    songFontSize: songFontSize,
+                    showChords: showChords,
                     saveSettings: saveSettings);
               });
         });
@@ -237,10 +260,9 @@ class _SongBookState extends State<SongBook> {
                     hintStyle: new TextStyle(color: Colors.white)))
             : Text('Písně'),
         leading: IconButton(
-            icon: Icon(Icons.keyboard),
-            onPressed: () {
-              _chooseNumber(context);
-            }),
+          icon: Icon(Icons.keyboard),
+          onPressed: _chooseNumber,
+        ),
         actions: (<Widget>[
           IconButton(
               icon: Icon(_searchOpen ? Icons.close : Icons.search),

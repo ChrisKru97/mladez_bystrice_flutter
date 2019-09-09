@@ -7,17 +7,15 @@ import 'package:intl/intl.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mladez_zpevnik/config.dart';
 import 'package:mladez_zpevnik/jsonDateTime.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 class Talk extends StatefulWidget {
-  Talk({Key key, this.preferences, this.config}) : super(key: key);
+  Talk({Key key, this.preferences}) : super(key: key);
   final SharedPreferences preferences;
-  final Config config;
+
   @override
-  _TalkState createState() =>
-      _TalkState(preferences: this.preferences, config: this.config);
+  _TalkState createState() => _TalkState(preferences: this.preferences);
 }
 
 class Message {
@@ -40,9 +38,8 @@ class Message {
 
 class _TalkState extends State<Talk> {
   SharedPreferences preferences;
-  Config config;
 
-  _TalkState({this.preferences, this.config});
+  _TalkState({this.preferences});
 
   @override
   void initState() {
@@ -121,23 +118,29 @@ class _TalkState extends State<Talk> {
                                   }
                                 },
                                 humanize: true,
-                                style: TextStyle(
-                                    fontSize: config.textSize.toDouble())),
+                                style: DynamicTheme.of(context)
+                                    .data
+                                    .textTheme
+                                    .display4),
                           ),
                           Padding(
                             padding: _myPadding,
                             child: Text(
                                 _myDateFormat.format(message.date.value),
-                                style: TextStyle(
-                                    fontSize: config.textSize.toDouble())),
+                                style: DynamicTheme.of(context)
+                                    .data
+                                    .textTheme
+                                    .display4),
                           ),
                           Padding(
                               padding: _myPadding,
                               child: Text(
                                 message.sender,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: config.textSize.toDouble()),
+                                style: DynamicTheme.of(context)
+                                    .data
+                                    .textTheme
+                                    .display4
+                                    .copyWith(fontWeight: FontWeight.bold),
                               ))
                         ],
                       ));

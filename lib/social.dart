@@ -1,6 +1,5 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/config.dart';
 import 'package:mladez_zpevnik/events.dart';
 import 'package:mladez_zpevnik/talk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,24 +7,21 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' show json;
 
 class Social extends StatefulWidget {
-  Social({Key key, this.preferences, this.config}) : super(key: key);
+  Social({Key key, this.preferences}) : super(key: key);
   final SharedPreferences preferences;
-  final Config config;
 
   @override
-  _SocialState createState() =>
-      _SocialState(preferences: this.preferences, config: this.config);
+  _SocialState createState() => _SocialState(preferences: this.preferences);
 }
 
 class _SocialState extends State<Social> {
   final SharedPreferences preferences;
-  final Config config;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
   bool _showFAB = false;
 
-  _SocialState({this.preferences, this.config});
+  _SocialState({this.preferences});
 
   _openNewMessage(parentContext) {
     showDialog(
@@ -38,7 +34,7 @@ class _SocialState extends State<Social> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                     side: BorderSide(
-                        color: DynamicTheme.of(parentContext).data.primaryColor,
+                        color: DynamicTheme.of(context).data.primaryColor,
                         width: 3.0)),
                 elevation: 5,
                 child: Padding(
@@ -81,7 +77,7 @@ class _SocialState extends State<Social> {
                                           border: OutlineInputBorder(
                                               borderSide: BorderSide(
                                                   color: DynamicTheme.of(
-                                                          parentContext)
+                                                          context)
                                                       .data
                                                       .primaryColor)),
                                           labelText: 'Tvé jméno')))),
@@ -93,10 +89,10 @@ class _SocialState extends State<Social> {
                                   children: <Widget>[
                                     OutlineButton(
                                       highlightedBorderColor:
-                                          DynamicTheme.of(parentContext)
+                                          DynamicTheme.of(context)
                                               .data
                                               .primaryColor,
-                                      textColor: DynamicTheme.of(parentContext)
+                                      textColor: DynamicTheme.of(context)
                                           .data
                                           .primaryColor,
                                       child: Text('Zrušit'),
@@ -105,11 +101,10 @@ class _SocialState extends State<Social> {
                                       },
                                     ),
                                     RaisedButton(
-                                        highlightColor:
-                                            DynamicTheme.of(parentContext)
-                                                .data
-                                                .primaryColor,
-                                        color: DynamicTheme.of(parentContext)
+                                        highlightColor: DynamicTheme.of(context)
+                                            .data
+                                            .primaryColor,
+                                        color: DynamicTheme.of(context)
                                             .data
                                             .primaryColor,
                                         textColor: Colors.white,
@@ -201,11 +196,9 @@ class _SocialState extends State<Social> {
             body: TabBarView(children: <Widget>[
               Events(
                 preferences: preferences,
-                config: config,
               ),
               Talk(
                 preferences: preferences,
-                config: config,
               )
             ])));
   }

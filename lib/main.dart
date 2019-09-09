@@ -40,9 +40,31 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   SharedPreferences _preferences;
-  Config _config = Config(Colors.blue, Colors.green[800], false, 28, 14, false);
+  Config _config = Config(Colors.blue, Colors.green[800], 28, 14, false);
 
-  _saveSettings(Config config) {
+  _saveSettings(String param, var newValue) {
+    Config config = _config;
+    switch (param) {
+      case 'primary':
+        config.primary = newValue;
+        break;
+      case 'secondary':
+        config.secondary = newValue;
+        break;
+      case 'songFontSize':
+        config.songFontSize = newValue;
+        break;
+      case 'textSize':
+        config.textSize = newValue;
+        break;
+      case 'showChords':
+        config.showChords = newValue;
+        break;
+      case 'config':
+        config = newValue;
+        break;
+    }
+    _preferences.setString('config', jsonEncode(config));
     this.setState(() {
       _config = config;
     });
@@ -54,23 +76,40 @@ class _MyHomePageState extends State<MyHomePage> {
       String configString = value.getString('config') ?? '';
       if (configString != '') {
         var data = jsonDecode(configString);
+        Config config = Config(
+            data['primary'] != null
+                ? Color.fromRGBO(data['primary']['red'],
+                    data['primary']['green'], data['primary']['blue'], 1.0)
+                : Colors.blue,
+            data['secondary'] != null
+                ? Color.fromRGBO(data['secondary']['red'],
+                    data['secondary']['green'], data['secondary']['blue'], 1.0)
+                : Colors.green[800],
+            data['songFontSize'] ?? 28,
+            data['textSize'] ?? 14,
+            data['showChords'] ?? false);
+        Map<int, Color> primary = {
+          50: config.primary.withOpacity(.1),
+          100: config.primary.withOpacity(.2),
+          200: config.primary.withOpacity(.3),
+          300: config.primary.withOpacity(.4),
+          400: config.primary.withOpacity(.5),
+          500: config.primary.withOpacity(.6),
+          600: config.primary.withOpacity(.7),
+          700: config.primary.withOpacity(.8),
+          800: config.primary.withOpacity(.9),
+          900: config.primary.withOpacity(1),
+        };
+        DynamicTheme.of(context).setThemeData(ThemeData(
+            primarySwatch: MaterialColor(config.primary.value, primary),
+            textTheme: TextTheme(
+                display3: TextStyle(
+                    fontSize: config.textSize.toDouble() + 6,
+                    fontWeight: FontWeight.bold),
+                display4: TextStyle(fontSize: config.textSize.toDouble())),
+            secondaryHeaderColor: config.secondary));
         setState(() {
-          _config = Config(
-              data['primary'] != null
-                  ? Color.fromRGBO(data['primary']['red'],
-                      data['primary']['green'], data['primary']['blue'], 1.0)
-                  : Colors.blue,
-              data['secondary'] != null
-                  ? Color.fromRGBO(
-                      data['secondary']['red'],
-                      data['secondary']['green'],
-                      data['secondary']['blue'],
-                      1.0)
-                  : Colors.green[800],
-              data['darkMode'] ?? false,
-              data['songFontSize'] ?? 28,
-              data['textSize'] ?? 14,
-              data['showChords'] ?? false);
+          _config = config;
           _preferences = value;
         });
       } else {
@@ -84,79 +123,60 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Map<int, Color> primary = {
-      50: _config.primary.withOpacity(.1),
-      100: _config.primary.withOpacity(.2),
-      200: _config.primary.withOpacity(.3),
-      300: _config.primary.withOpacity(.4),
-      400: _config.primary.withOpacity(.5),
-      500: _config.primary.withOpacity(.6),
-      600: _config.primary.withOpacity(.7),
-      700: _config.primary.withOpacity(.8),
-      800: _config.primary.withOpacity(.9),
-      900: _config.primary.withOpacity(1),
-    };
-    return DynamicTheme(
-      defaultBrightness: Brightness.light,
-      data: (brightness) => ThemeData(
-          primarySwatch: MaterialColor(_config.primary.value, primary),
-          brightness: brightness,
-          secondaryHeaderColor: _config.secondary),
-      themedWidgetBuilder: (BuildContext context, ThemeData theme) {
-        if (_preferences == null) {
-          return Scaffold(
-            body: SpinKitWave(color: theme.secondaryHeaderColor),
-          );
-        }
-        Widget myWidget;
-        switch (_selectedIndex) {
-          case 0:
-            myWidget = Social(
-              preferences: _preferences,
-              config: _config,
-            );
-            break;
+    Color primary = DynamicTheme.of(context).data.primaryColor;
+    Color secondary = DynamicTheme.of(context).data.secondaryHeaderColor;
+    Brightness brightness = DynamicTheme.of(context).brightness;
+    if (_preferences == null) {
+      return Scaffold(
+        body: SpinKitWave(color: secondary),
+      );
+    }
+    Widget myWidget;
+    switch (_selectedIndex) {
+      case 0:
+        myWidget = Social(
+          preferences: _preferences,
+        );
+        break;
 //      case 1:
 //        myWidget = Recordings(preferences: _preferences, config: _config);
 //        break;
-          case 1:
-            myWidget = SongBook(
-              preferences: _preferences,
-              config: _config,
-              saveSettings: _saveSettings,
-            );
-            break;
-          case 2:
-            myWidget = Settings(
-                preferences: _preferences,
-                config: _config,
-                saveSettings: _saveSettings);
-            break;
-          default:
-            myWidget = Center();
-        }
-        return Scaffold(
-            body: Center(child: myWidget),
-            bottomNavigationBar: FancyBottomNavigation(
-              tabs: [
-                TabData(iconData: Icons.people, title: "Aktuality"),
+      case 1:
+        myWidget = SongBook(
+          preferences: _preferences,
+          songFontSize: _config.songFontSize.toDouble(),
+          showChords: _config.showChords,
+          saveSettings: _saveSettings,
+        );
+        break;
+      case 2:
+        myWidget = Settings(
+            preferences: _preferences,
+            config: _config,
+            saveSettings: _saveSettings);
+        break;
+      default:
+        myWidget = Center();
+    }
+    return Scaffold(
+        body: Center(child: myWidget),
+        bottomNavigationBar: FancyBottomNavigation(
+          tabs: [
+            TabData(iconData: Icons.people, title: "Aktuality"),
 //            TabData(iconData: Icons.mic, title: "Nahrávky"),
-                TabData(iconData: Icons.audiotrack, title: "Zpěvník"),
-                TabData(iconData: Icons.settings, title: "Nastavení"),
-              ],
-              onTabChangedListener: (int position) {
-                setState(() {
-                  _selectedIndex = position;
-                });
-              },
-              barBackgroundColor: theme.primaryColor,
-              inactiveIconColor: theme.brightness == Brightness.light
-                  ? Colors.black
-                  : Colors.white,
-              circleColor: theme.secondaryHeaderColor,
-              textColor: Colors.white,
-            ));
-      },
-    );
+            TabData(iconData: Icons.audiotrack, title: "Zpěvník"),
+            TabData(iconData: Icons.settings, title: "Nastavení"),
+          ],
+          onTabChangedListener: (int position) {
+            setState(() {
+              _selectedIndex = position;
+            });
+          },
+          barBackgroundColor: primary,
+          inactiveIconColor:
+              brightness == Brightness.light ? Colors.black45 : Colors.white,
+          circleColor: secondary,
+          textColor: Colors.white,
+        ));
   }
 }

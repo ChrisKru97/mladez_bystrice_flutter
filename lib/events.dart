@@ -6,18 +6,15 @@ import 'package:intl/intl.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mladez_zpevnik/config.dart';
 import 'package:mladez_zpevnik/jsonDateTime.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Events extends StatefulWidget {
-  Events({Key key, this.preferences, this.config}) : super(key: key);
+  Events({Key key, this.preferences}) : super(key: key);
   final SharedPreferences preferences;
-  final Config config;
   @override
-  _EventsState createState() =>
-      _EventsState(preferences: this.preferences, config: this.config);
+  _EventsState createState() => _EventsState(preferences: this.preferences);
 }
 
 class Event {
@@ -54,9 +51,8 @@ class Event {
 
 class _EventsState extends State<Events> {
   SharedPreferences preferences;
-  Config config;
 
-  _EventsState({this.preferences, this.config});
+  _EventsState({this.preferences});
 
   @override
   void initState() {
@@ -137,9 +133,10 @@ class _EventsState extends State<Events> {
                                   EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 0.0),
                               child: Text(
                                 event.title,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: (config.textSize + 6).toDouble()),
+                                style:  DynamicTheme.of(context)
+                                    .data
+                                    .textTheme
+                                    .display3,
                               ),
                             ),
                             Divider(color: Colors.black),
@@ -155,16 +152,20 @@ class _EventsState extends State<Events> {
                                     }
                                   },
                                   humanize: true,
-                                  style: TextStyle(
-                                      fontSize: config.textSize.toDouble())),
+                                  style: DynamicTheme.of(context)
+                                      .data
+                                      .textTheme
+                                      .display4),
                             ),
                             Padding(
                               padding: _myPadding,
                               child: Text(
                                 _myDateFormat
                                     .format(event.date.value.toLocal()),
-                                style: TextStyle(
-                                    fontSize: config.textSize.toDouble()),
+                                style: DynamicTheme.of(context)
+                                    .data
+                                    .textTheme
+                                    .display4,
                               ),
                             ),
                             event.show
@@ -172,9 +173,13 @@ class _EventsState extends State<Events> {
                                     padding: _myPadding,
                                     child: Text(
                                       event.author,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: config.textSize.toDouble()),
+                                      style: DynamicTheme.of(context)
+                                          .data
+                                          .textTheme
+                                          .display4
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ))
                                 : Center()
                           ]));
