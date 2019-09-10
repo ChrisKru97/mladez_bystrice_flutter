@@ -33,7 +33,7 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     _textSize = config.textSize ?? 14;
-    _darkMode = DynamicTheme.of(context).brightness == Brightness.dark;
+    _darkMode = DynamicTheme.of(context).data.brightness == Brightness.dark;
     _primary = config.primary ?? Colors.blue;
     _secondary = config.secondary ?? Colors.green[800];
     _showChords = config.showChords ?? false;

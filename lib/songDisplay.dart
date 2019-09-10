@@ -52,37 +52,43 @@ class _SongDisplayState extends State<SongDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: DynamicTheme.of(context).data.primaryColor,
-        title: Text(song.number.toString() + '. ' + song.name),
-      ),
-      body: GestureDetector(
-        onScaleStart: (ScaleStartDetails scaleDetails) => setState(() {
-          _previousFontSize = _songFontSize;
-        }),
-        onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
-          int newFontSize = (_previousFontSize * scaleDetails.scale).round();
-          setState(() {
-            if (newFontSize >= 40) {
-              _songFontSize = 40;
-            } else if (newFontSize <= 12) {
-              _songFontSize = 12;
-            } else {
-              _songFontSize = newFontSize;
-            }
-          });
-          saveSettings('songFontSize', newFontSize);
-        },
-        child: SingleChildScrollView(
-            child: Center(
-                child: Text(
-              song.song,
-              style: TextStyle(fontSize: _songFontSize.toDouble()),
-              textAlign: TextAlign.center,
-            )),
-            padding: EdgeInsets.all(5.0)),
-      ),
+    AppBar appBar = AppBar(
+      backgroundColor: DynamicTheme.of(context).data.primaryColor,
+      title: Text(song.number.toString() + '. ' + song.name),
     );
+    return Scaffold(
+        appBar: appBar,
+        body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onScaleStart: (ScaleStartDetails scaleDetails) => setState(() {
+            _previousFontSize = _songFontSize;
+          }),
+          onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
+            int newFontSize = (_previousFontSize * scaleDetails.scale).round();
+            setState(() {
+              if (newFontSize >= 40) {
+                _songFontSize = 40;
+              } else if (newFontSize <= 12) {
+                _songFontSize = 12;
+              } else {
+                _songFontSize = newFontSize;
+              }
+            });
+            saveSettings('songFontSize', newFontSize);
+          },
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+                constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height -
+                        kToolbarHeight -
+                        appBar.preferredSize.height),
+                child: Center(
+                    child: Text(
+                  song.song,
+                  style: TextStyle(fontSize: _songFontSize.toDouble()),
+                  textAlign: TextAlign.center,
+                ))),
+          ),
+        ));
   }
 }

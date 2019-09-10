@@ -324,7 +324,7 @@ class _SongBookState extends State<SongBook> {
                                     : Icons.favorite_border,
                                 color: alreadySaved
                                     ? Colors.red
-                                    : DynamicTheme.of(context).brightness ==
+                                    : DynamicTheme.of(context).data.brightness ==
                                             Brightness.dark
                                         ? Colors.white
                                         : Colors.black),
