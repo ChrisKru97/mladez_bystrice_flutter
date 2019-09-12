@@ -1,27 +1,20 @@
-import 'dart:convert';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_fluid_slider/flutter_fluid_slider.dart';
 import 'package:mladez_zpevnik/config.dart';
 
 class Settings extends StatefulWidget {
-  Settings({Key key, this.preferences, this.config, this.saveSettings})
-      : super(key: key);
-  final SharedPreferences preferences;
+  Settings({Key key, this.config, this.saveSettings}) : super(key: key);
   final Config config;
   final saveSettings;
 
   @override
-  _SettingsState createState() => _SettingsState(
-      preferences: this.preferences,
-      config: this.config,
-      saveSettings: this.saveSettings);
+  _SettingsState createState() =>
+      _SettingsState(config: this.config, saveSettings: this.saveSettings);
 }
 
 class _SettingsState extends State<Settings> {
-  SharedPreferences preferences;
   Config config;
   final snackBar = SnackBar(
       content: Row(
@@ -40,7 +33,7 @@ class _SettingsState extends State<Settings> {
     super.initState();
   }
 
-  _SettingsState({this.preferences, this.config, this.saveSettings});
+  _SettingsState({this.config, this.saveSettings});
 
   int _textSize;
   bool _darkMode;
@@ -113,11 +106,8 @@ class _SettingsState extends State<Settings> {
                           child: FluidSlider(
                             sliderColor: _primary,
                             value: _textSize.toDouble(),
-                            labelsTextStyle: TextStyle(
-                                color: DynamicTheme.of(context).brightness ==
-                                        Brightness.light
-                                    ? Colors.black
-                                    : Colors.white),
+                            valueTextStyle: TextStyle(color: Colors.black),
+                            labelsTextStyle: TextStyle(color: Colors.white),
                             onChanged: (double newValue) {
                               setState(() {
                                 _textSize = newValue.truncate();
@@ -220,6 +210,7 @@ class _SettingsState extends State<Settings> {
                               if (_darkMode) {
                                 DynamicTheme.of(context).setThemeData(ThemeData(
                                     primaryColor: _primary,
+                                    brightness: Brightness.dark,
                                     textTheme: TextTheme(
                                         display3: TextStyle(
                                             fontSize: _textSize.toDouble() + 6,
@@ -234,6 +225,7 @@ class _SettingsState extends State<Settings> {
                                     .setBrightness(Brightness.light);
                                 DynamicTheme.of(context).setThemeData(ThemeData(
                                     primaryColor: _primary,
+                                    brightness: Brightness.light,
                                     textTheme: TextTheme(
                                         display3: TextStyle(
                                             fontSize: _textSize.toDouble() + 6,
@@ -242,9 +234,7 @@ class _SettingsState extends State<Settings> {
                                             fontSize: _textSize.toDouble())),
                                     secondaryHeaderColor: _secondary));
                               }
-                              saveSettings('config', newConfig);
-                              preferences.setString(
-                                  'config', jsonEncode(newConfig));
+                              saveSettings(newConfig);
                               Scaffold.of(context).showSnackBar(snackBar);
                             },
                           )),

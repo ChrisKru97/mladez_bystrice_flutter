@@ -40,34 +40,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   SharedPreferences _preferences;
-  Config _config = Config(Colors.blue, Colors.green[800], 28, 14, false);
+  Config _config = Config(Colors.blue, Colors.green[800], 22, 14, false);
 
-  _saveSettings(String param, var newValue) {
-    Config config = _config;
-    switch (param) {
-      case 'primary':
-        config.primary = newValue;
-        break;
-      case 'secondary':
-        config.secondary = newValue;
-        break;
-      case 'songFontSize':
-        config.songFontSize = newValue;
-        break;
-      case 'textSize':
-        config.textSize = newValue;
-        break;
-      case 'showChords':
-        config.showChords = newValue;
-        break;
-      case 'config':
-        config = newValue;
-        break;
+  _saveSettings(var newValue) {
+    if (newValue is int) {
+      Config config = Config(_config.primary, _config.secondary, newValue,
+          _config.textSize, _config.showChords);
+      _preferences.setString('config', jsonEncode(config));
+      this.setState(() {
+        _config = config;
+      });
+    } else if (newValue is Config) {
+      _preferences.setString('config', jsonEncode(newValue));
+      this.setState(() {
+        _config = newValue;
+      });
     }
-    _preferences.setString('config', jsonEncode(config));
-    this.setState(() {
-      _config = config;
-    });
   }
 
   @override
@@ -85,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ? Color.fromRGBO(data['secondary']['red'],
                     data['secondary']['green'], data['secondary']['blue'], 1.0)
                 : Colors.green[800],
-            data['songFontSize'] ?? 28,
+            data['songFontSize'] ?? 22,
             data['textSize'] ?? 14,
             data['showChords'] ?? false);
         Map<int, Color> primary = {
@@ -100,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
           800: config.primary.withOpacity(.9),
           900: config.primary.withOpacity(1),
         };
+        Brightness brightness = DynamicTheme.of(context).data.brightness;
         DynamicTheme.of(context).setThemeData(ThemeData(
             primarySwatch: MaterialColor(config.primary.value, primary),
             textTheme: TextTheme(
@@ -108,6 +97,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     fontWeight: FontWeight.bold),
                 display4: TextStyle(fontSize: config.textSize.toDouble())),
             secondaryHeaderColor: config.secondary));
+        if (brightness == Brightness.dark) {
+          DynamicTheme.of(context).setBrightness(Brightness.dark);
+        }
         setState(() {
           _config = config;
           _preferences = value;
@@ -125,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     Color primary = DynamicTheme.of(context).data.primaryColor;
     Color secondary = DynamicTheme.of(context).data.secondaryHeaderColor;
-    Brightness brightness = DynamicTheme.of(context).brightness;
+    Brightness brightness = DynamicTheme.of(context).data.brightness;
     if (_preferences == null) {
       return Scaffold(
         body: SpinKitWave(color: secondary),
@@ -144,16 +136,12 @@ class _MyHomePageState extends State<MyHomePage> {
       case 1:
         myWidget = SongBook(
           preferences: _preferences,
-          songFontSize: _config.songFontSize.toDouble(),
           showChords: _config.showChords,
           saveSettings: _saveSettings,
         );
         break;
       case 2:
-        myWidget = Settings(
-            preferences: _preferences,
-            config: _config,
-            saveSettings: _saveSettings);
+        myWidget = Settings(config: _config, saveSettings: _saveSettings);
         break;
       default:
         myWidget = Center();

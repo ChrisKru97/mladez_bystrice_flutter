@@ -10,13 +10,11 @@ class NumberSelect extends StatefulWidget {
       {Key key,
       this.songs,
       this.preferences,
-      this.songFontSize,
       this.showChords,
       this.saveSettings})
       : super(key: key);
   final List<Song> songs;
   final SharedPreferences preferences;
-  final double songFontSize;
   final bool showChords;
   final saveSettings;
 
@@ -24,7 +22,6 @@ class NumberSelect extends StatefulWidget {
   _NumberSelectState createState() => _NumberSelectState(
       songs: this.songs,
       preferences: this.preferences,
-      songFontSize: this.songFontSize,
       showChords: this.showChords,
       saveSettings: this.saveSettings);
 }
@@ -60,7 +57,6 @@ class _NumberSelectState extends State<NumberSelect> {
             return SongDisplay(
                 song: songs[parsedNumber - (parsedNumber < 198 ? 1 : 3)],
                 preferences: preferences,
-                songFontSize: songFontSize,
                 showChords: showChords,
                 saveSettings: saveSettings);
           },

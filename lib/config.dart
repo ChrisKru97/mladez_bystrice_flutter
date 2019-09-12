@@ -2,11 +2,11 @@ import 'dart:convert' show json;
 import 'dart:ui';
 
 class Config {
-  Color primary;
-  Color secondary;
-  int songFontSize;
-  int textSize;
-  bool showChords;
+  final Color primary;
+  final Color secondary;
+  final int songFontSize;
+  final int textSize;
+  final bool showChords;
 
   Config(this.primary, this.secondary, this.songFontSize, this.textSize,
       this.showChords);

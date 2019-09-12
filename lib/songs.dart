@@ -10,21 +10,14 @@ import 'package:mladez_zpevnik/songDisplay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SongBook extends StatefulWidget {
-  SongBook(
-      {Key key,
-      this.preferences,
-      this.songFontSize,
-      this.showChords,
-      this.saveSettings})
+  SongBook({Key key, this.preferences, this.showChords, this.saveSettings})
       : super(key: key);
   final SharedPreferences preferences;
-  final double songFontSize;
   final bool showChords;
   final saveSettings;
   @override
   _SongBookState createState() => _SongBookState(
       preferences: this.preferences,
-      songFontSize: this.songFontSize,
       showChords: this.showChords,
       saveSettings: this.saveSettings);
 }
@@ -61,15 +54,10 @@ class Song {
 
 class _SongBookState extends State<SongBook> {
   SharedPreferences preferences;
-  double songFontSize;
   bool showChords;
   var saveSettings;
 
-  _SongBookState(
-      {this.preferences,
-      this.songFontSize,
-      this.showChords,
-      this.saveSettings});
+  _SongBookState({this.preferences, this.showChords, this.saveSettings});
 
   @override
   void initState() {
@@ -115,7 +103,6 @@ class _SongBookState extends State<SongBook> {
         return SongDisplay(
             song: song,
             preferences: preferences,
-            songFontSize: songFontSize,
             showChords: showChords,
             saveSettings: saveSettings);
       },
@@ -128,7 +115,7 @@ class _SongBookState extends State<SongBook> {
         builder: (BuildContext context) {
           Color primary = DynamicTheme.of(context).data.primaryColor;
           Color secondary = DynamicTheme.of(context).data.secondaryHeaderColor;
-          Brightness brightness = DynamicTheme.of(context).brightness;
+          Brightness brightness = DynamicTheme.of(context).data.brightness;
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -174,7 +161,8 @@ class _SongBookState extends State<SongBook> {
                 Color primary = DynamicTheme.of(context).data.primaryColor;
                 Color secondary =
                     DynamicTheme.of(context).data.secondaryHeaderColor;
-                Brightness brightness = DynamicTheme.of(context).brightness;
+                Brightness brightness =
+                    DynamicTheme.of(context).data.brightness;
                 if (snapshot.data == null) {
                   return SpinKitDoubleBounce(color: secondary);
                 }
@@ -234,7 +222,6 @@ class _SongBookState extends State<SongBook> {
                 return NumberSelect(
                     songs: snapshot.data,
                     preferences: preferences,
-                    songFontSize: songFontSize,
                     showChords: showChords,
                     saveSettings: saveSettings);
               });
@@ -324,7 +311,9 @@ class _SongBookState extends State<SongBook> {
                                     : Icons.favorite_border,
                                 color: alreadySaved
                                     ? Colors.red
-                                    : DynamicTheme.of(context).data.brightness ==
+                                    : DynamicTheme.of(context)
+                                                .data
+                                                .brightness ==
                                             Brightness.dark
                                         ? Colors.white
                                         : Colors.black),
