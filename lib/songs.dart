@@ -246,10 +246,6 @@ class _SongBookState extends State<SongBook> {
                     hintText: "Hledej...",
                     hintStyle: new TextStyle(color: Colors.white)))
             : Text('Písně'),
-        leading: IconButton(
-          icon: Icon(Icons.keyboard),
-          onPressed: _chooseNumber,
-        ),
         actions: (<Widget>[
           IconButton(
               icon: Icon(_searchOpen ? Icons.close : Icons.search),
@@ -265,6 +261,10 @@ class _SongBookState extends State<SongBook> {
               icon: Icon(Icons.format_list_bulleted), onPressed: _pushSaved),
         ]),
       ),
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: DynamicTheme.of(context).data.secondaryHeaderColor,
+          child: Icon(Icons.keyboard),
+          onPressed: _chooseNumber),
       body: FutureBuilder(
         future: _loadSongs(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
