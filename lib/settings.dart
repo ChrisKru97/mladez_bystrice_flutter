@@ -1,8 +1,6 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'package:flutter_fluid_slider/flutter_fluid_slider.dart';
-import 'package:mladez_zpevnik/config.dart';
+import 'package:mladez_zpevnik/classes/config.dart';
 
 class Settings extends StatefulWidget {
   Settings({Key key, this.config, this.saveSettings}) : super(key: key);
@@ -25,8 +23,7 @@ class _SettingsState extends State<Settings> {
 
   @override
   void initState() {
-    _textSize = config.textSize ?? 14;
-    _darkMode = DynamicTheme.of(context).data.brightness == Brightness.dark;
+    _darkMode = config.darkMode ?? false;
     _primary = config.primary ?? Colors.blue;
     _secondary = config.secondary ?? Colors.green[800];
     _showChords = config.showChords ?? false;
@@ -48,31 +45,21 @@ class _SettingsState extends State<Settings> {
           return Dialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  side: BorderSide(
-                      color: secondary
-                          ? DynamicTheme.of(parentContext)
-                              .data
-                              .secondaryHeaderColor
-                          : DynamicTheme.of(parentContext).data.primaryColor,
-                      width: 3.0)),
+                  side: BorderSide(width: 3.0)),
               elevation: 5,
               child: Padding(
                   padding: EdgeInsets.all(15.0),
                   child: Column(children: <Widget>[
                     MaterialColorPicker(
-                      selectedColor: secondary ? _secondary : _primary,
+                      selectedColor: _primary,
                       onColorChange: (Color color) {
                         setState(() {
-                          if (secondary) {
-                            _secondary = color;
-                          } else {
-                            _primary = color;
-                          }
+                          _secondary = color;
                         });
                       },
                     ),
                     RaisedButton(
-                      color: secondary ? _secondary : _primary,
+                      color: _primary,
                       textColor: Colors.white,
                       child: Text("Zavřít"),
                       onPressed: () {
@@ -86,36 +73,12 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            backgroundColor: DynamicTheme.of(context).data.primaryColor,
-            title: Text('Nastavení')),
+        appBar: AppBar(title: Text('Nastavení')),
         body: SingleChildScrollView(
             child: Center(
                 child: Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Column(children: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.all(20.0),
-                          child: Text(
-                            'Velikost obsahu',
-                            style: TextStyle(fontSize: _textSize.toDouble()),
-                          )),
-                      Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 0.0, horizontal: 20.0),
-                          child: FluidSlider(
-                            sliderColor: _primary,
-                            value: _textSize.toDouble(),
-                            valueTextStyle: TextStyle(color: Colors.black),
-                            labelsTextStyle: TextStyle(color: Colors.white),
-                            onChanged: (double newValue) {
-                              setState(() {
-                                _textSize = newValue.truncate();
-                              });
-                            },
-                            min: 6.0,
-                            max: 32.0,
-                          )),
                       Padding(
                           padding: EdgeInsets.all(15.0),
                           child: Text('Pozadí aplikace',
@@ -205,35 +168,11 @@ class _SettingsState extends State<Settings> {
                               'Uložit',
                             ),
                             onPressed: () {
-                              Config newConfig = Config(_primary, _secondary,
-                                  config.songFontSize, _textSize, _showChords);
-                              if (_darkMode) {
-                                DynamicTheme.of(context).setThemeData(ThemeData(
-                                    primaryColor: _primary,
-                                    brightness: Brightness.dark,
-                                    textTheme: TextTheme(
-                                        display3: TextStyle(
-                                            fontSize: _textSize.toDouble() + 6,
-                                            fontWeight: FontWeight.bold),
-                                        display4: TextStyle(
-                                            fontSize: _textSize.toDouble())),
-                                    secondaryHeaderColor: _secondary));
-                                DynamicTheme.of(context)
-                                    .setBrightness(Brightness.dark);
-                              } else {
-                                DynamicTheme.of(context)
-                                    .setBrightness(Brightness.light);
-                                DynamicTheme.of(context).setThemeData(ThemeData(
-                                    primaryColor: _primary,
-                                    brightness: Brightness.light,
-                                    textTheme: TextTheme(
-                                        display3: TextStyle(
-                                            fontSize: _textSize.toDouble() + 6,
-                                            fontWeight: FontWeight.bold),
-                                        display4: TextStyle(
-                                            fontSize: _textSize.toDouble())),
-                                    secondaryHeaderColor: _secondary));
-                              }
+                              Config newConfig = Config(
+                                  primary: Colors.blue,
+                                  secondary: _secondary,
+                                  songFontSize: config.songFontSize,
+                                  showChords: _showChords);
                               saveSettings(newConfig);
                               Scaffold.of(context).showSnackBar(snackBar);
                             },

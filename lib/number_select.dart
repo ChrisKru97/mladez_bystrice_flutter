@@ -1,27 +1,22 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/config.dart';
-import 'package:mladez_zpevnik/songDisplay.dart';
-import 'package:mladez_zpevnik/songs.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mladez_zpevnik/classes/config.dart';
+import 'package:mladez_zpevnik/song_display.dart';
+import 'classes/song.dart';
 
 class NumberSelect extends StatefulWidget {
   NumberSelect(
       {Key key,
       this.songs,
-      this.preferences,
       this.showChords,
       this.saveSettings})
       : super(key: key);
   final List<Song> songs;
-  final SharedPreferences preferences;
   final bool showChords;
   final saveSettings;
 
   @override
   _NumberSelectState createState() => _NumberSelectState(
       songs: this.songs,
-      preferences: this.preferences,
       showChords: this.showChords,
       saveSettings: this.saveSettings);
 }
@@ -29,7 +24,6 @@ class NumberSelect extends StatefulWidget {
 class _NumberSelectState extends State<NumberSelect> {
   _NumberSelectState(
       {this.songs,
-      this.preferences,
       this.songFontSize,
       this.showChords,
       this.saveSettings});
@@ -37,7 +31,6 @@ class _NumberSelectState extends State<NumberSelect> {
   double songFontSize;
   bool showChords;
   List<Song> songs;
-  SharedPreferences preferences;
   Config config;
   var saveSettings;
   TextEditingController fieldController = TextEditingController();
@@ -56,7 +49,6 @@ class _NumberSelectState extends State<NumberSelect> {
           builder: (BuildContext context) {
             return SongDisplay(
                 song: songs[parsedNumber - (parsedNumber < 198 ? 1 : 3)],
-                preferences: preferences,
                 showChords: showChords,
                 saveSettings: saveSettings);
           },
@@ -69,14 +61,13 @@ class _NumberSelectState extends State<NumberSelect> {
 
   @override
   Widget build(BuildContext context) {
-    Color primary = DynamicTheme.of(context).data.primaryColor;
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Dialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                side: BorderSide(color: primary, width: 3.0)),
+                side: BorderSide(width: 3.0)),
             elevation: 5,
             child: Padding(
                 padding: EdgeInsets.all(15.0),
@@ -86,7 +77,6 @@ class _NumberSelectState extends State<NumberSelect> {
                     TextField(
                       decoration: InputDecoration(
                           counterText: "", border: InputBorder.none),
-                      cursorColor: primary,
                       controller: fieldController,
                       autofocus: true,
                       keyboardType: TextInputType.number,
@@ -113,7 +103,6 @@ class _NumberSelectState extends State<NumberSelect> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         RaisedButton(
-                          color: primary,
                           textColor: Colors.white,
                           child: Text("Otevřít"),
                           onPressed: () {
@@ -121,7 +110,6 @@ class _NumberSelectState extends State<NumberSelect> {
                           },
                         ),
                         RaisedButton(
-                          color: primary,
                           textColor: Colors.white,
                           child: Text("Zavřít"),
                           onPressed: () {
