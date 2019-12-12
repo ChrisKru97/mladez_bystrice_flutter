@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+import '../components/my_raised_button.dart';
+import '../song_display.dart';
+
+class NumberSelect extends StatelessWidget {
+  final TextEditingController _fieldController = TextEditingController();
+
+  void openSong(BuildContext context, String number) {
+    int parsedNumber;
+    parsedNumber = int.parse(number);
+    _fieldController.text = '';
+    if (!parsedNumber.isNaN &&
+        (parsedNumber > 0 && parsedNumber < 198 ||
+            parsedNumber > 199 && parsedNumber < 209)) {
+      Navigator.of(context).push(MaterialPageRoute<void>(
+        builder: (BuildContext context) =>
+            SongDisplay(parsedNumber - (parsedNumber < 198 ? 1 : 3)),
+      ));
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+        Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: const BorderSide(width: 1)),
+            child: Padding(
+                padding: const EdgeInsets.all(15),
+                child:
+                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  TextField(
+                    decoration: InputDecoration(
+                        counterText: '', border: InputBorder.none),
+                    controller: _fieldController,
+                    autofocus: true,
+                    keyboardType: TextInputType.number,
+                    onSubmitted: (String text) {
+                      openSong(context, text);
+                    },
+                    textAlign: TextAlign.center,
+                    maxLength: 3,
+                    onChanged: (String data) {
+                      int number;
+                      try {
+                        number = int.parse(data);
+                      } on Exception catch (_) {
+                        _fieldController.text =
+                            data.substring(0, data.length - 1);
+                      }
+                      if (!(number > 0 && number < 198 ||
+                          number > 199 && number < 209)) {
+                        _fieldController.text =
+                            data.substring(0, data.length - 1);
+                      }
+                    },
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      MyRaisedButton(
+                        'Otevřít',
+                        () {
+                          openSong(context, _fieldController.text);
+                        },
+                      ),
+                      MyRaisedButton(
+                        'Zavřít',
+                        () {
+                          Navigator.pop(context);
+                        },
+                      )
+                    ],
+                  )
+                ])))
+      ]);
+}

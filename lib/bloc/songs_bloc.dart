@@ -9,28 +9,34 @@ class SongsBloc implements Bloc {
   SharedPreferences _preferences;
   List<Song> _songs;
   List<Song> _chordSongs;
-  final StreamController<Set<int>> _controller = StreamController<Set<int>>();
+  final StreamController<Set<int>> _controller =
+      StreamController<Set<int>>.broadcast();
+  Set<int> _last = <int>{};
 
   Stream<Set<int>> get stream => _controller.stream;
 
-  List<Song> getSongs({bool showChords}) => showChords ? _chordSongs : _songs;
+  List<Song> getSongs({bool showChords}) =>
+      showChords != null && showChords ? _chordSongs : _songs;
+
+  Song getSong(int number, {bool showChords}) =>
+      (showChords ?? false ? _chordSongs : _songs).elementAt(number);
 
   void addFavorite(int number) {
-    _controller.stream.last.then((Set<int> lastSet) {
-      lastSet.remove(number);
-      if (_preferences != null) {
-        _preferences.setString('favorites', jsonEncode(lastSet));
-      }
-    });
+    _last.add(number);
+    _controller.sink.add(_last);
+    if (_preferences != null) {
+      _preferences.setStringList(
+          'favorites', _last.map((int i) => i.toString()).toList());
+    }
   }
 
   void removeFavorite(int number) {
-    _controller.stream.last.then((Set<int> lastSet) {
-      lastSet.add(number);
-      if (_preferences != null) {
-        _preferences.setString('favorites', jsonEncode(lastSet));
-      }
-    });
+    _last.remove(number);
+    _controller.sink.add(_last);
+    if (_preferences != null) {
+      _preferences.setStringList(
+          'favorites', _last.map((int i) => i.toString()).toList());
+    }
   }
 
   void loadSongs() {
@@ -47,7 +53,7 @@ class SongsBloc implements Bloc {
 
     rootBundle
         .loadStructuredData(
-        'assets/zpevnik.json', (String s) async => await jsonDecode(s))
+            'assets/zpevnik.json', (String s) async => await jsonDecode(s))
         .then((dynamic data) {
       if (data is List<dynamic>) {
         _chordSongs = parseSongList(data);
@@ -55,7 +61,7 @@ class SongsBloc implements Bloc {
     });
     rootBundle
         .loadStructuredData(
-        'assets/noChords.json', (String s) async => await jsonDecode(s))
+            'assets/noChords.json', (String s) async => await jsonDecode(s))
         .then((dynamic data) {
       if (data is List<dynamic>) {
         _songs = parseSongList(data);
@@ -63,13 +69,16 @@ class SongsBloc implements Bloc {
     });
   }
 
+  void refresh() {
+    _controller.sink.add(_last);
+  }
+
   void initFromPrefs(SharedPreferences prefs) {
     if (prefs.containsKey('favorites')) {
-      print('contains favorites');
       final Set<int> newFavorites = <int>{};
-      (jsonDecode(prefs.getString('favorites')) as Iterable<int>)
-          .forEach(newFavorites.add);
+      prefs.getStringList('favorites').map(int.parse).forEach(newFavorites.add);
       _controller.sink.add(newFavorites);
+      _last = newFavorites;
     }
     _preferences = prefs;
   }

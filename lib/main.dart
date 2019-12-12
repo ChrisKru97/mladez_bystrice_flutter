@@ -18,9 +18,7 @@ class MyApp extends StatelessWidget {
         future: SharedPreferences.getInstance(),
         builder: (_, AsyncSnapshot<SharedPreferences> snapshot) {
           if (snapshot.data == null) {
-            return MaterialApp(
-                title: 'Mládež Bystřice',
-                home: SpinKitWave(color: Colors.blue));
+            return MaterialApp(home: SpinKitWave(color: Colors.blue));
           } else {
             final Config initialConfig = Config();
             final ConfigBloc configBloc = ConfigBloc()
@@ -39,11 +37,11 @@ class MyApp extends StatelessWidget {
                       title: 'Mládež Bystřice',
                       home: MainScreen(),
                       theme: ThemeData(
+                          brightness: snapshot.data.darkMode
+                              ? Brightness.dark
+                              : Brightness.light,
                           primarySwatch: snapshot.data.primary,
                           secondaryHeaderColor: snapshot.data.secondary),
-                      darkTheme: snapshot.data.darkMode
-                          ? ThemeData.dark()
-                          : ThemeData.light(),
                     ),
                   ),
                 ),

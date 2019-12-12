@@ -1,76 +1,97 @@
-import 'dart:convert';
-
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/classes/song.dart';
+import 'bloc/bloc_provider.dart';
+import 'bloc/config_bloc.dart';
+import 'bloc/songs_bloc.dart';
+import 'classes/config.dart';
+import 'classes/song.dart';
+import 'components/favorite_icon.dart';
+import 'components/loader.dart';
+import 'dialogs/font_settings.dart';
 
 class SongDisplay extends StatefulWidget {
-  SongDisplay({Key key, this.song, this.showChords, this.saveSettings})
-      : super(key: key);
-  final Song song;
-  final bool showChords;
-  final saveSettings;
+  const SongDisplay(this._number, {Key key}) : super(key: key);
+  final int _number;
 
   @override
-  _SongDisplayState createState() => _SongDisplayState(
-      song: this.song,
-      showChords: this.showChords,
-      saveSettings: this.saveSettings);
+  _SongDisplayState createState() => _SongDisplayState();
 }
 
 class _SongDisplayState extends State<SongDisplay> {
-  _SongDisplayState({this.song, this.showChords, this.saveSettings});
-
-  int _songFontSize;
-  int _previousFontSize;
-
-  Song song;
-  bool showChords;
-  var saveSettings;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool _showFab = true;
 
   @override
   Widget build(BuildContext context) {
-    AppBar appBar = AppBar(
-      title: Text(song.number.toString() + '. ' + song.name),
-    );
+    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
+    final Song song = BlocProvider.of<SongsBloc>(context)
+        .getSong(widget._number, showChords: provider.showChords);
     return Scaffold(
-        appBar: appBar,
-        body: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onScaleStart: (ScaleStartDetails scaleDetails) => setState(() {
-            _previousFontSize = _songFontSize;
-          }),
-          onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
-            int newFontSize = (_previousFontSize * scaleDetails.scale).round();
-            if (newFontSize >= 40) {
-              newFontSize = 40;
-            } else if (newFontSize <= 12) {
-              newFontSize = 12;
+      appBar: AppBar(
+        title: Text('${song.number}. ${song.name}'),
+        actions: <Widget>[FavoriteIcon(song.number)],
+      ),
+      body: StreamBuilder<Config>(
+          stream: provider.stream,
+          builder: (BuildContext context, AsyncSnapshot<Config> snapshot) {
+            if (snapshot.data == null) {
+              provider.refresh();
+              return Loader();
             }
-            setState(() {
-              _songFontSize = newFontSize;
-            });
-            saveSettings(newFontSize);
-          },
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            child: ConstrainedBox(
-                constraints: BoxConstraints(
-                    minHeight: MediaQuery.of(context).size.height -
-                        kToolbarHeight -
-                        appBar.preferredSize.height,
-                    minWidth: MediaQuery.of(context).size.width),
-                child: Center(
-                    child: Text(
-                  song.song,
-                  style: TextStyle(fontSize: _songFontSize.toDouble()),
-                  textAlign: TextAlign.center,
-                ))),
-          ),
-        ));
+            final double fontSize = snapshot.data.songFontSize;
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
+                double newFontSize = fontSize * pow(scaleDetails.scale, 1 / 16);
+                if (newFontSize >= 40) {
+                  newFontSize = 40;
+                } else if (newFontSize <= 12) {
+                  newFontSize = 12;
+                }
+                provider.updateConfig('songFontSize', newFontSize,
+                    skipAnimation: true);
+              },
+              child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(15),
+                  child: AnimatedDefaultTextStyle(
+                    duration: snapshot.data.skipAnimation
+                        ? const Duration(microseconds: 1)
+                        : const Duration(milliseconds: 400),
+                    style: TextStyle(
+                        fontSize: fontSize,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black),
+                    child: Text(song.song,
+                        textAlign: snapshot.data.alignCenter
+                            ? TextAlign.center
+                            : TextAlign.justify),
+                  )),
+            );
+          }),
+      floatingActionButton: Builder(
+          builder: (BuildContext context) => Visibility(
+                visible: _showFab,
+                child: FloatingActionButton(
+                  mini: true,
+                  backgroundColor:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black54
+                          : Theme.of(context).secondaryHeaderColor,
+                  onPressed: () {
+                    setState(() {
+                      _showFab = false;
+                    });
+                    showBottomSheet(
+                        context: context,
+                        builder: (_) => FontSettings()).closed.then((_) {
+                      setState(() {
+                        _showFab = true;
+                      });
+                    });
+                  },
+                  child: Icon(Icons.format_size, color: Colors.white),
+                ),
+              )),
+    );
   }
 }

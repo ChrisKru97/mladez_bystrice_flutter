@@ -7,20 +7,25 @@ class Config {
       this.secondary = const Color(0xFF2E7D32),
       this.songFontSize = 22,
       this.showChords = false,
-      this.darkMode = false});
+      this.darkMode = false,
+      this.alignCenter = false,
+      this.skipAnimation = false});
 
   MaterialColor primary;
   Color secondary;
-  int songFontSize;
+  double songFontSize;
   bool showChords;
   bool darkMode;
+  bool alignCenter;
+  bool skipAnimation;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'primary': primary.toString(),
         'secondary': secondary.toString(),
         'songFontSize': songFontSize,
         'showChords': showChords,
-        'darkMode': darkMode
+        'darkMode': darkMode,
+        'alignCenter': alignCenter,
       };
 
   @override
