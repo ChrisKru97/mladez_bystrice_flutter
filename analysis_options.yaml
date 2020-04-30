@@ -5,6 +5,7 @@ analyzer:
 
 linter:
   rules:
+    omit_local_variable_types: false
     - camel_case_types
     - camel_case_extensions
     - avoid_empty_else
