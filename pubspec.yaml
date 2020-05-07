@@ -1,26 +1,23 @@
 name: mladez_zpevnik
-description: Bystricky mladezovy zpevnik
+description: Bystřický mládežový zpěvník
 
-version: 1.4.1+11
+version: 1.5.0+12
 
 environment:
-  sdk: ^2.7.2
+  sdk: ^2.8.1
 
 dependencies:
   flutter:
     sdk: flutter
-
-  draggable_scrollbar: any
-  flutter_spinkit: any
   flutter_material_color_picker: any
-  pedantic: any
   shared_preferences: any
-  popup_menu: any
   toggle_switch: any
+  google_fonts: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  pedantic: any
 
 flutter:
   uses-material-design: true

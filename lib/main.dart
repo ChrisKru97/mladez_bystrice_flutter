@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'bloc/bloc_provider.dart';
 import 'bloc/config_bloc.dart';
@@ -11,6 +11,18 @@ import 'main_screen.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  getTheme(String font, TextTheme def) {
+    switch (font) {
+      case 'Patrick':
+        return GoogleFonts.patrickHandTextTheme(def);
+      case 'Coda':
+        return GoogleFonts.codaTextTheme(def);
+      case 'Hammersmith':
+        return GoogleFonts.hammersmithOneTextTheme(def);
+    }
+    return def;
+  }
+
   @override
   Widget build(BuildContext context) {
     final SongsBloc songsBloc = SongsBloc()..loadSongs();
@@ -18,7 +30,8 @@ class MyApp extends StatelessWidget {
         future: SharedPreferences.getInstance(),
         builder: (_, AsyncSnapshot<SharedPreferences> snapshot) {
           if (snapshot.data == null) {
-            return MaterialApp(home: SpinKitWave(color: Colors.blue));
+            return MaterialApp(
+                home: Center(child: CircularProgressIndicator()));
           } else {
             final Config initialConfig = Config();
             final ConfigBloc configBloc = ConfigBloc()
@@ -37,11 +50,14 @@ class MyApp extends StatelessWidget {
                       title: 'Mládež Bystřice',
                       home: MainScreen(),
                       theme: ThemeData(
-                          brightness: snapshot.data.darkMode
-                              ? Brightness.dark
-                              : Brightness.light,
-                          primarySwatch: snapshot.data.primary,
-                          secondaryHeaderColor: snapshot.data.secondary),
+                        brightness: snapshot.data.darkMode
+                            ? Brightness.dark
+                            : Brightness.light,
+                        primarySwatch: snapshot.data.primary,
+                        secondaryHeaderColor: snapshot.data.secondary,
+                        textTheme: getTheme(
+                            snapshot.data.font, Theme.of(context).textTheme),
+                      ),
                     ),
                   ),
                 ),

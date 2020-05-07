@@ -8,20 +8,21 @@ class Config {
       this.songFontSize = 22,
       this.showChords = false,
       this.darkMode = false,
-      this.alignCenter = false,
-      this.skipAnimation = false});
+      this.font = 'PatrickHand',
+      this.alignCenter = false});
 
   MaterialColor primary;
+  String font;
   Color secondary;
   double songFontSize;
   bool showChords;
   bool darkMode;
   bool alignCenter;
-  bool skipAnimation;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'primary': primary.toString(),
         'secondary': secondary.toString(),
+        'font': font,
         'songFontSize': songFontSize,
         'showChords': showChords,
         'darkMode': darkMode,
