@@ -6,7 +6,6 @@ import 'bloc/songs_bloc.dart';
 import 'classes/config.dart';
 import 'classes/song.dart';
 import 'components/favorite_icon.dart';
-import 'components/loader.dart';
 import 'dialogs/font_settings.dart';
 
 class SongDisplay extends StatefulWidget {
@@ -35,9 +34,20 @@ class _SongDisplayState extends State<SongDisplay> {
           builder: (BuildContext context, AsyncSnapshot<Config> snapshot) {
             if (snapshot.data == null) {
               provider.refresh();
-              return Loader();
+              return Center(child: CircularProgressIndicator());
             }
             final double fontSize = snapshot.data.songFontSize;
+            final textWidget = Text(
+              song.song,
+              textAlign: snapshot.data.alignCenter
+                  ? TextAlign.center
+                  : TextAlign.justify,
+              style: TextStyle(
+                  fontSize: fontSize,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black),
+            );
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
               onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
@@ -47,25 +57,14 @@ class _SongDisplayState extends State<SongDisplay> {
                 } else if (newFontSize <= 12) {
                   newFontSize = 12;
                 }
-                provider.updateConfig('songFontSize', newFontSize,
-                    skipAnimation: true);
+                provider.updateConfig('songFontSize', newFontSize);
               },
               child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(15),
-                  child: AnimatedDefaultTextStyle(
-                    duration: snapshot.data.skipAnimation
-                        ? const Duration(microseconds: 1)
-                        : const Duration(milliseconds: 400),
-                    style: TextStyle(
-                        fontSize: fontSize,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black),
-                    child: Text(song.song,
-                        textAlign: snapshot.data.alignCenter
-                            ? TextAlign.center
-                            : TextAlign.justify),
-                  )),
+                padding: const EdgeInsets.all(15),
+                child: snapshot.data.alignCenter
+                    ? Center(child: textWidget)
+                    : textWidget,
+              ),
             );
           }),
       floatingActionButton: Builder(
@@ -82,8 +81,11 @@ class _SongDisplayState extends State<SongDisplay> {
                       _showFab = false;
                     });
                     showBottomSheet(
-                        context: context,
-                        builder: (_) => FontSettings()).closed.then((_) {
+                            context: context,
+                            builder: (_) => FontSettings(),
+                            backgroundColor: Colors.transparent)
+                        .closed
+                        .then((_) {
                       setState(() {
                         _showFab = true;
                       });

@@ -3,7 +3,6 @@ import 'package:toggle_switch/toggle_switch.dart';
 import '../bloc/bloc_provider.dart';
 import '../bloc/config_bloc.dart';
 import '../classes/config.dart';
-import '../components/loader.dart';
 
 class FontSettings extends StatelessWidget {
   @override
@@ -14,12 +13,20 @@ class FontSettings extends StatelessWidget {
         builder: (_, AsyncSnapshot<Config> snapshot) {
           if (snapshot.data == null) {
             provider.refresh();
-            return Loader();
+            return Center(child: CircularProgressIndicator());
           }
           return Container(
-            margin: const EdgeInsets.all(15),
+            margin: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-                color: Colors.black26, borderRadius: BorderRadius.circular(15)),
+                color: Colors.grey[400],
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black54,
+                      offset: Offset(0, 0),
+                      blurRadius: 10,
+                      spreadRadius: 1)
+                ]),
             height: 160,
             padding: const EdgeInsets.all(15),
             child: Column(
@@ -69,7 +76,7 @@ class FontSettings extends StatelessWidget {
                 ),
                 Slider(
                   min: 12,
-                  max: 40,
+                  max: 60,
                   onChanged: (double value) {
                     provider.updateConfig('songFontSize', value);
                   },
