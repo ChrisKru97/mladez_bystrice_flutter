@@ -3,8 +3,9 @@ import '../bloc/bloc_provider.dart';
 import '../bloc/songs_bloc.dart';
 
 class FavoriteIcon extends StatelessWidget {
-  const FavoriteIcon(this.number, {Key key}) : super(key: key);
+  const FavoriteIcon(this.number, {this.white = false});
 
+  final bool white;
   final int number;
 
   @override
@@ -25,9 +26,10 @@ class FavoriteIcon extends StatelessWidget {
                     : CrossFadeState.showSecond,
                 firstChild: Icon(Icons.favorite, color: Colors.red),
                 secondChild: Icon(Icons.favorite_border,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black),
+                    color:
+                        Theme.of(context).brightness == Brightness.dark || white
+                            ? Colors.white
+                            : Colors.black),
               ),
               onPressed: () {
                 if (favorited) {

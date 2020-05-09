@@ -22,12 +22,34 @@ class _SongDisplayState extends State<SongDisplay> {
   @override
   Widget build(BuildContext context) {
     final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
+    final fontFamily = provider.fontFamily;
+    double sizeCoeff = 2;
+    switch (fontFamily) {
+      case "Patrick":
+        sizeCoeff = 2.2;
+        break;
+      case "Coda":
+        sizeCoeff = 1.7;
+        break;
+      case "Hammersmith":
+        sizeCoeff = 1.6;
+        break;
+    }
     final Song song = BlocProvider.of<SongsBloc>(context)
         .getSong(widget._number, showChords: provider.showChords);
+    final title = '${song.number}. ${song.name}';
+    final titleSize =
+        (MediaQuery.of(context).size.width / title.length) * sizeCoeff;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${song.number}. ${song.name}'),
-        actions: <Widget>[FavoriteIcon(song.number)],
+        flexibleSpace: SafeArea(
+            child: Center(
+                child: Text(
+          title,
+          style: TextStyle(
+              color: Colors.white, fontSize: titleSize < 40 ? titleSize : 40),
+        ))),
+        actions: <Widget>[FavoriteIcon(song.number, white: true)],
       ),
       body: StreamBuilder<Config>(
           stream: provider.stream,

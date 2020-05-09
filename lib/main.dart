@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'bloc/bloc_provider.dart';
@@ -8,7 +10,21 @@ import 'bloc/songs_bloc.dart';
 import 'classes/config.dart';
 import 'main_screen.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  LicenseRegistry.addLicense(() async* {
+    final codaLicense =
+        await rootBundle.loadString('google_fonts/coda_OFL.txt');
+    yield LicenseEntryWithLineBreaks(['google_fonts_coda'], codaLicense);
+    final hammersmithLicense =
+        await rootBundle.loadString('google_fonts/hammersmith_OFL.txt');
+    yield LicenseEntryWithLineBreaks(
+        ['google_fonts_hammersmith'], hammersmithLicense);
+    final patrickLicense =
+        await rootBundle.loadString('google_fonts/patrick_OFL.txt');
+    yield LicenseEntryWithLineBreaks(['google_fonts_patrick'], patrickLicense);
+  });
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   getTheme(String font, TextTheme def) {

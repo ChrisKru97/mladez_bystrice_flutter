@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import '../bloc/bloc_provider.dart';
 import '../bloc/songs_bloc.dart';
-import '../classes/song.dart';
 import '../components/song_list.dart';
 
-class SavedList extends StatelessWidget {
+class HistoryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SongsBloc provider = BlocProvider.of<SongsBloc>(context);
@@ -13,20 +12,20 @@ class SavedList extends StatelessWidget {
             flexibleSpace: SafeArea(
                 child: Center(
                     child: Text(
-          'Oblíbené',
+          'Naposledy otevřené',
           style: TextStyle(color: Colors.white, fontSize: 30),
         )))),
-        body: StreamBuilder<Set<int>>(
-            stream: provider.stream,
-            builder: (_, AsyncSnapshot<Set<int>> snapshot) {
+        body: StreamBuilder<List<int>>(
+            stream: provider.historyStream,
+            builder: (_, AsyncSnapshot<List<int>> snapshot) {
               if (snapshot.data == null) {
                 provider.refresh();
                 return Center(child: CircularProgressIndicator());
               }
+              final songs = provider.getSongs();
               return SongList(
-                  songs: provider
-                      .getSongs()
-                      .where((Song song) => snapshot.data.contains(song.number))
+                  songs: snapshot.data
+                      .map((songNumber) => songs.elementAt(songNumber))
                       .toList());
             }));
   }
