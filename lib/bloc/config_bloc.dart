@@ -14,6 +14,7 @@ class ConfigBloc implements Bloc {
   Stream<Config> get stream => _controller.stream;
 
   bool get showChords => _last.showChords;
+  String get fontFamily => _last.font;
 
   void refresh() {
     _controller.sink.add(_last);

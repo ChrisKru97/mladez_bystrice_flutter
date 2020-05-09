@@ -11,9 +11,14 @@ class SongsBloc implements Bloc {
   List<Song> _chordSongs;
   final StreamController<Set<int>> _controller =
       StreamController<Set<int>>.broadcast();
+  final StreamController<List<int>> _historyConttroller =
+      StreamController<List<int>>.broadcast();
   Set<int> _last = <int>{};
+  List<int> _lastHistory = <int>[];
 
   Stream<Set<int>> get stream => _controller.stream;
+
+  Stream<List<int>> get historyStream => _historyConttroller.stream;
 
   List<Song> getSongs({bool showChords}) =>
       showChords != null && showChords ? _chordSongs : _songs;
@@ -36,6 +41,20 @@ class SongsBloc implements Bloc {
     if (_preferences != null) {
       _preferences.setStringList(
           'favorites', _last.map((int i) => i.toString()).toList());
+    }
+  }
+
+  void addToHistory(int number) {
+    if (_lastHistory.length > 50) {
+      _lastHistory.removeLast();
+    }
+    if (_lastHistory.length == 0 || _lastHistory.elementAt(0) != number) {
+      _lastHistory.insert(0, number);
+      _historyConttroller.sink.add(_lastHistory);
+      if (_preferences != null) {
+        _preferences.setStringList(
+            'history', _lastHistory.map((int i) => i.toString()).toList());
+      }
     }
   }
 
@@ -71,6 +90,7 @@ class SongsBloc implements Bloc {
 
   void refresh() {
     _controller.sink.add(_last);
+    _historyConttroller.sink.add(_lastHistory);
   }
 
   void initFromPrefs(SharedPreferences prefs) {
@@ -80,11 +100,16 @@ class SongsBloc implements Bloc {
       _controller.sink.add(newFavorites);
       _last = newFavorites;
     }
+    if (prefs.containsKey('history')) {
+      _lastHistory = prefs.getStringList('history').map(int.parse).toList();
+      _historyConttroller.sink.add(_lastHistory);
+    }
     _preferences = prefs;
   }
 
   @override
   void dispose() {
+    _historyConttroller.close();
     _controller.close();
   }
 }

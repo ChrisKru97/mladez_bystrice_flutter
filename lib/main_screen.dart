@@ -1,13 +1,14 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/components/menu_row.dart';
-import 'package:mladez_zpevnik/song_display.dart';
+import 'package:mladez_zpevnik/components/song_list.dart';
 import 'bloc/bloc_provider.dart';
 import 'bloc/config_bloc.dart';
 import 'bloc/search_bloc.dart';
 import 'bloc/songs_bloc.dart';
 import 'classes/config.dart';
 import 'classes/song.dart';
-import 'components/favorite_icon.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -17,10 +18,11 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   PersistentBottomSheetController bottomSheetController;
 
-  void _openSong(BuildContext context, int number) {
-    Navigator.of(context)
-        .push(MaterialPageRoute<void>(builder: (_) => SongDisplay(number)));
-  }
+  void setBottomSheet(
+          PersistentBottomSheetController newBottomSheetController) =>
+      setState(() {
+        bottomSheetController = newBottomSheetController;
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -61,95 +63,48 @@ class _MainScreenState extends State<MainScreen> {
                 } else {
                   filteredSongs = songs;
                 }
-                return Scaffold(
-                  body: GestureDetector(
+                return GestureDetector(
                     onTap: () {
                       if (bottomSheetController != null) {
                         bottomSheetController.close();
+                        BlocProvider.of<SearchBloc>(context).search('');
                         setState(() {
                           bottomSheetController = null;
                         });
                       }
                     },
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverAppBar(
+                    child: Scaffold(
+                      appBar: AppBar(
                           automaticallyImplyLeading: false,
-                          expandedHeight: 150,
-                          floating: true,
-                          stretch: true,
-                          stretchTriggerOffset: 1,
-                          pinned: true,
-                          flexibleSpace: FlexibleSpaceBar(
-                              background: SafeArea(
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 12),
-                                  child: Text(
-                                    "Mládežový zpěvník",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.08),
-                                  ),
-                                ),
+                          centerTitle: true,
+                          flexibleSpace: SafeArea(
+                            child: Center(
+                              child: Text(
+                                "Mládežový zpěvník",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.08),
                               ),
-                              title: SafeArea(
-                                  child: MenuRow(
-                                      setBottomSheet: (bottomSheet) {
-                                        bottomSheet.closed.then((value) {
-                                          setState(() {
-                                            bottomSheetController = null;
-                                          });
-                                        });
-                                        setState(() {
-                                          bottomSheetController = bottomSheet;
-                                        });
-                                      },
-                                      bottomSheetController:
-                                          bottomSheetController))),
-                        ),
-                        SliverFixedExtentList(
-                          delegate:
-                              SliverChildBuilderDelegate((context, index) {
-                            final song = filteredSongs.elementAt(index);
-                            return ListTile(
-                                title: Text(
-                                  '${song.number}. ${song.name}',
-                                  style: TextStyle(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black),
-                                ),
-                                onTap: () {
-                                  if (bottomSheetController != null) {
-                                    bottomSheetController.close();
-                                    setState(() {
-                                      bottomSheetController = null;
-                                      _openSong(
-                                          context,
-                                          song.number < 198
-                                              ? song.number - 1
-                                              : song.number - 3);
-                                    });
-                                  } else {
-                                    _openSong(
-                                        context,
-                                        song.number < 198
-                                            ? song.number - 1
-                                            : song.number - 3);
-                                  }
-                                },
-                                trailing: FavoriteIcon(song.number));
-                          }, childCount: filteredSongs.length),
-                          itemExtent: 50,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+                            ),
+                          )),
+                      body: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          SongList(
+                              trimmed: true,
+                              songs: filteredSongs,
+                              bottomSheetController: bottomSheetController,
+                              setBottomSheet: setBottomSheet),
+                          ClipRect(
+                            child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                                child: MenuRow(setBottomSheet: setBottomSheet)),
+                          ),
+                        ],
+                      ),
+                    ));
               });
         });
   }
