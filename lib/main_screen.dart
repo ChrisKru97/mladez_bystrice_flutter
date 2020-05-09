@@ -68,9 +68,6 @@ class _MainScreenState extends State<MainScreen> {
                       if (bottomSheetController != null) {
                         bottomSheetController.close();
                         BlocProvider.of<SearchBloc>(context).search('');
-                        setState(() {
-                          bottomSheetController = null;
-                        });
                       }
                     },
                     child: Scaffold(

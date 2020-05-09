@@ -887,7 +887,7 @@
   {
     "number": 178,
     "name": "Vládca",
-    "song": "1. Každý s nás dúfa v súcit a bezhraničnú lásku, ó, Pane zmiluj sa. Každý z nás túži prijímať milosť odpustenia a nádej spásy.\nRef.: Vládca, vrchmi može hýbať, môj Boh je nejmocnější, má moc zachrániť nás. Víťaz povôd večnej spásy, porazil smrť, z horbu vstal, Ježiš víťazne vstal.\n2. Biedny som Ty ma prijímaš všetok môj strach a pády, ó Kriste zmiluj sa. Za Tebou túžim kráčať si moja pevná nádej, dnes sa Ti dávám.\nCODA: Zažiar svetlom, nech Ťa svet vidí, spievaj, Tebe slávy, Králi môj víťazný."
+    "song": "1. Každý s nás dúfa v súcit a bezhraničnú lásku, ó, Pane zmiluj sa. Každý z nás túži prijímať milosť odpustenia a nádej spásy.\nRef.: Vládca, vrchmi može hýbať, môj Boh je nejmocnější, má moc zachrániť nás. Víťaz povôd večnej spásy, porazil smrť, z hrobu vstal, Ježiš víťazne vstal.\n2. Biedny som Ty ma prijímaš všetok môj strach a pády, ó Kriste zmiluj sa. Za Tebou túžim kráčať si moja pevná nádej, dnes sa Ti dávám.\nCODA: Zažiar svetlom, nech Ťa svet vidí, spievaj, Tebe slávy, Králi môj víťazný."
   },
   {
     "number": 179,
@@ -1028,5 +1028,10 @@
     "name": "Staň se mou vizí",
     "song": "Staň se mou vizí, buď snem, který mám,\npro který chci žít a svůj život dám,\n hlasem, jenž vodí mne světlem i tmou,\nkaždý den provází mne stezkou Tvou.\nTy jsi má moudrost, má pravda, můj Pán,\n od Tebe učím se všemu, co znám.\nMůj Otče v nebesích, jsem dítě Tvé,\nsvou láskou přebýváš teď v srdci mém.\nSám jsi mým štítem, Tvůj meč ostrý mám,\nsílu a odvahu svou dáváš nám.\n Skálou jsi pevnou, jež ční jako hrad,\nnad mořem běsnícím s Tebou chci stát.\n Nehledám slávu či bohatství lesk,\n Ty jsi můj přítel a Nejvyšší kněz.\n Až jednou vrátíš se v slávě své k nám,\nk sobě mne zavoláš, Tvůj hlas už znám.",
     "number": 208
+  },
+  {
+    "name": "Aj keby nekvitol fík",
+    "song": "Aj keby nekvitol fík, \naj keby nerodila zem, \naj keby nebesá nedoniesli svetlo v nové ráno. \nA aj keď polia zlyhajú \na sýpky prázdne zostanú, \naj keď všetko vôkol volá, že Boh nie je. \n\nRef.: Áno práve vtedy pozdvihnem svoj hlas \na budem spievať chvály. \nUprostred trápení, uprostred súžení Ježiš je Pán. \nÁno práve vtedy pozdvihnem svoj hlas \na budem spievať chvály. \nLebo verím, v Neho verím. \n( Aj keby nekvitol fík ) \n\nKeď blízky priateľ opustí, \na je tak ťažké odpustiť \nkeď sa múry v mojom vnútri zrazu rúcajú \nkeď sa zdá, že to neskončí, \nslzy sa tlačia do očí \nviem, že stojíš blízko tých, čo v Teba dúfajú.",
+    "number": 209
   }
 ]
