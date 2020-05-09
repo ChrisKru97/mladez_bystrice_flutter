@@ -23,6 +23,7 @@ String deburr(String s) => s
     .replaceAll(RegExp(r"ś", caseSensitive: false), "s")
     .replaceAll(RegExp(r"ź", caseSensitive: false), "z")
     .replaceAll(RegExp(r"ż", caseSensitive: false), "z")
+    .replaceAll(RegExp(r"ľ", caseSensitive: false), "l")
     .replaceAll(RegExp(r"ą", caseSensitive: false), "a");
 
 class SearchBloc implements Bloc {

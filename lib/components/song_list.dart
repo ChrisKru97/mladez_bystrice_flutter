@@ -55,7 +55,7 @@ class SongList extends StatelessWidget {
               itemCount: songs.length + (trimmed ? 1 : 0),
               itemBuilder: (BuildContext context, int index) {
                 if (trimmed && index == songs.length) {
-                  return ListTile(title: Container(height: 80));
+                  return ListTile(title: Container(height: 70));
                 }
                 final Song song = songs.elementAt(index);
                 return ListTile(

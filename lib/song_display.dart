@@ -26,20 +26,20 @@ class _SongDisplayState extends State<SongDisplay> {
     double sizeCoeff = 2;
     switch (fontFamily) {
       case "Patrick":
-        sizeCoeff = 2.2;
+        sizeCoeff = 2.6;
         break;
       case "Coda":
-        sizeCoeff = 1.7;
+        sizeCoeff = 2;
         break;
       case "Hammersmith":
-        sizeCoeff = 1.6;
+        sizeCoeff = 1.9;
         break;
     }
     final Song song = BlocProvider.of<SongsBloc>(context)
         .getSong(widget._number, showChords: provider.showChords);
     final title = '${song.number}. ${song.name}';
     final titleSize =
-        (MediaQuery.of(context).size.width / title.length) * sizeCoeff;
+        ((MediaQuery.of(context).size.width - 100) / title.length) * sizeCoeff;
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: SafeArea(
@@ -61,9 +61,8 @@ class _SongDisplayState extends State<SongDisplay> {
             final double fontSize = snapshot.data.songFontSize;
             final textWidget = Text(
               song.song,
-              textAlign: snapshot.data.alignCenter
-                  ? TextAlign.center
-                  : TextAlign.justify,
+              textAlign:
+                  snapshot.data.alignCenter ? TextAlign.center : TextAlign.left,
               style: TextStyle(
                   fontSize: fontSize,
                   color: Theme.of(context).brightness == Brightness.dark
