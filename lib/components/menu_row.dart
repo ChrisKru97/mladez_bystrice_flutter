@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/bloc/bloc_provider.dart';
 import 'package:mladez_zpevnik/bloc/search_bloc.dart';
+import 'package:mladez_zpevnik/components/hand_cursor.dart';
 import 'package:mladez_zpevnik/dialogs/history_list.dart';
 import 'package:mladez_zpevnik/dialogs/number_select.dart';
 import 'package:mladez_zpevnik/dialogs/saved_list.dart';
@@ -20,7 +21,7 @@ class ButtonContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           color: Colors.white,
         ),
-        child: Center(child: child),
+        child: Center(child: HandCursor(child: child)),
       );
 }
 

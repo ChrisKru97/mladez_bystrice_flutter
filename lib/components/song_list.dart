@@ -2,6 +2,7 @@ import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/bloc/bloc_provider.dart';
 import 'package:mladez_zpevnik/bloc/songs_bloc.dart';
+import 'package:mladez_zpevnik/components/hand_cursor.dart';
 import '../classes/song.dart';
 import '../song_display.dart';
 import 'favorite_icon.dart';
@@ -58,22 +59,25 @@ class SongList extends StatelessWidget {
                   return ListTile(title: Container(height: 70));
                 }
                 final Song song = songs.elementAt(index);
-                return ListTile(
-                    title: Text(
-                      '${song.number}. ${song.name}',
-                      style: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black),
-                    ),
-                    onTap: () {
-                      _openSong(
-                          context,
-                          song.number < 198
-                              ? song.number - 1
-                              : song.number - 3);
-                    },
-                    trailing: FavoriteIcon(song.number));
+                return HandCursor(
+                  child: ListTile(
+                      title: Text(
+                        '${song.number}. ${song.name}',
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black),
+                      ),
+                      onTap: () {
+                        _openSong(
+                            context,
+                            song.number < 198
+                                ? song.number - 1
+                                : song.number - 3);
+                      },
+                      trailing: FavoriteIcon(song.number)),
+                );
               }),
         )
       : Center(

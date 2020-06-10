@@ -63,6 +63,7 @@ class _MainScreenState extends State<MainScreen> {
                 } else {
                   filteredSongs = songs;
                 }
+                final titleSize = MediaQuery.of(context).size.width * 0.13;
                 return GestureDetector(
                     onTap: () {
                       if (bottomSheetController != null) {
@@ -80,9 +81,7 @@ class _MainScreenState extends State<MainScreen> {
                                 "Mládežový zpěvník",
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.08),
+                                    fontSize: titleSize < 38 ? titleSize : 38),
                               ),
                             ),
                           )),

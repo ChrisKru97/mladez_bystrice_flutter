@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:mladez_zpevnik/components/hand_cursor.dart';
+import 'package:universal_html/html.dart';
 import 'bloc/bloc_provider.dart';
 import 'bloc/config_bloc.dart';
 import 'bloc/songs_bloc.dart';
@@ -42,12 +44,13 @@ class _SongDisplayState extends State<SongDisplay> {
         ((MediaQuery.of(context).size.width - 100) / title.length) * sizeCoeff;
     return Scaffold(
       appBar: AppBar(
+        leading: HandCursor(child: BackButton()),
         flexibleSpace: SafeArea(
             child: Center(
                 child: Text(
           title,
           style: TextStyle(
-              color: Colors.white, fontSize: titleSize < 40 ? titleSize : 40),
+              color: Colors.white, fontSize: titleSize < 38 ? titleSize : 38),
         ))),
         actions: <Widget>[FavoriteIcon(song.number, white: true)],
       ),
@@ -91,28 +94,34 @@ class _SongDisplayState extends State<SongDisplay> {
       floatingActionButton: Builder(
           builder: (BuildContext context) => Visibility(
                 visible: _showFab,
-                child: FloatingActionButton(
-                  mini: true,
-                  backgroundColor:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Colors.black54
-                          : Theme.of(context).secondaryHeaderColor,
-                  onPressed: () {
-                    setState(() {
-                      _showFab = false;
-                    });
-                    showBottomSheet(
-                            context: context,
-                            builder: (_) => FontSettings(),
-                            backgroundColor: Colors.transparent)
-                        .closed
-                        .then((_) {
+                child: HandCursor(
+                  child: FloatingActionButton(
+                    mini: true,
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black54
+                            : Theme.of(context).secondaryHeaderColor,
+                    onPressed: () {
+                      window.document
+                          .getElementById('app-container')
+                          .style
+                          .cursor = 'default';
                       setState(() {
-                        _showFab = true;
+                        _showFab = false;
                       });
-                    });
-                  },
-                  child: Icon(Icons.format_size, color: Colors.white),
+                      showBottomSheet(
+                              context: context,
+                              builder: (_) => FontSettings(),
+                              backgroundColor: Colors.transparent)
+                          .closed
+                          .then((_) {
+                        setState(() {
+                          _showFab = true;
+                        });
+                      });
+                    },
+                    child: Icon(Icons.format_size, color: Colors.white),
+                  ),
                 ),
               )),
     );
