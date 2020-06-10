@@ -14,6 +14,7 @@ dependencies:
   shared_preferences: any
   toggle_switch: any
   google_fonts: any
+  universal_html: any
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mladez_zpevnik/components/hand_cursor.dart';
 import '../bloc/bloc_provider.dart';
 import '../bloc/songs_bloc.dart';
 import '../classes/song.dart';
@@ -10,12 +11,13 @@ class SavedList extends StatelessWidget {
     final SongsBloc provider = BlocProvider.of<SongsBloc>(context);
     return Scaffold(
         appBar: AppBar(
+            leading: HandCursor(child: BackButton()),
             flexibleSpace: SafeArea(
                 child: Center(
                     child: Text(
-          'Oblíbené',
-          style: TextStyle(color: Colors.white, fontSize: 30),
-        )))),
+              'Oblíbené',
+              style: TextStyle(color: Colors.white, fontSize: 30),
+            )))),
         body: StreamBuilder<Set<int>>(
             stream: provider.stream,
             builder: (_, AsyncSnapshot<Set<int>> snapshot) {

@@ -1,0 +1,18 @@
+{
+    "name": "Mládežový zpěvník",
+    "short_name": "Mládežový zpěvník",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "Mládežový zpěvník",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}
