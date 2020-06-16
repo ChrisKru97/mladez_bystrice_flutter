@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "207934052135",
+    "firebase_url": "https://mladezovy-zpevnik.firebaseio.com",
+    "project_id": "mladezovy-zpevnik",
+    "storage_bucket": "mladezovy-zpevnik.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207934052135:android:02284fb26cd2cbeb0f7b02",
+        "android_client_info": {
+          "package_name": "com.bystrice.mladez"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "207934052135-6co6uogtfa1kpp6nhgdkaeh9a6hf0mjg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJOKoZq0hlQwnWciVNzRI1vA4msCtVdOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "207934052135-6co6uogtfa1kpp6nhgdkaeh9a6hf0mjg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

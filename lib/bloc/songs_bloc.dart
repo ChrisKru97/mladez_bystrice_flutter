@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../classes/song.dart';
 import 'bloc.dart';
@@ -70,21 +69,19 @@ class SongsBloc implements Bloc {
       return songs;
     }
 
-    rootBundle
-        .loadStructuredData(
-            'assets/zpevnik.json', (String s) async => await jsonDecode(s))
-        .then((dynamic data) {
-      if (data is List<dynamic>) {
-        _chordSongs = parseSongList(data);
-      }
+    Firestore.instance
+        .collection('songs')
+        .orderBy('number')
+        .getDocuments()
+        .then((value) {
+      _chordSongs = parseSongList(value.documents);
     });
-    rootBundle
-        .loadStructuredData(
-            'assets/noChords.json', (String s) async => await jsonDecode(s))
-        .then((dynamic data) {
-      if (data is List<dynamic>) {
-        _songs = parseSongList(data);
-      }
+    Firestore.instance
+        .collection('noChords')
+        .orderBy('number')
+        .getDocuments()
+        .then((value) {
+      _songs = parseSongList(value.documents);
     });
   }
 

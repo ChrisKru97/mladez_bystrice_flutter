@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,13 +23,20 @@ void main() {
     final patrickLicense =
         await rootBundle.loadString('google_fonts/patrick_OFL.txt');
     yield LicenseEntryWithLineBreaks(['google_fonts_patrick'], patrickLicense);
+    final opensanslicense =
+        await rootBundle.loadString('google_fonts/opensans_OFL.txt');
+    yield LicenseEntryWithLineBreaks(
+        ['google_fonts_opensans'], opensanslicense);
   });
+  Firestore.instance.settings(persistenceEnabled: true);
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   getTheme(String font, TextTheme def) {
     switch (font) {
+      case 'OpenSans':
+        return GoogleFonts.openSansTextTheme(def);
       case 'Patrick':
         return GoogleFonts.patrickHandTextTheme(def);
       case 'Coda':

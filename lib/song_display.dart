@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/components/hand_cursor.dart';
-import 'package:universal_html/html.dart';
+import 'package:universal_html/html.dart' hide Text;
 import 'bloc/bloc_provider.dart';
 import 'bloc/config_bloc.dart';
 import 'bloc/songs_bloc.dart';
@@ -27,6 +27,9 @@ class _SongDisplayState extends State<SongDisplay> {
     final fontFamily = provider.fontFamily;
     double sizeCoeff = 2;
     switch (fontFamily) {
+      case "OpenSans":
+        sizeCoeff = 4;
+        break;
       case "Patrick":
         sizeCoeff = 2.6;
         break;
