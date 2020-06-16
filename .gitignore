@@ -9,6 +9,8 @@
 .history
 .svn/
 
+firebaseDeploy
+
 # IntelliJ related
 *.iml
 *.ipr
@@ -33,7 +35,7 @@
 **/android/captures/
 **/android/gradlew
 **/android/gradlew.bat
-**/android/local.properties
+local.properties*
 **/android/**/GeneratedPluginRegistrant.java
 
 # iOS/XCode related
@@ -68,3 +70,5 @@
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+google-services.json

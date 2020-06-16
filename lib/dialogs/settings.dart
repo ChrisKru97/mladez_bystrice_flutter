@@ -9,6 +9,7 @@ import '../classes/config.dart';
 import '../components/my_raised_button.dart';
 
 final List<TextStyle> Fonts = [
+  GoogleFonts.openSans(),
   GoogleFonts.patrickHand(),
   GoogleFonts.coda(),
   GoogleFonts.hammersmithOne()
