@@ -9,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  draggable_scrollbar: any
   flutter_material_color_picker: any
   shared_preferences: any
   toggle_switch: any

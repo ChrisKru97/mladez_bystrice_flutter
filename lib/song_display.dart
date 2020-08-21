@@ -11,8 +11,9 @@ import 'components/favorite_icon.dart';
 import 'dialogs/font_settings.dart';
 
 class SongDisplay extends StatefulWidget {
-  const SongDisplay(this._number, {Key key}) : super(key: key);
+  const SongDisplay(this._number, {Key key, this.song}) : super(key: key);
   final int _number;
+  final Song song;
 
   @override
   _SongDisplayState createState() => _SongDisplayState();
@@ -27,8 +28,8 @@ class _SongDisplayState extends State<SongDisplay> {
     final fontFamily = provider.fontFamily;
     double sizeCoeff = 2;
     switch (fontFamily) {
-      case "OpenSans":
-        sizeCoeff = 4;
+      case "Open":
+        sizeCoeff = 2.3;
         break;
       case "Patrick":
         sizeCoeff = 2.6;
@@ -40,22 +41,27 @@ class _SongDisplayState extends State<SongDisplay> {
         sizeCoeff = 1.9;
         break;
     }
-    final Song song = BlocProvider.of<SongsBloc>(context)
-        .getSong(widget._number, showChords: provider.showChords);
+    final Song song = widget.song ??
+        BlocProvider.of<SongsBloc>(context)
+            .getSong(widget._number, showChords: provider.showChords);
     final title = '${song.number}. ${song.name}';
-    final titleSize =
-        ((MediaQuery.of(context).size.width - 100) / title.length) * sizeCoeff;
     return Scaffold(
       appBar: AppBar(
-        leading: HandCursor(child: BackButton()),
+        automaticallyImplyLeading: false,
+        leading: widget.song != null ? null : HandCursor(child: BackButton()),
         flexibleSpace: SafeArea(
-            child: Center(
-                child: Text(
-          title,
-          style: TextStyle(
-              color: Colors.white, fontSize: titleSize < 38 ? titleSize : 38),
-        ))),
-        actions: <Widget>[FavoriteIcon(song.number, white: true)],
+            child: Center(child: LayoutBuilder(builder: (_, constraints) {
+          final titleSize =
+              ((constraints.maxWidth - 100) / title.length) * sizeCoeff;
+          return Text(
+            title,
+            style: TextStyle(
+                color: Colors.white, fontSize: titleSize < 38 ? titleSize : 38),
+          );
+        }))),
+        actions: song == null
+            ? <Widget>[FavoriteIcon(song.number, white: true)]
+            : null,
       ),
       body: StreamBuilder<Config>(
           stream: provider.stream,
@@ -94,39 +100,41 @@ class _SongDisplayState extends State<SongDisplay> {
               ),
             );
           }),
-      floatingActionButton: Builder(
-          builder: (BuildContext context) => Visibility(
-                visible: _showFab,
-                child: HandCursor(
-                  child: FloatingActionButton(
-                    mini: true,
-                    backgroundColor:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Colors.black54
-                            : Theme.of(context).secondaryHeaderColor,
-                    onPressed: () {
-                      window.document
-                          .getElementById('app-container')
-                          .style
-                          .cursor = 'default';
-                      setState(() {
-                        _showFab = false;
-                      });
-                      showBottomSheet(
-                              context: context,
-                              builder: (_) => FontSettings(),
-                              backgroundColor: Colors.transparent)
-                          .closed
-                          .then((_) {
-                        setState(() {
-                          _showFab = true;
-                        });
-                      });
-                    },
-                    child: Icon(Icons.format_size, color: Colors.white),
-                  ),
-                ),
-              )),
+      floatingActionButton: widget.song == null
+          ? Builder(
+              builder: (BuildContext context) => Visibility(
+                    visible: _showFab,
+                    child: HandCursor(
+                      child: FloatingActionButton(
+                        mini: true,
+                        backgroundColor:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.black54
+                                : Theme.of(context).secondaryHeaderColor,
+                        onPressed: () {
+                          window.document
+                              .getElementById('app-container')
+                              .style
+                              .cursor = 'default';
+                          setState(() {
+                            _showFab = false;
+                          });
+                          showBottomSheet(
+                                  context: context,
+                                  builder: (_) => FontSettings(),
+                                  backgroundColor: Colors.transparent)
+                              .closed
+                              .then((_) {
+                            setState(() {
+                              _showFab = true;
+                            });
+                          });
+                        },
+                        child: Icon(Icons.format_size, color: Colors.white),
+                      ),
+                    ),
+                  ))
+          : null,
     );
   }
 }

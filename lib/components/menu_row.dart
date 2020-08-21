@@ -1,7 +1,11 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/bloc/bloc_provider.dart';
 import 'package:mladez_zpevnik/bloc/search_bloc.dart';
 import 'package:mladez_zpevnik/components/hand_cursor.dart';
+import 'package:mladez_zpevnik/dialogs/add_song.dart';
+import 'package:mladez_zpevnik/dialogs/check_new_songs.dart';
 import 'package:mladez_zpevnik/dialogs/history_list.dart';
 import 'package:mladez_zpevnik/dialogs/number_select.dart';
 import 'package:mladez_zpevnik/dialogs/saved_list.dart';
@@ -26,8 +30,9 @@ class ButtonContainer extends StatelessWidget {
 }
 
 class MenuRow extends StatelessWidget {
-  MenuRow({this.setBottomSheet});
+  MenuRow({this.setBottomSheet, this.lastNumber});
 
+  final int lastNumber;
   final void Function(PersistentBottomSheetController) setBottomSheet;
 
   @override
@@ -43,7 +48,7 @@ class MenuRow extends StatelessWidget {
                   color: Colors.red,
                 ),
                 onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
+                    CupertinoPageRoute<void>(
                         builder: (BuildContext context) => SavedList())),
               ),
             ),
@@ -67,7 +72,7 @@ class MenuRow extends StatelessWidget {
                     color: Colors.black,
                   ),
                   onPressed: () => setBottomSheet(showBottomSheet(
-                      builder: (_) => NumberSelect(),
+                      builder: (_) => NumberSelect(lastNumber),
                       context: context,
                       backgroundColor: Colors.transparent))),
             ),
@@ -78,9 +83,20 @@ class MenuRow extends StatelessWidget {
                     color: Colors.black,
                   ),
                   onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
+                      CupertinoPageRoute<void>(
                           builder: (BuildContext context) => HistoryList()))),
             ),
+            if (kIsWeb)
+              ButtonContainer(
+                child: IconButton(
+                    icon: Icon(
+                      Icons.add,
+                      color: Colors.black,
+                    ),
+                    onPressed: () => Navigator.of(context).push(
+                        CupertinoPageRoute<void>(
+                            builder: (BuildContext _) => AddSong(context)))),
+              ),
             ButtonContainer(
               child: IconButton(
                   icon: Icon(
@@ -91,7 +107,18 @@ class MenuRow extends StatelessWidget {
                       context: context,
                       builder: (_) => Settings(),
                       backgroundColor: Colors.transparent))),
-            )
+            ),
+            if (!kReleaseMode)
+              ButtonContainer(
+                child: IconButton(
+                    icon: Icon(
+                      Icons.edit,
+                      color: Colors.black,
+                    ),
+                    onPressed: () => Navigator.of(context).push(
+                        CupertinoPageRoute<void>(
+                            builder: (BuildContext _) => CheckNewSongs()))),
+              )
           ],
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

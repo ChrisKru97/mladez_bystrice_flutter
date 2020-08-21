@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../classes/song.dart';
@@ -57,32 +58,45 @@ class SongsBloc implements Bloc {
     }
   }
 
-  void loadSongs() {
-    List<Song> parseSongList(List<dynamic> data) {
-      final List<Song> songs = <Song>[];
-      for (final dynamic s in data) {
-        songs.add(Song(
-            number: s['number'] as int,
-            name: s['name'] as String,
-            song: s['song'] as String));
-      }
-      return songs;
+  List<Song> parseSongList(List<dynamic> data) {
+    final List<Song> songs = <Song>[];
+    for (final dynamic s in data) {
+      songs.add(Song(
+          number: s['number'] as int,
+          name: s['name'] as String,
+          song: s['song'] as String));
     }
+    return songs;
+  }
 
-    Firestore.instance
-        .collection('songs')
-        .orderBy('number')
-        .getDocuments()
-        .then((value) {
-      _chordSongs = parseSongList(value.documents);
-    });
-    Firestore.instance
-        .collection('noChords')
-        .orderBy('number')
-        .getDocuments()
-        .then((value) {
-      _songs = parseSongList(value.documents);
-    });
+  Future<void> loadChordSongs({bool force = false}) async {
+    if (!force && _preferences.containsKey('songList')) {
+      _chordSongs =
+          parseSongList(jsonDecode(_preferences.getString('songList')));
+    } else {
+      final data = parseSongList((await Firestore.instance
+              .collection('songs')
+              .orderBy('number')
+              .getDocuments())
+          .documents);
+      _chordSongs = data;
+      _preferences.setString('songList', jsonEncode(data));
+    }
+  }
+
+  Future<void> loadNoChordSongs({bool force = false}) async {
+    if (!force && _preferences.containsKey('noChordsList')) {
+      _songs =
+          parseSongList(jsonDecode(_preferences.getString('noChordsList')));
+    } else {
+      final data = parseSongList((await Firestore.instance
+              .collection('noChords')
+              .orderBy('number')
+              .getDocuments())
+          .documents);
+      _songs = data;
+      _preferences.setString('noChordsList', jsonEncode(data));
+    }
   }
 
   void refresh() {
@@ -91,6 +105,9 @@ class SongsBloc implements Bloc {
   }
 
   void initFromPrefs(SharedPreferences prefs) {
+    _preferences = prefs;
+    loadChordSongs();
+    loadNoChordSongs();
     if (prefs.containsKey('favorites')) {
       final Set<int> newFavorites = <int>{};
       prefs.getStringList('favorites').map(int.parse).forEach(newFavorites.add);
@@ -101,7 +118,6 @@ class SongsBloc implements Bloc {
       _lastHistory = prefs.getStringList('history').map(int.parse).toList();
       _historyConttroller.sink.add(_lastHistory);
     }
-    _preferences = prefs;
   }
 
   @override
