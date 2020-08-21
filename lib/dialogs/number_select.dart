@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/bloc/bloc_provider.dart';
 import 'package:mladez_zpevnik/bloc/songs_bloc.dart';
@@ -6,6 +7,9 @@ import '../components/my_raised_button.dart';
 import '../song_display.dart';
 
 class NumberSelect extends StatelessWidget {
+  NumberSelect(this.lastNumber);
+
+  final int lastNumber;
   final TextEditingController _fieldController = TextEditingController();
 
   void openSong(BuildContext context, String number) {
@@ -14,12 +18,12 @@ class NumberSelect extends StatelessWidget {
     _fieldController.text = '';
     if (!parsedNumber.isNaN &&
         (parsedNumber > 0 && parsedNumber < 198 ||
-            parsedNumber > 199 && parsedNumber < 210)) {
+            parsedNumber > 199 && parsedNumber < lastNumber)) {
       final finalNumber = parsedNumber - (parsedNumber < 198 ? 1 : 3);
       try {
         BlocProvider.of<SongsBloc>(context).addToHistory(finalNumber);
       } catch (_) {}
-      Navigator.of(context).push(MaterialPageRoute<void>(
+      Navigator.of(context).push(CupertinoPageRoute<void>(
         builder: (BuildContext context) => SongDisplay(finalNumber),
       ));
     } else {
@@ -48,7 +52,8 @@ class NumberSelect extends StatelessWidget {
             } on Exception catch (_) {
               _fieldController.text = data.substring(0, data.length - 1);
             }
-            if (!(number > 0 && number < 198 || number > 199 && number < 210)) {
+            if (!(number > 0 && number < 198 ||
+                number > 199 && number < lastNumber)) {
               _fieldController.text = data.substring(0, data.length - 1);
             }
           },

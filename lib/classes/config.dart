@@ -8,7 +8,7 @@ class Config {
       this.songFontSize = 22,
       this.showChords = false,
       this.darkMode = false,
-      this.font = 'OpenSans',
+      this.font = 'Open',
       this.alignCenter = false});
 
   MaterialColor primary;

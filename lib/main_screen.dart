@@ -96,7 +96,9 @@ class _MainScreenState extends State<MainScreen> {
                           ClipRect(
                             child: BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-                                child: MenuRow(setBottomSheet: setBottomSheet)),
+                                child: MenuRow(
+                                    setBottomSheet: setBottomSheet,
+                                    lastNumber: songs.last.number + 1)),
                           ),
                         ],
                       ),

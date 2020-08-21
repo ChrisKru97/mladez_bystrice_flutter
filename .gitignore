@@ -35,7 +35,8 @@ firebaseDeploy
 **/android/captures/
 **/android/gradlew
 **/android/gradlew.bat
-local.properties*
+local.properties
+key.properties.bkp
 **/android/**/GeneratedPluginRegistrant.java
 
 # iOS/XCode related

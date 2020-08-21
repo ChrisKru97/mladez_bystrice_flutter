@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,14 +27,13 @@ void main() {
     yield LicenseEntryWithLineBreaks(
         ['google_fonts_opensans'], opensanslicense);
   });
-  Firestore.instance.settings(persistenceEnabled: true);
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   getTheme(String font, TextTheme def) {
     switch (font) {
-      case 'OpenSans':
+      case 'Open':
         return GoogleFonts.openSansTextTheme(def);
       case 'Patrick':
         return GoogleFonts.patrickHandTextTheme(def);
@@ -49,7 +47,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SongsBloc songsBloc = SongsBloc()..loadSongs();
     return FutureBuilder<SharedPreferences>(
         future: SharedPreferences.getInstance(),
         builder: (_, AsyncSnapshot<SharedPreferences> snapshot) {
@@ -60,7 +57,8 @@ class MyApp extends StatelessWidget {
             final Config initialConfig = Config();
             final ConfigBloc configBloc = ConfigBloc()
               ..initFromPrefs(snapshot.data, initialConfig);
-            songsBloc.initFromPrefs(snapshot.data);
+            final SongsBloc songsBloc = SongsBloc()
+              ..initFromPrefs(snapshot.data);
             return BlocProvider<ConfigBloc>(
               bloc: configBloc,
               child: BlocProvider<SongsBloc>(
