@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mladez_zpevnik/components/hand_cursor.dart';
 import 'package:mladez_zpevnik/dialogs/bottom_sheet.dart';
 import '../bloc/bloc_provider.dart';
 import '../bloc/config_bloc.dart';
@@ -85,15 +84,13 @@ class Settings extends StatelessWidget {
                   const Text(
                     'Světlé',
                   ),
-                  HandCursor(
-                    child: Switch(
-                      value: snapshot.data.darkMode,
-                      activeTrackColor: primary.withOpacity(0.6),
-                      activeColor: primary,
-                      onChanged: (bool value) {
-                        provider.updateConfig('darkMode', value);
-                      },
-                    ),
+                  Switch(
+                    value: snapshot.data.darkMode,
+                    activeTrackColor: primary.withOpacity(0.6),
+                    activeColor: primary,
+                    onChanged: (bool value) {
+                      provider.updateConfig('darkMode', value);
+                    },
                   ),
                   const Text(
                     'Tmavé',
@@ -144,21 +141,17 @@ class Settings extends StatelessWidget {
                     style: font,
                   );
                   if (fontName == snapshot.data.font) {
-                    return HandCursor(
-                      child: RaisedButton(
-                        child: child,
-                        onPressed: () => null,
-                      ),
+                    return RaisedButton(
+                      child: child,
+                      onPressed: () => null,
                     );
                   }
-                  return HandCursor(
-                    child: FlatButton(
-                      child: child,
-                      textColor: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        provider.updateConfig('font', fontName);
-                      },
-                    ),
+                  return FlatButton(
+                    child: child,
+                    textColor: Theme.of(context).primaryColor,
+                    onPressed: () {
+                      provider.updateConfig('font', fontName);
+                    },
                   );
                 }).toList(),
               )

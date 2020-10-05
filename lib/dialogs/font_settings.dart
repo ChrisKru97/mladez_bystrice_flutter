@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/components/hand_cursor.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import '../bloc/bloc_provider.dart';
 import '../bloc/config_bloc.dart';
@@ -44,50 +43,44 @@ class FontSettings extends StatelessWidget {
                               'Akordy',
                               style: TextStyle(fontSize: 22),
                             )),
-                        HandCursor(
-                          child: Switch(
-                            value: snapshot.data.showChords,
+                        Switch(
+                          value: snapshot.data.showChords,
 //                          activeTrackColor:
 //                              Theme.of(context).primaryColor.withOpacity(0.6),
 //                          activeColor: Theme.of(context).primaryColor,
-                            onChanged: (bool value) {
-                              provider.updateConfig('showChords', value);
-                            },
-                          ),
+                          onChanged: (bool value) {
+                            provider.updateConfig('showChords', value);
+                          },
                         ),
                       ],
                     ),
-                    HandCursor(
-                      child: ToggleSwitch(
-                        icons: <IconData>[
-                          Icons.format_align_left,
-                          Icons.format_align_center
-                        ],
-                        initialLabelIndex: snapshot.data.alignCenter ? 1 : 0,
-                        activeTextColor: Colors.white,
-                        labels: const <String>['', ''],
-                        inactiveBgColor: Colors.black26,
-                        activeBgColor: Theme.of(context).secondaryHeaderColor,
-                        inactiveTextColor:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
-                        onToggle: (int selected) {
-                          provider.updateConfig('alignCenter', 1 == selected);
-                        },
-                      ),
+                    ToggleSwitch(
+                      icons: <IconData>[
+                        Icons.format_align_left,
+                        Icons.format_align_center
+                      ],
+                      initialLabelIndex: snapshot.data.alignCenter ? 1 : 0,
+                      activeFgColor: Colors.white,
+                      labels: const <String>['', ''],
+                      inactiveBgColor: Colors.black26,
+                      activeBgColor: Theme.of(context).secondaryHeaderColor,
+                      inactiveFgColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                      onToggle: (int selected) {
+                        provider.updateConfig('alignCenter', 1 == selected);
+                      },
                     )
                   ],
                 ),
-                HandCursor(
-                  child: Slider(
-                    min: 12,
-                    max: 60,
-                    onChanged: (double value) {
-                      provider.updateConfig('songFontSize', value);
-                    },
-                    value: snapshot.data.songFontSize,
-                  ),
+                Slider(
+                  min: 12,
+                  max: 60,
+                  onChanged: (double value) {
+                    provider.updateConfig('songFontSize', value);
+                  },
+                  value: snapshot.data.songFontSize,
                 ),
               ],
             ),

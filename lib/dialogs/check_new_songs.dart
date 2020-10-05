@@ -10,23 +10,23 @@ class CheckNewSongs extends StatelessWidget {
           title: Text('Nové písně'),
         ),
         body: StreamBuilder<QuerySnapshot>(
-          stream: Firestore.instance.collection('checkRequired').snapshots(),
+          stream: FirebaseFirestore.instance.collection('checkRequired').snapshots(),
           builder: (_, snapshot) => snapshot.hasData
               ? ListView.builder(
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: (_, index) => ListTile(
                         onTap: () => Navigator.of(context).push(
                             CupertinoPageRoute<void>(
                                 builder: (BuildContext _) => CheckSong(
-                                    snapshot.data.documents
+                                    snapshot.data.docs
                                         .elementAt(index)
-                                        .data,
-                                    snapshot.data.documents
+                                        .data(),
+                                    snapshot.data.docs
                                         .elementAt(index)
-                                        .documentID))),
+                                        .id))),
                         title: Text(snapshot.data.documents
                             .elementAt(index)
-                            ?.data['name']),
+                            ?.data()['name']),
                       ))
               : Center(child: CircularProgressIndicator()),
         ),

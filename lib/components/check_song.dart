@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class CheckSong extends StatelessWidget {
   CheckSong(this.song, this.id);
 
-  final Firestore _firestore = Firestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String id;
   final Map<String, dynamic> song;
 
@@ -27,12 +27,9 @@ class CheckSong extends StatelessWidget {
               heroTag: 'closeFAB',
               backgroundColor: Colors.red,
               child: Icon(Icons.close),
-              onPressed: () {
-                _firestore.runTransaction((transaction) async {
-                  await transaction
-                      .delete(_firestore.document('checkRequired/$id'));
-                  Navigator.pop(context);
-                });
+              onPressed: () async {
+                await _firestore.doc('checkRequired/$id').delete();
+                Navigator.pop(context);
               },
             ),
             Padding(
@@ -41,34 +38,30 @@ class CheckSong extends StatelessWidget {
                 heroTag: 'checkFAB',
                 backgroundColor: Colors.green,
                 child: Icon(Icons.check),
-                onPressed: () {
-                  _firestore.runTransaction((transaction) async {
-                    final number = (await _firestore
-                                .collection('songs')
-                                .orderBy('number', descending: true)
-                                .limit(1)
-                                .getDocuments())
-                            .documents
-                            .elementAt(0)
-                            .data['number'] +
-                        1;
-                    await transaction.set(
-                        _firestore.document('songs/${number}'), {
-                      'name': song['name'],
-                      'song': song['chordsSong'],
-                      'number': number
-                    });
-                    await transaction.set(
-                        _firestore.document('noChords/${number}'), {
-                      'name': song['name'],
-                      'song': song['song'],
-                      'number': number
-                    });
-                    await transaction
-                        .delete(_firestore.document('checkRequired/$id'));
-                    Navigator.pop(context);
+                onPressed: () async =>
+                    await _firestore.runTransaction((transaction) async {
+                  final number = (await _firestore
+                              .collection('songs')
+                              .orderBy('number', descending: true)
+                              .limit(1)
+                              .get())
+                          .docs
+                          .elementAt(0)
+                          .data()["number"] +
+                      1;
+                  await transaction.set(_firestore.doc('songs/${number}'), {
+                    'name': song['name'],
+                    'song': song['chordsSong'],
+                    'number': number
                   });
-                },
+                  await transaction.set(_firestore.doc('noChords/${number}'), {
+                    'name': song['name'],
+                    'song': song['song'],
+                    'number': number
+                  });
+                  await transaction.delete(_firestore.doc('checkRequired/$id'));
+                  Navigator.pop(context);
+                }),
               ),
             )
           ],

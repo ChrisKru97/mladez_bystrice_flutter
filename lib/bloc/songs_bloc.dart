@@ -60,11 +60,14 @@ class SongsBloc implements Bloc {
 
   List<Song> parseSongList(List<dynamic> data) {
     final List<Song> songs = <Song>[];
-    for (final dynamic s in data) {
+    for (var song in data) {
+      if (song is QueryDocumentSnapshot) {
+        song = song.data();
+      }
       songs.add(Song(
-          number: s['number'] as int,
-          name: s['name'] as String,
-          song: s['song'] as String));
+          number: song['number'] as int,
+          name: song['name'] as String,
+          song: song['song'] as String));
     }
     return songs;
   }
@@ -74,11 +77,11 @@ class SongsBloc implements Bloc {
       _chordSongs =
           parseSongList(jsonDecode(_preferences.getString('songList')));
     } else {
-      final data = parseSongList((await Firestore.instance
+      final data = parseSongList((await FirebaseFirestore.instance
               .collection('songs')
               .orderBy('number')
-              .getDocuments())
-          .documents);
+              .get())
+          .docs);
       _chordSongs = data;
       _preferences.setString('songList', jsonEncode(data));
     }
@@ -89,11 +92,11 @@ class SongsBloc implements Bloc {
       _songs =
           parseSongList(jsonDecode(_preferences.getString('noChordsList')));
     } else {
-      final data = parseSongList((await Firestore.instance
+      final data = parseSongList((await FirebaseFirestore.instance
               .collection('noChords')
               .orderBy('number')
-              .getDocuments())
-          .documents);
+              .get())
+          .docs);
       _songs = data;
       _preferences.setString('noChordsList', jsonEncode(data));
     }
