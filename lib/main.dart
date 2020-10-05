@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,18 +48,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<SharedPreferences>(
-        future: SharedPreferences.getInstance(),
-        builder: (_, AsyncSnapshot<SharedPreferences> snapshot) {
-          if (snapshot.data == null) {
+    return FutureBuilder<List<dynamic>>(
+        future: Future.wait(
+            [SharedPreferences.getInstance(), Firebase.initializeApp()]),
+        builder: (_, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (!snapshot.hasData) {
             return MaterialApp(
                 home: Center(child: CircularProgressIndicator()));
           } else {
             final Config initialConfig = Config();
             final ConfigBloc configBloc = ConfigBloc()
-              ..initFromPrefs(snapshot.data, initialConfig);
+              ..initFromPrefs(snapshot.data[0], initialConfig);
             final SongsBloc songsBloc = SongsBloc()
-              ..initFromPrefs(snapshot.data);
+              ..initFromPrefs(snapshot.data[0]);
             return BlocProvider<ConfigBloc>(
               bloc: configBloc,
               child: BlocProvider<SongsBloc>(

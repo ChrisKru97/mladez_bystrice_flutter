@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/components/hand_cursor.dart';
 import '../bloc/bloc_provider.dart';
 import '../bloc/songs_bloc.dart';
 import '../components/song_list.dart';
@@ -10,7 +9,7 @@ class HistoryList extends StatelessWidget {
     final SongsBloc provider = BlocProvider.of<SongsBloc>(context);
     return Scaffold(
         appBar: AppBar(
-            leading: HandCursor(child: BackButton()),
+            leading: BackButton(),
             flexibleSpace: SafeArea(
                 child: Center(
                     child: Text(

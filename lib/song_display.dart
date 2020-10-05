@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/components/hand_cursor.dart';
-import 'package:universal_html/html.dart' hide Text;
+import 'package:wakelock/wakelock.dart';
 import 'bloc/bloc_provider.dart';
 import 'bloc/config_bloc.dart';
 import 'bloc/songs_bloc.dart';
@@ -24,6 +23,8 @@ class _SongDisplayState extends State<SongDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    Wakelock.enabled
+        .then((bool enabled) => enabled ? null : Wakelock.disable());
     final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
     final fontFamily = provider.fontFamily;
     double sizeCoeff = 2;
@@ -48,7 +49,7 @@ class _SongDisplayState extends State<SongDisplay> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: widget.song != null ? null : HandCursor(child: BackButton()),
+        leading: widget.song != null ? null : BackButton(),
         flexibleSpace: SafeArea(
             child: Center(child: LayoutBuilder(builder: (_, constraints) {
           final titleSize =
@@ -59,9 +60,9 @@ class _SongDisplayState extends State<SongDisplay> {
                 color: Colors.white, fontSize: titleSize < 38 ? titleSize : 38),
           );
         }))),
-        actions: song == null
-            ? <Widget>[FavoriteIcon(song.number, white: true)]
-            : null,
+        actions: widget.song != null
+            ? null
+            : <Widget>[FavoriteIcon(song.number, white: true)],
       ),
       body: StreamBuilder<Config>(
           stream: provider.stream,
@@ -100,41 +101,41 @@ class _SongDisplayState extends State<SongDisplay> {
               ),
             );
           }),
-      floatingActionButton: widget.song == null
+      floatingActionButton: song == null
           ? Builder(
               builder: (BuildContext context) => Visibility(
                     visible: _showFab,
-                    child: HandCursor(
-                      child: FloatingActionButton(
-                        mini: true,
-                        backgroundColor:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? Colors.black54
-                                : Theme.of(context).secondaryHeaderColor,
-                        onPressed: () {
-                          window.document
-                              .getElementById('app-container')
-                              .style
-                              .cursor = 'default';
+                    child: FloatingActionButton(
+                      mini: true,
+                      backgroundColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.black54
+                              : Theme.of(context).secondaryHeaderColor,
+                      onPressed: () {
+                        setState(() {
+                          _showFab = false;
+                        });
+                        showBottomSheet(
+                                context: context,
+                                builder: (_) => FontSettings(),
+                                backgroundColor: Colors.transparent)
+                            .closed
+                            .then((_) {
                           setState(() {
-                            _showFab = false;
+                            _showFab = true;
                           });
-                          showBottomSheet(
-                                  context: context,
-                                  builder: (_) => FontSettings(),
-                                  backgroundColor: Colors.transparent)
-                              .closed
-                              .then((_) {
-                            setState(() {
-                              _showFab = true;
-                            });
-                          });
-                        },
-                        child: Icon(Icons.format_size, color: Colors.white),
-                      ),
+                        });
+                      },
+                      child: Icon(Icons.format_size, color: Colors.white),
                     ),
                   ))
           : null,
     );
+  }
+
+  @override
+  void dispose() {
+    Wakelock.disable();
+    super.dispose();
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/bloc/bloc_provider.dart';
 import 'package:mladez_zpevnik/bloc/songs_bloc.dart';
-import 'package:mladez_zpevnik/components/hand_cursor.dart';
 import 'package:mladez_zpevnik/dialogs/add_song.dart';
 import '../classes/song.dart';
 import '../song_display.dart';
@@ -16,6 +16,7 @@ class SongList extends StatelessWidget {
       this.setBottomSheet,
       this.trimmed = false});
 
+  final ScrollController _controller = ScrollController();
   final bool trimmed;
   final List<Song> songs;
   final PersistentBottomSheetController bottomSheetController;
@@ -38,55 +39,63 @@ class SongList extends StatelessWidget {
     if (songs.length == 0)
       return Center(
           child: Text('Zatím žádné písně', style: TextStyle(fontSize: 30)));
-    final list = ListView.separated(
-        separatorBuilder: (_, __) => Divider(
-              height: 2,
-              color: Colors.black12,
-            ),
-        itemCount: songs.length + (trimmed ? 1 : 0),
-        itemBuilder: (BuildContext context, int index) {
-          if (trimmed && index == songs.length) {
-            return ListTile(title: Container(height: 70));
-          }
-          final Song song = songs.elementAt(index);
-          return HandCursor(
-            child: ListTile(
-                title: Text(
-                  '${song.number}. ${song.name}',
-                  style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black),
+    final list = DraggableScrollbar.rrect(
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white70
+            : Theme.of(context).secondaryHeaderColor,
+        padding: EdgeInsets.only(right: 4, bottom: trimmed ? 80 : 0),
+        alwaysVisibleScrollThumb: true,
+        controller: _controller,
+        child: ListView.separated(
+            controller: _controller,
+            separatorBuilder: (_, __) => Divider(
+                  height: 2,
+                  color: Colors.black12,
                 ),
-                onTap: () {
-                  _openSong(context,
-                      song.number < 198 ? song.number - 1 : song.number - 3);
-                },
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (!kReleaseMode)
-                      IconButton(
-                        color: Colors.black,
-                        icon: Icon(Icons.edit),
-                        onPressed: () => Navigator.of(context).push(
-                            CupertinoPageRoute<void>(builder: (BuildContext _) {
-                          final chordsText = BlocProvider.of<SongsBloc>(context)
-                              .getSong(
-                                  song.number > 196
-                                      ? song.number - 3
-                                      : song.number - 1,
-                                  showChords: true)
-                              .song;
-                          return AddSong(context,
-                              song: song, chordsText: chordsText);
-                        })),
-                      ),
-                    FavoriteIcon(song.number),
-                  ],
-                )),
-          );
-        });
+            itemCount: songs.length + (trimmed ? 1 : 0),
+            itemBuilder: (BuildContext context, int index) {
+              if (trimmed && index == songs.length) {
+                return ListTile(title: Container(height: 70));
+              }
+              final Song song = songs.elementAt(index);
+              return ListTile(
+                  title: Text(
+                    '${song.number}. ${song.name}',
+                    style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black),
+                  ),
+                  onTap: () {
+                    _openSong(context,
+                        song.number < 198 ? song.number - 1 : song.number - 3);
+                  },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (!kReleaseMode)
+                        IconButton(
+                          color: Colors.black,
+                          icon: Icon(Icons.edit),
+                          onPressed: () => Navigator.of(context).push(
+                              CupertinoPageRoute<void>(
+                                  builder: (BuildContext _) {
+                            final chordsText =
+                                BlocProvider.of<SongsBloc>(context)
+                                    .getSong(
+                                        song.number > 196
+                                            ? song.number - 3
+                                            : song.number - 1,
+                                        showChords: true)
+                                    .song;
+                            return AddSong(context,
+                                song: song, chordsText: chordsText);
+                          })),
+                        ),
+                      FavoriteIcon(song.number),
+                    ],
+                  ));
+            }));
     if (!trimmed) return list;
     return RefreshIndicator(
         onRefresh: () async {

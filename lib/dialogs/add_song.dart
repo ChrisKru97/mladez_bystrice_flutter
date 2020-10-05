@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mladez_zpevnik/classes/song.dart';
-import 'package:mladez_zpevnik/components/hand_cursor.dart';
 import 'package:mladez_zpevnik/components/my_raised_button.dart';
 import 'package:mladez_zpevnik/song_display.dart';
 
@@ -13,7 +12,7 @@ class AddSong extends StatelessWidget {
   final Song song;
   final String chordsText;
   final BuildContext parentContext;
-  final _firestore = Firestore.instance;
+  final _firestore = FirebaseFirestore.instance;
   final StreamController _chordsStream = StreamController<bool>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _songController = TextEditingController();
@@ -30,7 +29,7 @@ class AddSong extends StatelessWidget {
     final height = MediaQuery.of(context).size.height * 0.8;
     return Scaffold(
         appBar: AppBar(
-            leading: HandCursor(child: BackButton()),
+            leading: BackButton(),
             flexibleSpace: SafeArea(
                 child: Center(
                     child: Text(
@@ -97,8 +96,8 @@ class AddSong extends StatelessWidget {
                                   try {
                                     if (song != null) {
                                       await transaction.update(
-                                          _firestore.document(
-                                              'noChords/${song.number}'),
+                                          _firestore
+                                              .doc('noChords/${song.number}'),
                                           {
                                             'name': _nameController.text,
                                             'song': _songController.text,
@@ -106,7 +105,7 @@ class AddSong extends StatelessWidget {
                                           });
                                       await transaction.update(
                                           _firestore
-                                              .document('songs/${song.number}'),
+                                              .doc('songs/${song.number}'),
                                           {
                                             'name': _nameController.text,
                                             'song': _chordSongController.text,
@@ -114,7 +113,7 @@ class AddSong extends StatelessWidget {
                                           });
                                     } else {
                                       await transaction.set(
-                                          _firestore.document(
+                                          _firestore.doc(
                                               'checkRequired/${UniqueKey().toString()}'),
                                           {
                                             'name': _nameController.text,
