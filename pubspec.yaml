@@ -1,7 +1,7 @@
 name: mladez_zpevnik
 description: Bystřický mládežový zpěvník
 
-version: 1.6.0+17
+version: 1.6.1+18
 
 environment:
   sdk: ^2.8.1
@@ -14,7 +14,6 @@ dependencies:
   shared_preferences: any
   toggle_switch: any
   google_fonts: any
-  #universal_html: any
   firebase_core: any
   cloud_firestore: any
   wakelock: any

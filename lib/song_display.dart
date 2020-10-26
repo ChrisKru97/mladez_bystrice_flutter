@@ -23,8 +23,10 @@ class _SongDisplayState extends State<SongDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    Wakelock.enabled
-        .then((bool enabled) => enabled ? null : Wakelock.disable());
+    Wakelock.enabled.then((bool enabled) {
+      print(enabled.toString());
+      return enabled ? null : Wakelock.enable();
+    });
     final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
     final fontFamily = provider.fontFamily;
     double sizeCoeff = 2;
@@ -101,7 +103,7 @@ class _SongDisplayState extends State<SongDisplay> {
               ),
             );
           }),
-      floatingActionButton: song == null
+      floatingActionButton: widget.song == null
           ? Builder(
               builder: (BuildContext context) => Visibility(
                     visible: _showFab,
