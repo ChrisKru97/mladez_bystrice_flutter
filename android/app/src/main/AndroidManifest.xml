@@ -2,7 +2,6 @@
           package="com.bystrice.mladez">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-            android:name="io.flutter.app.FlutterApplication"
             android:label="Mládež Bystřice"
             android:icon="@mipmap/ic_launcher">
         <activity
