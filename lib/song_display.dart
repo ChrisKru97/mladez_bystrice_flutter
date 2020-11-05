@@ -24,7 +24,6 @@ class _SongDisplayState extends State<SongDisplay> {
   @override
   Widget build(BuildContext context) {
     Wakelock.enabled.then((bool enabled) {
-      print(enabled.toString());
       return enabled ? null : Wakelock.enable();
     });
     final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
