@@ -4,7 +4,7 @@ description: Bystřický mládežový zpěvník
 version: 1.6.1+18
 
 environment:
-  sdk: ^2.8.1
+  sdk: ^2.10.3
 
 dependencies:
   flutter:

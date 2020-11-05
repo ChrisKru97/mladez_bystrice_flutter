@@ -1,6 +1,5 @@
 {
   "projects": {
-    "default": "zpevnik-tranovice-sceav",
-    "bystrice": "mladezovy-zpevnik"
+    "default": "mladezovy-zpevnik"
   }
 }
