@@ -1,4 +1,6 @@
 analyzer:
+  enable-experiment:
+    - non-nullable
   exclude: [build/**]
   strong-mode:
     implicit-casts: false
