@@ -2,35 +2,41 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/classes/song.dart';
-import 'package:mladez_zpevnik/components/my_raised_button.dart';
-import 'package:mladez_zpevnik/song_display.dart';
+import '../classes/song.dart';
+import '../components/my_raised_button.dart';
+import '../song_display.dart';
 
-class AddSong extends StatelessWidget {
-  AddSong(this.parentContext, {this.song, this.chordsText});
+class AddSong extends StatefulWidget {
+  const AddSong(this.parentContext, {this.song, this.chordsText});
 
-  final Song song;
-  final String chordsText;
+  final Song? song;
+  final String? chordsText;
   final BuildContext parentContext;
-  final _firestore = FirebaseFirestore.instance;
-  final StreamController _chordsStream = StreamController<bool>();
+
+  @override
+  _AddSongState createState() => _AddSongState();
+}
+
+class _AddSongState extends State<AddSong> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final StreamController<bool> _chordsStream = StreamController<bool>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _songController = TextEditingController();
   final TextEditingController _chordSongController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    if (song != null) {
-      _nameController.text = song.name;
-      _songController.text = song.song;
-      _chordSongController.text = chordsText;
+    if (widget.song != null) {
+      _nameController.text = widget.song!.name;
+      _songController.text = widget.song!.song;
+      _chordSongController.text = widget.chordsText;
     }
-    final width = MediaQuery.of(context).size.width * 0.4;
-    final height = MediaQuery.of(context).size.height * 0.8;
+    final double width = MediaQuery.of(context).size.width * 0.4;
+    final double height = MediaQuery.of(context).size.height * 0.8;
     return Scaffold(
         appBar: AppBar(
-            leading: BackButton(),
-            flexibleSpace: SafeArea(
+            leading: const BackButton(),
+            flexibleSpace: const SafeArea(
                 child: Center(
                     child: Text(
               'Přidat píseň',
@@ -39,16 +45,16 @@ class AddSong extends StatelessWidget {
         body: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+            children: <Widget>[
               Container(
                 width: width,
                 height: height,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
+                  children: <Widget>[
                     TextField(
                       enableSuggestions: false,
-                      decoration: InputDecoration(labelText: 'Název'),
+                      decoration: const InputDecoration(labelText: 'Název'),
                       controller: _nameController,
                       autocorrect: false,
                       onChanged: (_) => _chordsStream.sink.add(false),
@@ -60,7 +66,7 @@ class AddSong extends StatelessWidget {
                         enableSuggestions: false,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
-                        decoration: InputDecoration(labelText: 'Text'),
+                        decoration: const InputDecoration(labelText: 'Text'),
                         autocorrect: false,
                         controller: _songController,
                         onChanged: (_) => _chordsStream.sink.add(false),
@@ -74,64 +80,72 @@ class AddSong extends StatelessWidget {
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
                         autocorrect: false,
-                        decoration: InputDecoration(labelText: 'Text s akordy'),
+                        decoration:
+                            const InputDecoration(labelText: 'Text s akordy'),
                         controller: _chordSongController,
                         onChanged: (_) => _chordsStream.sink.add(true),
                       ),
                     ),
                     Builder(
-                        builder: (context) => MyRaisedButton(
-                                song != null ? 'Uprav' : 'Odešli ke kontrole',
-                                () {
+                        builder: (BuildContext context) => MyRaisedButton(
+                                widget.song != null
+                                    ? 'Uprav'
+                                    : 'Odešli ke kontrole', () {
                               if (_nameController.text.isEmpty ||
                                   _songController.text.isEmpty ||
                                   _chordSongController.text.isEmpty) {
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text('Chybí data',
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: const Text('Chybí data',
                                       style: TextStyle(color: Colors.white)),
                                   backgroundColor: Colors.redAccent[400],
                                 ));
                               } else {
-                                _firestore.runTransaction((transaction) async {
+                                _firestore.runTransaction(
+                                    (Transaction transaction) async {
                                   try {
-                                    if (song != null) {
-                                      await transaction.update(
-                                          _firestore
-                                              .doc('noChords/${song.number}'),
-                                          {
-                                            'name': _nameController.text,
-                                            'song': _songController.text,
-                                            'number': song.number
-                                          });
-                                      await transaction.update(
-                                          _firestore
-                                              .doc('songs/${song.number}'),
-                                          {
-                                            'name': _nameController.text,
-                                            'song': _chordSongController.text,
-                                            'number': song.number
-                                          });
+                                    if (widget.song != null) {
+                                      transaction
+                                        ..update(
+                                            _firestore.doc(
+                                                'noChords/${widget.song!.number}'),
+                                            <String, dynamic>{
+                                              'name': _nameController.text,
+                                              'song': _songController.text,
+                                              'number': widget.song!.number
+                                            })
+                                        ..update(
+                                            _firestore.doc(
+                                                'songs/${widget.song!.number}'),
+                                            <String, dynamic>{
+                                              'name': _nameController.text,
+                                              'song': _chordSongController.text,
+                                              'number': widget.song!.number
+                                            });
                                     } else {
-                                      await transaction.set(
+                                      transaction.set(
                                           _firestore.doc(
                                               'checkRequired/${UniqueKey().toString()}'),
-                                          {
+                                          <String, String>{
                                             'name': _nameController.text,
                                             'song': _songController.text,
                                             'chordsSong':
                                                 _chordSongController.text
                                           });
                                     }
-                                    Scaffold.of(parentContext)
+                                    ScaffoldMessenger.of(widget.parentContext)
                                         .showSnackBar(SnackBar(
                                       content: Text(
-                                        song != null ? 'Upraveno' : 'Přídáno',
-                                        style: TextStyle(color: Colors.black),
+                                        widget.song != null
+                                            ? 'Upraveno'
+                                            : 'Přídáno',
+                                        style: const TextStyle(
+                                            color: Colors.black),
                                       ),
                                       backgroundColor: Colors.greenAccent[100],
                                     ));
                                     Navigator.pop(context);
-                                  } catch (_) {}
+                                  } on Exception catch (_) {}
                                 });
                               }
                             }))
@@ -139,7 +153,7 @@ class AddSong extends StatelessWidget {
                 ),
               ),
               Container(
-                  decoration: BoxDecoration(boxShadow: [
+                  decoration: const BoxDecoration(boxShadow: <BoxShadow>[
                     BoxShadow(
                         blurRadius: 5,
                         spreadRadius: 1,
@@ -151,15 +165,22 @@ class AddSong extends StatelessWidget {
                   child: StreamBuilder<bool>(
                       stream: _chordsStream.stream,
                       initialData: false,
-                      builder: (_, snapshot) => SongDisplay(1,
+                      builder: (_, AsyncSnapshot<bool> snapshot) => SongDisplay(
+                          1,
                           song: Song(
                               number: 1,
                               name: _nameController.text,
-                              song: snapshot.data
+                              song: snapshot.data ?? false
                                   ? _chordSongController.text
                                   : _songController.text))))
             ],
           ),
         ));
+  }
+
+  @override
+  void dispose() {
+    _chordsStream.close();
+    super.dispose();
   }
 }

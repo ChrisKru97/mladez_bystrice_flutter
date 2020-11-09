@@ -1,9 +1,9 @@
 import 'dart:convert' show jsonEncode;
-import 'package:flutter/material.dart' show required, immutable;
+import 'package:flutter/material.dart' show immutable;
 
 @immutable
 class Song {
-  const Song({@required this.number, @required this.name, @required this.song});
+  const Song({required this.number, required this.name, required this.song});
 
   final int number;
   final String name;

@@ -8,7 +8,7 @@ import 'bloc.dart';
 class ConfigBloc implements Bloc {
   final StreamController<Config> _controller =
       StreamController<Config>.broadcast();
-  SharedPreferences _preferences;
+  SharedPreferences? _preferences;
   Config _last = Config();
 
   Stream<Config> get stream => _controller.stream;
@@ -25,57 +25,43 @@ class ConfigBloc implements Bloc {
       case 'font':
         if (value is String) {
           _last.font = value;
-          if (_preferences != null) {
-            _preferences.setString('font', value);
-          }
+          _preferences?.setString('font', value);
         }
         break;
       case 'primary':
         if (value is Color) {
           _last.primary = createSwatch(value);
-          if (_preferences != null) {
-            _preferences.setInt('primary', value.value);
-          }
+          _preferences?.setInt('primary', value.value);
         }
         break;
       case 'secondary':
         if (value is Color) {
           _last.secondary = value;
-          if (_preferences != null) {
-            _preferences.setInt('secondary', value.value);
-          }
+          _preferences?.setInt('secondary', value.value);
         }
         break;
       case 'songFontSize':
         if (value is double) {
-          _last..songFontSize = value;
-          if (_preferences != null) {
-            _preferences.setDouble('songFontSize', value);
-          }
+          _last.songFontSize = value;
+          _preferences?.setDouble('songFontSize', value);
         }
         break;
       case 'showChords':
         if (value is bool) {
           _last.showChords = value;
-          if (_preferences != null) {
-            _preferences.setBool('showChords', value);
-          }
+          _preferences?.setBool('showChords', value);
         }
         break;
       case 'darkMode':
         if (value is bool) {
           _last.darkMode = value;
-          if (_preferences != null) {
-            _preferences.setBool('darkMode', value);
-          }
+          _preferences?.setBool('darkMode', value);
         }
         break;
       case 'alignCenter':
         if (value is bool) {
           _last.alignCenter = value;
-          if (_preferences != null) {
-            _preferences.setBool('alignCenter', value);
-          }
+          _preferences?.setBool('alignCenter', value);
         }
         break;
     }

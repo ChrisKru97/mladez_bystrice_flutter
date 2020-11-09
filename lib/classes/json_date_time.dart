@@ -3,5 +3,5 @@ class JsonDateTime {
 
   final DateTime value;
 
-  String toJson() => value?.toIso8601String();
+  String toJson() => value.toIso8601String();
 }
