@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomBottomSheet extends StatelessWidget {
-  CustomBottomSheet({this.child});
+  const CustomBottomSheet({required this.child});
 
   final Widget child;
 
@@ -10,11 +10,11 @@ class CustomBottomSheet extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20).copyWith(top: 10),
       child: Container(
           padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              boxShadow: [
+              boxShadow: <BoxShadow>[
                 BoxShadow(
                     color: Colors.black54,
                     offset: Offset(0, 0),

@@ -1,17 +1,18 @@
+import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/bloc/bloc_provider.dart';
-import 'package:mladez_zpevnik/bloc/songs_bloc.dart';
-import 'package:mladez_zpevnik/dialogs/add_song.dart';
+
+import '../bloc/bloc_provider.dart';
+import '../bloc/songs_bloc.dart';
 import '../classes/song.dart';
+import '../dialogs/add_song.dart';
 import '../song_display.dart';
 import 'favorite_icon.dart';
 
 class SongList extends StatelessWidget {
   SongList(
-      {this.songs,
+      {required this.songs,
       this.bottomSheetController,
       this.setBottomSheet,
       this.trimmed = false});
@@ -19,27 +20,28 @@ class SongList extends StatelessWidget {
   final ScrollController _controller = ScrollController();
   final bool trimmed;
   final List<Song> songs;
-  final PersistentBottomSheetController bottomSheetController;
-  final void Function(PersistentBottomSheetController) setBottomSheet;
+  final PersistentBottomSheetController<int>? bottomSheetController;
+  final void Function(PersistentBottomSheetController<int>?)? setBottomSheet;
 
   void _openSong(BuildContext context, int number) {
     try {
-      BlocProvider.of<SongsBloc>(context).addToHistory(number);
-      if (bottomSheetController != null) {
-        bottomSheetController.close();
-        setBottomSheet(null);
+      BlocProvider.of<SongsBloc>(context)!.addToHistory(number);
+      bottomSheetController?.close();
+      if (setBottomSheet != null) {
+        setBottomSheet!(null);
       }
-    } catch (_) {}
-    Navigator.of(context)
+    } on Exception catch (_) {}
+    Navigator.of(context)!
         .push(CupertinoPageRoute<void>(builder: (_) => SongDisplay(number)));
   }
 
   @override
   Widget build(BuildContext context) {
-    if (songs.length == 0)
-      return Center(
+    if (songs.isEmpty) {
+      return const Center(
           child: Text('Zatím žádné písně', style: TextStyle(fontSize: 30)));
-    final list = DraggableScrollbar.rrect(
+    }
+    final Widget list = DraggableScrollbar.rrect(
         backgroundColor: Theme.of(context).brightness == Brightness.dark
             ? Colors.white70
             : Theme.of(context).secondaryHeaderColor,
@@ -48,7 +50,7 @@ class SongList extends StatelessWidget {
         controller: _controller,
         child: ListView.separated(
             controller: _controller,
-            separatorBuilder: (_, __) => Divider(
+            separatorBuilder: (_, __) => const Divider(
                   height: 2,
                   color: Colors.black12,
                 ),
@@ -72,22 +74,23 @@ class SongList extends StatelessWidget {
                   },
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
+                    children: <Widget>[
                       if (!kReleaseMode)
                         IconButton(
                           color: Colors.black,
-                          icon: Icon(Icons.edit),
-                          onPressed: () => Navigator.of(context).push(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => Navigator.of(context)!.push(
                               CupertinoPageRoute<void>(
                                   builder: (BuildContext _) {
-                            final chordsText =
-                                BlocProvider.of<SongsBloc>(context)
-                                    .getSong(
-                                        song.number > 196
-                                            ? song.number - 3
-                                            : song.number - 1,
-                                        showChords: true)
-                                    .song;
+                            final String chordsText =
+                                (BlocProvider.of<SongsBloc>(context)!
+                                        .getSong(
+                                            song.number > 196
+                                                ? song.number - 3
+                                                : song.number - 1,
+                                            showChords: true)
+                                        ?.song) ??
+                                    '';
                             return AddSong(context,
                                 song: song, chordsText: chordsText);
                           })),
@@ -96,14 +99,17 @@ class SongList extends StatelessWidget {
                     ],
                   ));
             }));
-    if (!trimmed) return list;
+    if (!trimmed) {
+      return list;
+    }
     return RefreshIndicator(
         onRefresh: () async {
-          final blocProvider = BlocProvider.of<SongsBloc>(context);
-          return Future.wait([
+          final SongsBloc blocProvider = BlocProvider.of<SongsBloc>(context)!;
+          // ignore: unnecessary_cast
+          return Future.wait(<Future<void>>[
             blocProvider.loadNoChordSongs(force: true),
             blocProvider.loadChordSongs(force: true)
-          ]);
+          ]) as Future<void>;
         },
         child: list);
   }

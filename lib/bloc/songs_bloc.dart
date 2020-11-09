@@ -6,9 +6,9 @@ import '../classes/song.dart';
 import 'bloc.dart';
 
 class SongsBloc implements Bloc {
-  SharedPreferences _preferences;
-  List<Song> _songs;
-  List<Song> _chordSongs;
+  SharedPreferences? _preferences;
+  List<Song>? _songs;
+  List<Song>? _chordSongs;
   final StreamController<Set<int>> _controller =
       StreamController<Set<int>>.broadcast();
   final StreamController<List<int>> _historyConttroller =
@@ -20,47 +20,41 @@ class SongsBloc implements Bloc {
 
   Stream<List<int>> get historyStream => _historyConttroller.stream;
 
-  List<Song> getSongs({bool showChords}) =>
-      showChords != null && showChords ? _chordSongs : _songs;
+  List<Song>? getSongs({bool? showChords}) =>
+      showChords ?? false ? _chordSongs : _songs;
 
-  Song getSong(int number, {bool showChords}) =>
-      (showChords ?? false ? _chordSongs : _songs).elementAt(number);
+  Song? getSong(int number, {bool? showChords}) =>
+      (showChords ?? false ? _chordSongs : _songs)?.elementAt(number);
 
   void addFavorite(int number) {
     _last.add(number);
     _controller.sink.add(_last);
-    if (_preferences != null) {
-      _preferences.setStringList(
-          'favorites', _last.map((int i) => i.toString()).toList());
-    }
+    _preferences?.setStringList(
+        'favorites', _last.map((int i) => i.toString()).toList());
   }
 
   void removeFavorite(int number) {
     _last.remove(number);
     _controller.sink.add(_last);
-    if (_preferences != null) {
-      _preferences.setStringList(
-          'favorites', _last.map((int i) => i.toString()).toList());
-    }
+    _preferences?.setStringList(
+        'favorites', _last.map((int i) => i.toString()).toList());
   }
 
   void addToHistory(int number) {
     if (_lastHistory.length > 50) {
       _lastHistory.removeLast();
     }
-    if (_lastHistory.length == 0 || _lastHistory.elementAt(0) != number) {
+    if (_lastHistory.isEmpty || _lastHistory.elementAt(0) != number) {
       _lastHistory.insert(0, number);
       _historyConttroller.sink.add(_lastHistory);
-      if (_preferences != null) {
-        _preferences.setStringList(
-            'history', _lastHistory.map((int i) => i.toString()).toList());
-      }
+      _preferences?.setStringList(
+          'history', _lastHistory.map((int i) => i.toString()).toList());
     }
   }
 
   List<Song> parseSongList(List<dynamic> data) {
     final List<Song> songs = <Song>[];
-    for (var song in data) {
+    for (dynamic song in data) {
       if (song is QueryDocumentSnapshot) {
         song = song.data();
       }
@@ -73,32 +67,42 @@ class SongsBloc implements Bloc {
   }
 
   Future<void> loadChordSongs({bool force = false}) async {
-    if (!force && _preferences.containsKey('songList')) {
-      _chordSongs =
-          parseSongList(jsonDecode(_preferences.getString('songList')));
+    if (!force &&
+        _preferences != null &&
+        _preferences!.containsKey('songList')) {
+      final dynamic decodedList =
+          jsonDecode(_preferences!.getString('songList'));
+      if (decodedList is List) {
+        _chordSongs = parseSongList(decodedList);
+      }
     } else {
-      final data = parseSongList((await FirebaseFirestore.instance
+      final List<Song> data = parseSongList((await FirebaseFirestore.instance
               .collection('songs')
               .orderBy('number')
               .get())
           .docs);
       _chordSongs = data;
-      _preferences.setString('songList', jsonEncode(data));
+      await _preferences?.setString('songList', jsonEncode(data));
     }
   }
 
   Future<void> loadNoChordSongs({bool force = false}) async {
-    if (!force && _preferences.containsKey('noChordsList')) {
-      _songs =
-          parseSongList(jsonDecode(_preferences.getString('noChordsList')));
+    if (!force &&
+        _preferences != null &&
+        _preferences!.containsKey('noChordsList')) {
+      final dynamic decodedList =
+          jsonDecode(_preferences!.getString('noChordsList'));
+      if (decodedList is List) {
+        _songs = parseSongList(decodedList);
+      }
     } else {
-      final data = parseSongList((await FirebaseFirestore.instance
+      final List<Song> data = parseSongList((await FirebaseFirestore.instance
               .collection('noChords')
               .orderBy('number')
               .get())
           .docs);
       _songs = data;
-      _preferences.setString('noChordsList', jsonEncode(data));
+      await _preferences?.setString('noChordsList', jsonEncode(data));
     }
   }
 

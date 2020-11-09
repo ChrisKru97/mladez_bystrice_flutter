@@ -7,22 +7,22 @@ environment:
   sdk: ">=2.11.0 <=2.12.0"
   
 dependencies:
+  cloud_firestore: any
+  draggable_scrollbar: any
+  firebase_core: any
   flutter:
     sdk: flutter
   flutter_material_color_picker: any
-  draggable_scrollbar: any
+  google_fonts: any
   shared_preferences: any
   toggle_switch: any
-  google_fonts: any
-  firebase_core: any
-  cloud_firestore: any
   wakelock: any
 
 dev_dependencies:
+  analyzer: any
   flutter_test:
     sdk: flutter
-  pedantic: any
-  analyzer: any
+  pedantic: ^1.1.0-nullsafety
 
 flutter:
   uses-material-design: true

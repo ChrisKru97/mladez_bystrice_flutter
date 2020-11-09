@@ -13,26 +13,28 @@ import 'main_screen.dart';
 
 void main() {
   LicenseRegistry.addLicense(() async* {
-    final codaLicense =
+    final String codaLicense =
         await rootBundle.loadString('google_fonts/coda_OFL.txt');
-    yield LicenseEntryWithLineBreaks(['google_fonts_coda'], codaLicense);
-    final hammersmithLicense =
+    yield LicenseEntryWithLineBreaks(
+        <String>['google_fonts_coda'], codaLicense);
+    final String hammersmithLicense =
         await rootBundle.loadString('google_fonts/hammersmith_OFL.txt');
     yield LicenseEntryWithLineBreaks(
-        ['google_fonts_hammersmith'], hammersmithLicense);
-    final patrickLicense =
+        <String>['google_fonts_hammersmith'], hammersmithLicense);
+    final String patrickLicense =
         await rootBundle.loadString('google_fonts/patrick_OFL.txt');
-    yield LicenseEntryWithLineBreaks(['google_fonts_patrick'], patrickLicense);
-    final opensanslicense =
+    yield LicenseEntryWithLineBreaks(
+        <String>['google_fonts_patrick'], patrickLicense);
+    final String opensanslicense =
         await rootBundle.loadString('google_fonts/opensans_OFL.txt');
     yield LicenseEntryWithLineBreaks(
-        ['google_fonts_opensans'], opensanslicense);
+        <String>['google_fonts_opensans'], opensanslicense);
   });
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  getTheme(String font, TextTheme def) {
+  TextTheme getTheme(String font, TextTheme def) {
     switch (font) {
       case 'Open':
         return GoogleFonts.openSansTextTheme(def);
@@ -47,47 +49,48 @@ class MyApp extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
-        future: Future.wait(
-            [SharedPreferences.getInstance(), Firebase.initializeApp()]),
-        builder: (_, AsyncSnapshot<List<dynamic>> snapshot) {
-          if (!snapshot.hasData) {
-            return MaterialApp(
-                home: Center(child: CircularProgressIndicator()));
-          } else {
-            final Config initialConfig = Config();
-            final ConfigBloc configBloc = ConfigBloc()
-              ..initFromPrefs(snapshot.data[0], initialConfig);
-            final SongsBloc songsBloc = SongsBloc()
-              ..initFromPrefs(snapshot.data[0]);
-            return BlocProvider<ConfigBloc>(
-              bloc: configBloc,
-              child: BlocProvider<SongsBloc>(
-                bloc: songsBloc,
-                child: BlocProvider<SearchBloc>(
-                  bloc: SearchBloc(),
-                  child: StreamBuilder<Config>(
-                    stream: configBloc.stream,
-                    initialData: initialConfig,
-                    builder: (_, AsyncSnapshot<Config> snapshot) => MaterialApp(
-                      title: 'Mládež Bystřice',
-                      home: MainScreen(),
-                      theme: ThemeData(
-                        brightness: snapshot.data.darkMode
-                            ? Brightness.dark
-                            : Brightness.light,
-                        primarySwatch: snapshot.data.primary,
-                        secondaryHeaderColor: snapshot.data.secondary,
-                        textTheme: getTheme(
-                            snapshot.data.font, Theme.of(context).textTheme),
-                      ),
+  Widget build(BuildContext context) => FutureBuilder<List<dynamic>>(
+      future: Future.wait(<Future<dynamic>>[
+        SharedPreferences.getInstance(),
+        Firebase.initializeApp()
+      ]),
+      builder: (_, AsyncSnapshot<List<dynamic>> snapshot) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const MaterialApp(
+              home: Center(child: CircularProgressIndicator()));
+        } else {
+          final Config initialConfig = Config();
+          final ConfigBloc configBloc = ConfigBloc()
+            ..initFromPrefs(
+                snapshot.data![0] as SharedPreferences, initialConfig);
+          final SongsBloc songsBloc = SongsBloc()
+            ..initFromPrefs(snapshot.data![0] as SharedPreferences);
+          return BlocProvider<ConfigBloc>(
+            bloc: configBloc,
+            child: BlocProvider<SongsBloc>(
+              bloc: songsBloc,
+              child: BlocProvider<SearchBloc>(
+                bloc: SearchBloc(),
+                child: StreamBuilder<Config>(
+                  stream: configBloc.stream,
+                  initialData: initialConfig,
+                  builder: (_, AsyncSnapshot<Config> snapshot) => MaterialApp(
+                    title: 'Mládež Bystřice',
+                    home: MainScreen(),
+                    theme: ThemeData(
+                      brightness: (snapshot.data?.darkMode ?? false)
+                          ? Brightness.dark
+                          : Brightness.light,
+                      primarySwatch: snapshot.data?.primary,
+                      secondaryHeaderColor: snapshot.data?.secondary,
+                      textTheme: getTheme(snapshot.data?.font ?? '',
+                          Theme.of(context).textTheme),
                     ),
                   ),
                 ),
               ),
-            );
-          }
-        });
-  }
+            ),
+          );
+        }
+      });
 }

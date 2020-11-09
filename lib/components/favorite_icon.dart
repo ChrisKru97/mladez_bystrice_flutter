@@ -10,7 +10,7 @@ class FavoriteIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SongsBloc provider = BlocProvider.of<SongsBloc>(context);
+    final SongsBloc provider = BlocProvider.of<SongsBloc>(context)!;
     return StreamBuilder<Set<int>>(
         stream: provider.stream,
         builder: (_, AsyncSnapshot<Set<int>> snapshot) {
@@ -24,7 +24,7 @@ class FavoriteIcon extends StatelessWidget {
                 crossFadeState: favorited
                     ? CrossFadeState.showFirst
                     : CrossFadeState.showSecond,
-                firstChild: Icon(Icons.favorite, color: Colors.red),
+                firstChild: const Icon(Icons.favorite, color: Colors.red),
                 secondChild: Icon(Icons.favorite_border,
                     color:
                         Theme.of(context).brightness == Brightness.dark || white

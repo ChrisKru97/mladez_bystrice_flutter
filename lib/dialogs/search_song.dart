@@ -9,7 +9,7 @@ class SearchSong extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.grey[400],
             borderRadius: BorderRadius.circular(15),
-            boxShadow: [
+            boxShadow: const <BoxShadow>[
               BoxShadow(
                   color: Colors.black54,
                   offset: Offset(0, 0),
@@ -19,12 +19,12 @@ class SearchSong extends StatelessWidget {
         height: 80,
         padding: const EdgeInsets.all(15),
         child: TextField(
-          decoration: InputDecoration(border: InputBorder.none),
-          style: TextStyle(color: Colors.white),
+          decoration: const InputDecoration(border: InputBorder.none),
+          style: const TextStyle(color: Colors.white),
           autofocus: true,
           autocorrect: false,
           textAlign: TextAlign.left,
-          onChanged: BlocProvider.of<SearchBloc>(context).search,
+          onChanged: BlocProvider.of<SearchBloc>(context)!.search,
         ),
       );
 }

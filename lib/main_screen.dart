@@ -1,14 +1,15 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/components/menu_row.dart';
-import 'package:mladez_zpevnik/components/song_list.dart';
+
 import 'bloc/bloc_provider.dart';
 import 'bloc/config_bloc.dart';
 import 'bloc/search_bloc.dart';
 import 'bloc/songs_bloc.dart';
 import 'classes/config.dart';
 import 'classes/song.dart';
+import 'components/menu_row.dart';
+import 'components/song_list.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -16,17 +17,17 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  PersistentBottomSheetController bottomSheetController;
+  PersistentBottomSheetController<int>? bottomSheetController;
 
   void setBottomSheet(
-          PersistentBottomSheetController newBottomSheetController) =>
+          PersistentBottomSheetController<int>? newBottomSheetController) =>
       setState(() {
         bottomSheetController = newBottomSheetController;
       });
 
   @override
   Widget build(BuildContext context) {
-    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
+    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context)!;
     return StreamBuilder<Config>(
         stream: provider.stream,
         builder: (_, AsyncSnapshot<Config> snapshot) {
@@ -34,41 +35,42 @@ class _MainScreenState extends State<MainScreen> {
             provider.refresh();
             return Container(
                 color: Colors.white,
-                child: Center(child: CircularProgressIndicator()));
+                child: const Center(child: CircularProgressIndicator()));
           }
-          final SongsBloc songsProvider = BlocProvider.of<SongsBloc>(context);
-          final List<Song> songs = songsProvider.getSongs();
+          final SongsBloc songsProvider = BlocProvider.of<SongsBloc>(context)!;
+          final List<Song>? songs = songsProvider.getSongs();
           if (songs == null) {
             provider.refresh();
             return Container(
                 color: Colors.white,
-                child: Center(child: CircularProgressIndicator()));
+                child: const Center(child: CircularProgressIndicator()));
           }
-          return StreamBuilder<String>(
-              stream: BlocProvider.of<SearchBloc>(context).stream,
+          return StreamBuilder<String?>(
+              stream: BlocProvider.of<SearchBloc>(context)!.stream,
               initialData: null,
-              builder: (_, AsyncSnapshot<String> snapshot) {
+              builder: (_, AsyncSnapshot<String?> snapshot) {
                 List<Song> filteredSongs;
-                if (snapshot.data != null && snapshot.data.isNotEmpty) {
+                if (snapshot.data != null && snapshot.data!.isNotEmpty) {
                   filteredSongs = songs
                       .where((Song song) =>
                           deburr(song.name)
                               .toLowerCase()
-                              .contains(snapshot.data) ||
+                              .contains(snapshot.data!) ||
                           deburr(song.song)
                               .toLowerCase()
-                              .contains(snapshot.data) ||
-                          song.number.toString().contains(snapshot.data))
+                              .contains(snapshot.data!) ||
+                          song.number.toString().contains(snapshot.data!))
                       .toList();
                 } else {
                   filteredSongs = songs;
                 }
-                final titleSize = MediaQuery.of(context).size.width * 0.13;
+                final double titleSize =
+                    MediaQuery.of(context).size.width * 0.13;
                 return GestureDetector(
                     onTap: () {
                       if (bottomSheetController != null) {
-                        bottomSheetController.close();
-                        BlocProvider.of<SearchBloc>(context).search('');
+                        bottomSheetController!.close();
+                        BlocProvider.of<SearchBloc>(context)!.search('');
                       }
                     },
                     child: Scaffold(
@@ -78,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
                           flexibleSpace: SafeArea(
                             child: Center(
                               child: Text(
-                                "Mládežový zpěvník",
+                                'Mládežový zpěvník',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: titleSize < 38 ? titleSize : 38),
@@ -87,7 +89,7 @@ class _MainScreenState extends State<MainScreen> {
                           )),
                       body: Stack(
                         alignment: Alignment.bottomCenter,
-                        children: [
+                        children: <Widget>[
                           SongList(
                               trimmed: true,
                               songs: filteredSongs,

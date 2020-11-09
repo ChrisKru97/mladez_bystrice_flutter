@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/bloc/bloc_provider.dart';
-import 'package:mladez_zpevnik/bloc/songs_bloc.dart';
-import 'package:mladez_zpevnik/dialogs/bottom_sheet.dart';
+
+import '../bloc/bloc_provider.dart';
+import '../bloc/songs_bloc.dart';
 import '../components/my_raised_button.dart';
+import '../dialogs/bottom_sheet.dart';
 import '../song_display.dart';
 
 class NumberSelect extends StatelessWidget {
@@ -19,11 +20,11 @@ class NumberSelect extends StatelessWidget {
     if (!parsedNumber.isNaN &&
         (parsedNumber > 0 && parsedNumber < 198 ||
             parsedNumber > 199 && parsedNumber < lastNumber)) {
-      final finalNumber = parsedNumber - (parsedNumber < 198 ? 1 : 3);
+      final int finalNumber = parsedNumber - (parsedNumber < 198 ? 1 : 3);
       try {
-        BlocProvider.of<SongsBloc>(context).addToHistory(finalNumber);
-      } catch (_) {}
-      Navigator.of(context).push(CupertinoPageRoute<void>(
+        BlocProvider.of<SongsBloc>(context)!.addToHistory(finalNumber);
+      } on Exception catch (_) {}
+      Navigator.of(context)!.push(CupertinoPageRoute<void>(
         builder: (BuildContext context) => SongDisplay(finalNumber),
       ));
     } else {
@@ -36,7 +37,7 @@ class NumberSelect extends StatelessWidget {
           child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         TextField(
           decoration:
-              InputDecoration(counterText: '', border: InputBorder.none),
+              const InputDecoration(counterText: '', border: InputBorder.none),
           controller: _fieldController,
           autofocus: true,
           keyboardType: TextInputType.number,
@@ -46,7 +47,7 @@ class NumberSelect extends StatelessWidget {
           textAlign: TextAlign.center,
           maxLength: 3,
           onChanged: (String data) {
-            int number;
+            int number = -1;
             try {
               number = int.parse(data);
             } on Exception catch (_) {

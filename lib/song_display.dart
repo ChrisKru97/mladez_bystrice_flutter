@@ -10,9 +10,9 @@ import 'components/favorite_icon.dart';
 import 'dialogs/font_settings.dart';
 
 class SongDisplay extends StatefulWidget {
-  const SongDisplay(this._number, {Key key, this.song}) : super(key: key);
+  const SongDisplay(this._number, {this.song});
   final int _number;
-  final Song song;
+  final Song? song;
 
   @override
   _SongDisplayState createState() => _SongDisplayState();
@@ -23,37 +23,35 @@ class _SongDisplayState extends State<SongDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    Wakelock.enabled.then((bool enabled) {
-      return enabled ? null : Wakelock.enable();
-    });
-    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
-    final fontFamily = provider.fontFamily;
+    Wakelock.enabled.then((bool enabled) => enabled ? null : Wakelock.enable());
+    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context)!;
+    final String fontFamily = provider.fontFamily;
     double sizeCoeff = 2;
     switch (fontFamily) {
-      case "Open":
+      case 'Open':
         sizeCoeff = 2.3;
         break;
-      case "Patrick":
+      case 'Patrick':
         sizeCoeff = 2.6;
         break;
-      case "Coda":
+      case 'Coda':
         sizeCoeff = 2;
         break;
-      case "Hammersmith":
+      case 'Hammersmith':
         sizeCoeff = 1.9;
         break;
     }
-    final Song song = widget.song ??
-        BlocProvider.of<SongsBloc>(context)
+    final Song? song = widget.song ??
+        BlocProvider.of<SongsBloc>(context)!
             .getSong(widget._number, showChords: provider.showChords);
-    final title = '${song.number}. ${song.name}';
+    final String title = '${song?.number}. ${song?.name}';
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: widget.song != null ? null : BackButton(),
-        flexibleSpace: SafeArea(
-            child: Center(child: LayoutBuilder(builder: (_, constraints) {
-          final titleSize =
+        leading: widget.song != null ? null : const BackButton(),
+        flexibleSpace: SafeArea(child: Center(
+            child: LayoutBuilder(builder: (_, BoxConstraints constraints) {
+          final double titleSize =
               ((constraints.maxWidth - 100) / title.length) * sizeCoeff;
           return Text(
             title,
@@ -63,20 +61,21 @@ class _SongDisplayState extends State<SongDisplay> {
         }))),
         actions: widget.song != null
             ? null
-            : <Widget>[FavoriteIcon(song.number, white: true)],
+            : <Widget>[FavoriteIcon(song?.number ?? -1, white: true)],
       ),
       body: StreamBuilder<Config>(
           stream: provider.stream,
           builder: (BuildContext context, AsyncSnapshot<Config> snapshot) {
-            if (snapshot.data == null) {
+            if (snapshot.data == null || song == null) {
               provider.refresh();
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
-            final double fontSize = snapshot.data.songFontSize;
-            final textWidget = Text(
+            final double fontSize = snapshot.data!.songFontSize;
+            final Text textWidget = Text(
               song.song,
-              textAlign:
-                  snapshot.data.alignCenter ? TextAlign.center : TextAlign.left,
+              textAlign: snapshot.data!.alignCenter
+                  ? TextAlign.center
+                  : TextAlign.left,
               style: TextStyle(
                   fontSize: fontSize,
                   color: Theme.of(context).brightness == Brightness.dark
@@ -96,7 +95,7 @@ class _SongDisplayState extends State<SongDisplay> {
               },
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(15),
-                child: snapshot.data.alignCenter
+                child: snapshot.data!.alignCenter
                     ? Center(child: textWidget)
                     : textWidget,
               ),
@@ -127,7 +126,7 @@ class _SongDisplayState extends State<SongDisplay> {
                           });
                         });
                       },
-                      child: Icon(Icons.format_size, color: Colors.white),
+                      child: const Icon(Icons.format_size, color: Colors.white),
                     ),
                   ))
           : null,

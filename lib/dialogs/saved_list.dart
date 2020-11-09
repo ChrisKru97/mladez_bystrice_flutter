@@ -7,11 +7,11 @@ import '../components/song_list.dart';
 class SavedList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final SongsBloc provider = BlocProvider.of<SongsBloc>(context);
+    final SongsBloc provider = BlocProvider.of<SongsBloc>(context)!;
     return Scaffold(
         appBar: AppBar(
-            leading: BackButton(),
-            flexibleSpace: SafeArea(
+            leading: const BackButton(),
+            flexibleSpace: const SafeArea(
                 child: Center(
                     child: Text(
               'Oblíbené',
@@ -22,13 +22,15 @@ class SavedList extends StatelessWidget {
             builder: (_, AsyncSnapshot<Set<int>> snapshot) {
               if (snapshot.data == null) {
                 provider.refresh();
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
               return SongList(
                   songs: provider
-                      .getSongs()
-                      .where((Song song) => snapshot.data.contains(song.number))
-                      .toList());
+                          .getSongs()
+                          ?.where((Song song) =>
+                              snapshot.data!.contains(song.number))
+                          .toList() ??
+                      <Song>[]);
             }));
   }
 }

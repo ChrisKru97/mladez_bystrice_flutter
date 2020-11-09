@@ -7,20 +7,20 @@ import '../classes/config.dart';
 class FontSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
+    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context)!;
     return StreamBuilder<Config>(
         stream: provider.stream,
         builder: (_, AsyncSnapshot<Config> snapshot) {
           if (snapshot.data == null) {
             provider.refresh();
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           return Container(
             margin: const EdgeInsets.all(20),
             decoration: BoxDecoration(
                 color: Colors.grey[400],
                 borderRadius: BorderRadius.circular(15),
-                boxShadow: [
+                boxShadow: const <BoxShadow>[
                   BoxShadow(
                       color: Colors.black54,
                       offset: Offset(0, 0),
@@ -44,7 +44,7 @@ class FontSettings extends StatelessWidget {
                               style: TextStyle(fontSize: 22),
                             )),
                         Switch(
-                          value: snapshot.data.showChords,
+                          value: snapshot.data!.showChords,
 //                          activeTrackColor:
 //                              Theme.of(context).primaryColor.withOpacity(0.6),
 //                          activeColor: Theme.of(context).primaryColor,
@@ -55,11 +55,11 @@ class FontSettings extends StatelessWidget {
                       ],
                     ),
                     ToggleSwitch(
-                      icons: <IconData>[
+                      icons: const <IconData>[
                         Icons.format_align_left,
                         Icons.format_align_center
                       ],
-                      initialLabelIndex: snapshot.data.alignCenter ? 1 : 0,
+                      initialLabelIndex: snapshot.data!.alignCenter ? 1 : 0,
                       activeFgColor: Colors.white,
                       labels: const <String>['', ''],
                       inactiveBgColor: Colors.black26,
@@ -80,7 +80,7 @@ class FontSettings extends StatelessWidget {
                   onChanged: (double value) {
                     provider.updateConfig('songFontSize', value);
                   },
-                  value: snapshot.data.songFontSize,
+                  value: snapshot.data!.songFontSize,
                 ),
               ],
             ),

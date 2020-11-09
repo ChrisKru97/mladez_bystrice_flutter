@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/bloc/bloc_provider.dart';
-import 'package:mladez_zpevnik/bloc/search_bloc.dart';
-import 'package:mladez_zpevnik/dialogs/add_song.dart';
-import 'package:mladez_zpevnik/dialogs/check_new_songs.dart';
-import 'package:mladez_zpevnik/dialogs/history_list.dart';
-import 'package:mladez_zpevnik/dialogs/number_select.dart';
-import 'package:mladez_zpevnik/dialogs/saved_list.dart';
-import 'package:mladez_zpevnik/dialogs/search_song.dart';
-import 'package:mladez_zpevnik/dialogs/settings.dart';
+import '../bloc/bloc_provider.dart';
+import '../bloc/search_bloc.dart';
+import '../dialogs/add_song.dart';
+import '../dialogs/check_new_songs.dart';
+import '../dialogs/history_list.dart';
+import '../dialogs/number_select.dart';
+import '../dialogs/saved_list.dart';
+import '../dialogs/search_song.dart';
+import '../dialogs/settings.dart';
 
 class ButtonContainer extends StatelessWidget {
-  ButtonContainer({this.child});
+  const ButtonContainer({required this.child});
 
   final Widget child;
 
@@ -29,31 +29,33 @@ class ButtonContainer extends StatelessWidget {
 }
 
 class MenuRow extends StatelessWidget {
-  MenuRow({this.setBottomSheet, this.lastNumber});
+  const MenuRow({required this.setBottomSheet, required this.lastNumber});
 
   final int lastNumber;
-  final void Function(PersistentBottomSheetController) setBottomSheet;
+  final void Function(PersistentBottomSheetController<int>?) setBottomSheet;
 
   @override
   Widget build(BuildContext context) => Container(
         color: Colors.black54,
-        padding: EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: 20),
         child: Row(
-          children: [
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
             ButtonContainer(
               child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.favorite,
                   color: Colors.red,
                 ),
-                onPressed: () => Navigator.of(context).push(
+                onPressed: () => Navigator.of(context)!.push(
                     CupertinoPageRoute<void>(
                         builder: (BuildContext context) => SavedList())),
               ),
             ),
             ButtonContainer(
               child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.search,
                     color: Colors.black,
                   ),
@@ -62,11 +64,11 @@ class MenuRow extends StatelessWidget {
                       builder: (_) => SearchSong(),
                       backgroundColor: Colors.transparent)
                     ..closed.then((_) =>
-                        BlocProvider.of<SearchBloc>(context).search('')))),
+                        BlocProvider.of<SearchBloc>(context)!.search('')))),
             ),
             ButtonContainer(
               child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.keyboard,
                     color: Colors.black,
                   ),
@@ -77,28 +79,28 @@ class MenuRow extends StatelessWidget {
             ),
             ButtonContainer(
               child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.history,
                     color: Colors.black,
                   ),
-                  onPressed: () => Navigator.of(context).push(
+                  onPressed: () => Navigator.of(context)!.push(
                       CupertinoPageRoute<void>(
                           builder: (BuildContext context) => HistoryList()))),
             ),
             if (kIsWeb)
               ButtonContainer(
                 child: IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.add,
                       color: Colors.black,
                     ),
-                    onPressed: () => Navigator.of(context).push(
+                    onPressed: () => Navigator.of(context)!.push(
                         CupertinoPageRoute<void>(
                             builder: (BuildContext _) => AddSong(context)))),
               ),
             ButtonContainer(
               child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.settings,
                     color: Colors.black,
                   ),
@@ -110,17 +112,15 @@ class MenuRow extends StatelessWidget {
             if (!kReleaseMode)
               ButtonContainer(
                 child: IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.edit,
                       color: Colors.black,
                     ),
-                    onPressed: () => Navigator.of(context).push(
+                    onPressed: () => Navigator.of(context)!.push(
                         CupertinoPageRoute<void>(
                             builder: (BuildContext _) => CheckNewSongs()))),
               )
           ],
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         ),
       );
 }

@@ -10,58 +10,62 @@ class CheckSong extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(song['name'])),
+        appBar: AppBar(title: Text(song['name'] as String)),
         body: Row(
-          children: [song['song'], song['chordsSong']]
-              .map((current) => SingleChildScrollView(
+          children: <String>[
+            song['song'] as String,
+            song['chordsSong'] as String
+          ]
+              .map((String entry) => SingleChildScrollView(
                   child: Container(
-                      padding: EdgeInsets.all(30),
+                      padding: const EdgeInsets.all(30),
                       width: MediaQuery.of(context).size.width / 2,
-                      child: Text(current))))
+                      child: Text(entry))))
               .toList(),
         ),
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [
+          children: <Widget>[
             FloatingActionButton(
-              heroTag: 'closeFAB',
               backgroundColor: Colors.red,
-              child: Icon(Icons.close),
+              heroTag: 'closeFAB',
               onPressed: () async {
                 await _firestore.doc('checkRequired/$id').delete();
                 Navigator.pop(context);
               },
+              child: const Icon(Icons.close),
             ),
             Padding(
               padding: const EdgeInsets.all(20),
               child: FloatingActionButton(
                 heroTag: 'checkFAB',
                 backgroundColor: Colors.green,
-                child: Icon(Icons.check),
-                onPressed: () async =>
-                    await _firestore.runTransaction((transaction) async {
-                  final number = (await _firestore
+                onPressed: () =>
+                    _firestore.runTransaction((Transaction transaction) async {
+                  final int number = ((await _firestore
                               .collection('songs')
                               .orderBy('number', descending: true)
                               .limit(1)
                               .get())
                           .docs
                           .elementAt(0)
-                          .data()["number"] +
+                          .data()['number'] as int) +
                       1;
-                  await transaction.set(_firestore.doc('songs/${number}'), {
-                    'name': song['name'],
-                    'song': song['chordsSong'],
-                    'number': number
-                  });
-                  await transaction.set(_firestore.doc('noChords/${number}'), {
-                    'name': song['name'],
-                    'song': song['song'],
-                    'number': number
-                  });
-                  await transaction.delete(_firestore.doc('checkRequired/$id'));
+                  transaction
+                    ..set(_firestore.doc('songs/$number'), <String, dynamic>{
+                      'name': song['name'],
+                      'song': song['chordsSong'],
+                      'number': number
+                    })
+                    ..set(_firestore.doc('noChords/$number'), <String, dynamic>{
+                      'name': song['name'],
+                      'song': song['song'],
+                      'number': number
+                    })
+                    ..delete(_firestore.doc('checkRequired/$id'));
                   Navigator.pop(context);
                 }),
+                child: const Icon(Icons.check),
               ),
             )
           ],
