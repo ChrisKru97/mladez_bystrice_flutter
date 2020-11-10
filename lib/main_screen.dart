@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bloc/bloc_provider.dart';
 import 'bloc/config_bloc.dart';
@@ -10,6 +11,7 @@ import 'classes/config.dart';
 import 'classes/song.dart';
 import 'components/menu_row.dart';
 import 'components/song_list.dart';
+import 'dialogs/starting_info.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -17,6 +19,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  bool checkedForStartingDialog = false;
   PersistentBottomSheetController<int>? bottomSheetController;
 
   void setBottomSheet(
@@ -25,8 +28,22 @@ class _MainScreenState extends State<MainScreen> {
         bottomSheetController = newBottomSheetController;
       });
 
+  Future<void> checkStartingDialog(BuildContext context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool dontShowStartingInfo =
+        prefs.getBool(dontShowStartingInfoKey) ?? false;
+    if (!dontShowStartingInfo) {
+      await showDialog(
+          context: context, builder: (BuildContext context) => StartingInfo());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!checkedForStartingDialog) {
+      checkedForStartingDialog = true;
+      checkStartingDialog(context);
+    }
     final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context)!;
     return StreamBuilder<Config>(
         stream: provider.stream,
