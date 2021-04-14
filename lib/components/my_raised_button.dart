@@ -5,7 +5,7 @@ class MyRaisedButton extends StatelessWidget {
 
   final String text;
   final void Function() onPressed;
-  final bool? secondary;
+  final bool secondary;
 
   @override
   Widget build(BuildContext context) => RaisedButton(

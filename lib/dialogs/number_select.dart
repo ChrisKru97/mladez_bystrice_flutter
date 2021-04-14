@@ -22,9 +22,9 @@ class NumberSelect extends StatelessWidget {
             parsedNumber > 199 && parsedNumber < lastNumber)) {
       final int finalNumber = parsedNumber - (parsedNumber < 198 ? 1 : 3);
       try {
-        BlocProvider.of<SongsBloc>(context)!.addToHistory(finalNumber);
+        BlocProvider.of<SongsBloc>(context).addToHistory(finalNumber);
       } on Exception catch (_) {}
-      Navigator.of(context)!.push(CupertinoPageRoute<void>(
+      Navigator.of(context).push(CupertinoPageRoute<void>(
         builder: (BuildContext context) => SongDisplay(finalNumber),
       ));
     } else {

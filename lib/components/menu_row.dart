@@ -1,10 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../bloc/bloc_provider.dart';
 import '../bloc/search_bloc.dart';
-import '../dialogs/add_song.dart';
-import '../dialogs/check_new_songs.dart';
 import '../dialogs/history_list.dart';
 import '../dialogs/number_select.dart';
 import '../dialogs/saved_list.dart';
@@ -12,7 +9,7 @@ import '../dialogs/search_song.dart';
 import '../dialogs/settings.dart';
 
 class ButtonContainer extends StatelessWidget {
-  const ButtonContainer({required this.child});
+  const ButtonContainer({this.child});
 
   final Widget child;
 
@@ -29,10 +26,10 @@ class ButtonContainer extends StatelessWidget {
 }
 
 class MenuRow extends StatelessWidget {
-  const MenuRow({required this.setBottomSheet, required this.lastNumber});
+  const MenuRow({this.setBottomSheet, this.lastNumber});
 
   final int lastNumber;
-  final void Function(PersistentBottomSheetController<int>?) setBottomSheet;
+  final void Function(PersistentBottomSheetController<int>) setBottomSheet;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -48,7 +45,7 @@ class MenuRow extends StatelessWidget {
                   Icons.favorite,
                   color: Colors.red,
                 ),
-                onPressed: () => Navigator.of(context)!.push(
+                onPressed: () => Navigator.of(context).push(
                     CupertinoPageRoute<void>(
                         builder: (BuildContext context) => SavedList())),
               ),
@@ -63,8 +60,10 @@ class MenuRow extends StatelessWidget {
                       context: context,
                       builder: (_) => SearchSong(),
                       backgroundColor: Colors.transparent)
-                    ..closed.then((_) =>
-                        BlocProvider.of<SearchBloc>(context)!.search('')))),
+                    ..closed.then((_) {
+                      setBottomSheet(null);
+                      BlocProvider.of<SearchBloc>(context).search('');
+                    }))),
             ),
             ButtonContainer(
               child: IconButton(
@@ -75,7 +74,10 @@ class MenuRow extends StatelessWidget {
                   onPressed: () => setBottomSheet(showBottomSheet(
                       builder: (_) => NumberSelect(lastNumber),
                       context: context,
-                      backgroundColor: Colors.transparent))),
+                      backgroundColor: Colors.transparent)
+                    ..closed.then((_) {
+                      setBottomSheet(null);
+                    }))),
             ),
             ButtonContainer(
               child: IconButton(
@@ -83,21 +85,10 @@ class MenuRow extends StatelessWidget {
                     Icons.history,
                     color: Colors.black,
                   ),
-                  onPressed: () => Navigator.of(context)!.push(
+                  onPressed: () => Navigator.of(context).push(
                       CupertinoPageRoute<void>(
                           builder: (BuildContext context) => HistoryList()))),
             ),
-            if (kIsWeb)
-              ButtonContainer(
-                child: IconButton(
-                    icon: const Icon(
-                      Icons.add,
-                      color: Colors.black,
-                    ),
-                    onPressed: () => Navigator.of(context)!.push(
-                        CupertinoPageRoute<void>(
-                            builder: (BuildContext _) => AddSong(context)))),
-              ),
             ButtonContainer(
               child: IconButton(
                   icon: const Icon(
@@ -107,19 +98,11 @@ class MenuRow extends StatelessWidget {
                   onPressed: () => setBottomSheet(showBottomSheet(
                       context: context,
                       builder: (_) => Settings(),
-                      backgroundColor: Colors.transparent))),
-            ),
-            if (!kReleaseMode)
-              ButtonContainer(
-                child: IconButton(
-                    icon: const Icon(
-                      Icons.edit,
-                      color: Colors.black,
-                    ),
-                    onPressed: () => Navigator.of(context)!.push(
-                        CupertinoPageRoute<void>(
-                            builder: (BuildContext _) => CheckNewSongs()))),
-              )
+                      backgroundColor: Colors.transparent)
+                    ..closed.then((_) {
+                      setBottomSheet(null);
+                    }))),
+            )
           ],
         ),
       );

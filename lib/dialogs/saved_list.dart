@@ -7,7 +7,7 @@ import '../components/song_list.dart';
 class SavedList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final SongsBloc provider = BlocProvider.of<SongsBloc>(context)!;
+    final SongsBloc provider = BlocProvider.of<SongsBloc>(context);
     return Scaffold(
         appBar: AppBar(
             leading: const BackButton(),
@@ -28,8 +28,8 @@ class SavedList extends StatelessWidget {
                   songs: provider
                           .getSongs()
                           ?.where((Song song) =>
-                              snapshot.data!.contains(song.number))
-                          .toList() ??
+                              snapshot.data.contains(song.number))
+                          ?.toList() ??
                       <Song>[]);
             }));
   }

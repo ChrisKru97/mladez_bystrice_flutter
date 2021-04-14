@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomBottomSheet extends StatelessWidget {
-  const CustomBottomSheet({required this.child});
+  const CustomBottomSheet({this.child});
 
   final Widget child;
 

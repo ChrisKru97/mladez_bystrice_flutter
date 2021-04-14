@@ -10,7 +10,7 @@ class FavoriteIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SongsBloc provider = BlocProvider.of<SongsBloc>(context)!;
+    final SongsBloc provider = BlocProvider.of<SongsBloc>(context);
     return StreamBuilder<Set<int>>(
         stream: provider.stream,
         builder: (_, AsyncSnapshot<Set<int>> snapshot) {

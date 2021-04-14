@@ -20,10 +20,10 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   bool checkedForStartingDialog = false;
-  PersistentBottomSheetController<int>? bottomSheetController;
+  PersistentBottomSheetController<int> bottomSheetController;
 
   void setBottomSheet(
-          PersistentBottomSheetController<int>? newBottomSheetController) =>
+          PersistentBottomSheetController<int> newBottomSheetController) =>
       setState(() {
         bottomSheetController = newBottomSheetController;
       });
@@ -44,7 +44,7 @@ class _MainScreenState extends State<MainScreen> {
       checkedForStartingDialog = true;
       checkStartingDialog(context);
     }
-    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context)!;
+    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
     return StreamBuilder<Config>(
         stream: provider.stream,
         builder: (_, AsyncSnapshot<Config> snapshot) {
@@ -54,29 +54,29 @@ class _MainScreenState extends State<MainScreen> {
                 color: Colors.white,
                 child: const Center(child: CircularProgressIndicator()));
           }
-          final SongsBloc songsProvider = BlocProvider.of<SongsBloc>(context)!;
-          final List<Song>? songs = songsProvider.getSongs();
+          final SongsBloc songsProvider = BlocProvider.of<SongsBloc>(context);
+          final List<Song> songs = songsProvider.getSongs();
           if (songs == null) {
             provider.refresh();
             return Container(
                 color: Colors.white,
                 child: const Center(child: CircularProgressIndicator()));
           }
-          return StreamBuilder<String?>(
-              stream: BlocProvider.of<SearchBloc>(context)!.stream,
+          return StreamBuilder<String>(
+              stream: BlocProvider.of<SearchBloc>(context).stream,
               initialData: null,
-              builder: (_, AsyncSnapshot<String?> snapshot) {
+              builder: (_, AsyncSnapshot<String> snapshot) {
                 List<Song> filteredSongs;
-                if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+                if (snapshot.data != null && snapshot.data.isNotEmpty) {
                   filteredSongs = songs
                       .where((Song song) =>
                           deburr(song.name)
                               .toLowerCase()
-                              .contains(snapshot.data!) ||
-                          deburr(song.song)
+                              .contains(snapshot.data) ||
+                          deburr(song.withoutChords)
                               .toLowerCase()
-                              .contains(snapshot.data!) ||
-                          song.number.toString().contains(snapshot.data!))
+                              .contains(snapshot.data) ||
+                          song.number.toString().contains(snapshot.data))
                       .toList();
                 } else {
                   filteredSongs = songs;
@@ -86,8 +86,8 @@ class _MainScreenState extends State<MainScreen> {
                 return GestureDetector(
                     onTap: () {
                       if (bottomSheetController != null) {
-                        bottomSheetController!.close();
-                        BlocProvider.of<SearchBloc>(context)!.search('');
+                        bottomSheetController?.close();
+                        BlocProvider.of<SearchBloc>(context).search('');
                       }
                     },
                     child: Scaffold(

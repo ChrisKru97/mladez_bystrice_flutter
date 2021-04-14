@@ -7,7 +7,7 @@ import '../classes/config.dart';
 class FontSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context)!;
+    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
     return StreamBuilder<Config>(
         stream: provider.stream,
         builder: (_, AsyncSnapshot<Config> snapshot) {
@@ -44,10 +44,7 @@ class FontSettings extends StatelessWidget {
                               style: TextStyle(fontSize: 22),
                             )),
                         Switch(
-                          value: snapshot.data!.showChords,
-//                          activeTrackColor:
-//                              Theme.of(context).primaryColor.withOpacity(0.6),
-//                          activeColor: Theme.of(context).primaryColor,
+                          value: snapshot.data.showChords,
                           onChanged: (bool value) {
                             provider.updateConfig('showChords', value);
                           },
@@ -59,7 +56,7 @@ class FontSettings extends StatelessWidget {
                         Icons.format_align_left,
                         Icons.format_align_center
                       ],
-                      initialLabelIndex: snapshot.data!.alignCenter ? 1 : 0,
+                      initialLabelIndex: snapshot.data.alignCenter ? 1 : 0,
                       activeFgColor: Colors.white,
                       labels: const <String>['', ''],
                       inactiveBgColor: Colors.black26,
@@ -75,12 +72,18 @@ class FontSettings extends StatelessWidget {
                   ],
                 ),
                 Slider(
-                  min: 12,
-                  max: 60,
+                  min: MediaQuery.of(context).size.width * 0.015 >
+                          snapshot.data.songFontSize
+                      ? snapshot.data.songFontSize
+                      : MediaQuery.of(context).size.width * 0.015,
+                  max: MediaQuery.of(context).size.width * 0.06 <
+                          snapshot.data.songFontSize
+                      ? snapshot.data.songFontSize
+                      : MediaQuery.of(context).size.width * 0.06,
                   onChanged: (double value) {
                     provider.updateConfig('songFontSize', value);
                   },
-                  value: snapshot.data!.songFontSize,
+                  value: snapshot.data.songFontSize,
                 ),
               ],
             ),

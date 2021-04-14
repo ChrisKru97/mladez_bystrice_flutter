@@ -8,7 +8,7 @@ import '../components/song_list.dart';
 class HistoryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final SongsBloc provider = BlocProvider.of<SongsBloc>(context)!;
+    final SongsBloc provider = BlocProvider.of<SongsBloc>(context);
     return Scaffold(
         appBar: AppBar(
             leading: const BackButton(),
@@ -25,10 +25,10 @@ class HistoryList extends StatelessWidget {
                 provider.refresh();
                 return const Center(child: CircularProgressIndicator());
               }
-              final List<Song>? songs = provider.getSongs();
+              final List<Song> songs = provider.getSongs();
               return SongList(
                   songs: (songs?.isNotEmpty ?? false)
-                      ? snapshot.data!.map(songs!.elementAt).toList()
+                      ? snapshot.data.map(songs.elementAt).toList()
                       : <Song>[]);
             }));
   }

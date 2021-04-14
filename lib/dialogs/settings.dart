@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../bloc/bloc_provider.dart';
 import '../bloc/config_bloc.dart';
@@ -8,19 +7,12 @@ import '../classes/config.dart';
 import '../components/my_raised_button.dart';
 import 'bottom_sheet.dart';
 
-final List<TextStyle> fonts = <TextStyle>[
-  GoogleFonts.openSans(),
-  GoogleFonts.patrickHand(),
-  GoogleFonts.coda(),
-  GoogleFonts.hammersmithOne()
-];
-
 class Settings extends StatelessWidget {
   void _selectColor(BuildContext context, bool secondary) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context)!;
+          final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
           return Dialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -41,8 +33,8 @@ class Settings extends StatelessWidget {
                             child: MaterialColorPicker(
                               circleSize: 75,
                               selectedColor: secondary
-                                  ? snapshot.data!.secondary
-                                  : snapshot.data!.primary,
+                                  ? snapshot.data.secondary
+                                  : snapshot.data.primary,
                               onColorChange: (Color color) {
                                 provider.updateConfig(
                                     secondary ? 'secondary' : 'primary', color);
@@ -62,7 +54,7 @@ class Settings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context)!;
+    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
     return CustomBottomSheet(
       child: StreamBuilder<Config>(
           stream: provider.stream,
@@ -74,7 +66,7 @@ class Settings extends StatelessWidget {
             final Color primary =
                 Theme.of(context).brightness == Brightness.dark
                     ? Colors.black54
-                    : snapshot.data!.primary;
+                    : snapshot.data.primary;
             return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
               const Padding(
                   padding: EdgeInsets.all(15),
@@ -87,7 +79,7 @@ class Settings extends StatelessWidget {
                     'Světlé',
                   ),
                   Switch(
-                    value: snapshot.data!.darkMode,
+                    value: snapshot.data.darkMode,
                     activeTrackColor: primary.withOpacity(0.6),
                     activeColor: primary,
                     onChanged: (bool value) {
@@ -99,14 +91,14 @@ class Settings extends StatelessWidget {
                   ),
                 ],
               ),
-              if (!snapshot.data!.darkMode)
+              if (!snapshot.data.darkMode)
                 const Padding(
                     padding: EdgeInsets.all(15),
                     child: Text(
                       'Výběr barev aplikací',
                       style: TextStyle(fontSize: 22),
                     )),
-              if (!snapshot.data!.darkMode)
+              if (!snapshot.data.darkMode)
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -118,7 +110,7 @@ class Settings extends StatelessWidget {
                         },
                       )
                     ]),
-              if (!snapshot.data!.darkMode)
+              if (!snapshot.data.darkMode)
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -130,35 +122,7 @@ class Settings extends StatelessWidget {
                         },
                         secondary: true,
                       )
-                    ]),
-              ButtonBar(
-                alignment: MainAxisAlignment.center,
-                children: fonts.map((TextStyle font) {
-                  final int index =
-                      font.fontFamily?.indexOf(RegExp(r'[A-Z_]'), 1) ?? -1;
-                  final String fontName = (index > 1
-                          ? font.fontFamily?.substring(0, index)
-                          : font.fontFamily) ??
-                      '';
-                  final Text child = Text(
-                    fontName,
-                    style: font,
-                  );
-                  if (fontName == snapshot.data!.font) {
-                    return RaisedButton(
-                      onPressed: () {},
-                      child: child,
-                    );
-                  }
-                  return FlatButton(
-                    textColor: Theme.of(context).primaryColor,
-                    onPressed: () {
-                      provider.updateConfig('font', fontName);
-                    },
-                    child: child,
-                  );
-                }).toList(),
-              )
+                    ])
             ]);
           }),
     );

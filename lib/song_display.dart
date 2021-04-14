@@ -12,7 +12,7 @@ import 'dialogs/font_settings.dart';
 class SongDisplay extends StatefulWidget {
   const SongDisplay(this._number, {this.song});
   final int _number;
-  final Song? song;
+  final Song song;
 
   @override
   _SongDisplayState createState() => _SongDisplayState();
@@ -24,26 +24,9 @@ class _SongDisplayState extends State<SongDisplay> {
   @override
   Widget build(BuildContext context) {
     Wakelock.enabled.then((bool enabled) => enabled ? null : Wakelock.enable());
-    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context)!;
-    final String fontFamily = provider.fontFamily;
-    double sizeCoeff = 2;
-    switch (fontFamily) {
-      case 'Open':
-        sizeCoeff = 2.3;
-        break;
-      case 'Patrick':
-        sizeCoeff = 2.6;
-        break;
-      case 'Coda':
-        sizeCoeff = 2;
-        break;
-      case 'Hammersmith':
-        sizeCoeff = 1.9;
-        break;
-    }
-    final Song? song = widget.song ??
-        BlocProvider.of<SongsBloc>(context)!
-            .getSong(widget._number, showChords: provider.showChords);
+    final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
+    final Song song = widget.song ??
+        BlocProvider.of<SongsBloc>(context).getSong(widget._number);
     final String title = '${song?.number}. ${song?.name}';
     return Scaffold(
       appBar: AppBar(
@@ -52,7 +35,7 @@ class _SongDisplayState extends State<SongDisplay> {
         flexibleSpace: SafeArea(child: Center(
             child: LayoutBuilder(builder: (_, BoxConstraints constraints) {
           final double titleSize =
-              ((constraints.maxWidth - 100) / title.length) * sizeCoeff;
+              ((constraints.maxWidth - 100) / title.length) * 2;
           return Text(
             title,
             style: TextStyle(
@@ -70,12 +53,11 @@ class _SongDisplayState extends State<SongDisplay> {
               provider.refresh();
               return const Center(child: CircularProgressIndicator());
             }
-            final double fontSize = snapshot.data!.songFontSize;
+            final double fontSize = snapshot.data.songFontSize;
             final Text textWidget = Text(
-              song.song,
-              textAlign: snapshot.data!.alignCenter
-                  ? TextAlign.center
-                  : TextAlign.left,
+              provider.showChords ? song.withChords : song.withoutChords,
+              textAlign:
+                  snapshot.data.alignCenter ? TextAlign.center : TextAlign.left,
               style: TextStyle(
                   fontSize: fontSize,
                   color: Theme.of(context).brightness == Brightness.dark
@@ -95,7 +77,7 @@ class _SongDisplayState extends State<SongDisplay> {
               },
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(15),
-                child: snapshot.data!.alignCenter
+                child: snapshot.data.alignCenter
                     ? Center(child: textWidget)
                     : textWidget,
               ),

@@ -12,7 +12,7 @@ class StartingInfo extends StatefulWidget {
 }
 
 class _StartingInfoState extends State<StartingInfo> {
-  SharedPreferences? _prefs;
+  SharedPreferences _prefs;
   final StreamController<bool> _dontShowStream = StreamController<bool>();
 
   @override
@@ -27,17 +27,19 @@ class _StartingInfoState extends State<StartingInfo> {
   Widget build(BuildContext context) => Dialog(
       insetPadding: const EdgeInsets.all(20),
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius:
+              BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
           side: const BorderSide(width: 1)),
       child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.030),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Container(
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.black54),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(
+                          MediaQuery.of(context).size.width * 0.02),
                       boxShadow: const <BoxShadow>[
                         BoxShadow(
                             color: Colors.black54,
@@ -45,34 +47,37 @@ class _StartingInfoState extends State<StartingInfo> {
                             blurRadius: 10)
                       ]),
                   child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(
+                          MediaQuery.of(context).size.width * 0.02),
                       child: Image.asset('updating_songs.gif'))),
               Padding(
-                  padding: const EdgeInsets.all(15),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
                   child: Text('Pro načtení nových písní potáhni dolů',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontSize:
-                              MediaQuery.of(context).size.width * 0.045))),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text('Nezobrazovat znovu',
-                        style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.03)),
-                    StreamBuilder<bool>(
-                        stream: _dontShowStream.stream,
-                        builder: (_, AsyncSnapshot<bool> snapshot) => Checkbox(
-                            onChanged: (bool? value) {
-                              _dontShowStream.sink.add(value ?? false);
-                              _prefs?.setBool(dontShowStartingInfoKey, value);
-                            },
-                            value: snapshot.data ?? false))
-                  ]),
+                          fontSize: MediaQuery.of(context).size.width * 0.05))),
               Padding(
-                  padding: const EdgeInsets.only(top: 15),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
+                  child: StreamBuilder<bool>(
+                      stream: _dontShowStream.stream,
+                      builder: (_, AsyncSnapshot<bool> snapshot) =>
+                          CheckboxListTile(
+                              controlAffinity: ListTileControlAffinity.leading,
+                              title: Text('Nezobrazovat znovu',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035)),
+                              onChanged: (bool value) {
+                                _dontShowStream.sink.add(value ?? false);
+                                _prefs?.setBool(dontShowStartingInfoKey, value);
+                              },
+                              value: snapshot.data ?? false))),
+              Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.width * 0.03),
                   child: MyRaisedButton('Zavřít', () => Navigator.pop(context)))
             ],
           )));

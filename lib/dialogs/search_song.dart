@@ -24,7 +24,7 @@ class SearchSong extends StatelessWidget {
           autofocus: true,
           autocorrect: false,
           textAlign: TextAlign.left,
-          onChanged: BlocProvider.of<SearchBloc>(context)!.search,
+          onChanged: BlocProvider.of<SearchBloc>(context).search,
         ),
       );
 }

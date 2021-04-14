@@ -8,13 +8,12 @@ import 'bloc.dart';
 class ConfigBloc implements Bloc {
   final StreamController<Config> _controller =
       StreamController<Config>.broadcast();
-  SharedPreferences? _preferences;
+  SharedPreferences _preferences;
   Config _last = Config();
 
   Stream<Config> get stream => _controller.stream;
 
   bool get showChords => _last.showChords;
-  String get fontFamily => _last.font;
 
   void refresh() {
     _controller.sink.add(_last);
@@ -22,12 +21,6 @@ class ConfigBloc implements Bloc {
 
   void updateConfig(String key, dynamic value) {
     switch (key) {
-      case 'font':
-        if (value is String) {
-          _last.font = value;
-          _preferences?.setString('font', value);
-        }
-        break;
       case 'primary':
         if (value is Color) {
           _last.primary = createSwatch(value);
@@ -119,9 +112,6 @@ class ConfigBloc implements Bloc {
     }
     if (prefs.containsKey('secondary')) {
       newConfig.secondary = Color(prefs.getInt('secondary'));
-    }
-    if (prefs.containsKey('font')) {
-      newConfig.font = prefs.getString('font');
     }
     if (prefs.containsKey('songFontSize')) {
       newConfig.songFontSize = prefs.getDouble('songFontSize');

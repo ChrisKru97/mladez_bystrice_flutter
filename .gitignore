@@ -9,6 +9,8 @@
 .history
 .svn/
 
+app.android-*.symbols
+
 # IntelliJ related
 *.iml
 *.ipr
