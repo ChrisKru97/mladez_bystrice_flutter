@@ -63,9 +63,9 @@ String deburr(String s) {
 }
 
 class SearchBloc implements Bloc {
-  final StreamController<String> _controller = StreamController<String>();
+  final StreamController<String?> _controller = StreamController<String?>();
 
-  Stream<String> get stream => _controller.stream;
+  Stream<String?> get stream => _controller.stream;
 
   void search(String s) {
     final String newS = deburr(s).toLowerCase();

@@ -20,10 +20,10 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   bool checkedForStartingDialog = false;
-  PersistentBottomSheetController<int> bottomSheetController;
+  PersistentBottomSheetController<int>? bottomSheetController;
 
   void setBottomSheet(
-          PersistentBottomSheetController<int> newBottomSheetController) =>
+          PersistentBottomSheetController<int>? newBottomSheetController) =>
       setState(() {
         bottomSheetController = newBottomSheetController;
       });
@@ -56,27 +56,26 @@ class _MainScreenState extends State<MainScreen> {
           }
           final SongsBloc songsProvider = BlocProvider.of<SongsBloc>(context);
           final List<Song> songs = songsProvider.getSongs();
-          if (songs == null) {
+          if (songs.isEmpty) {
             provider.refresh();
             return Container(
                 color: Colors.white,
                 child: const Center(child: CircularProgressIndicator()));
           }
-          return StreamBuilder<String>(
+          return StreamBuilder<String?>(
               stream: BlocProvider.of<SearchBloc>(context).stream,
-              initialData: null,
-              builder: (_, AsyncSnapshot<String> snapshot) {
+              builder: (_, AsyncSnapshot<String?> snapshot) {
                 List<Song> filteredSongs;
-                if (snapshot.data != null && snapshot.data.isNotEmpty) {
+                if (snapshot.data != null && snapshot.data!.isNotEmpty) {
                   filteredSongs = songs
                       .where((Song song) =>
                           deburr(song.name)
                               .toLowerCase()
-                              .contains(snapshot.data) ||
+                              .contains(snapshot.data!) ||
                           deburr(song.withoutChords)
                               .toLowerCase()
-                              .contains(snapshot.data) ||
-                          song.number.toString().contains(snapshot.data))
+                              .contains(snapshot.data!) ||
+                          song.number.toString().contains(snapshot.data!))
                       .toList();
                 } else {
                   filteredSongs = songs;

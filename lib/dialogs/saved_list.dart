@@ -26,11 +26,10 @@ class SavedList extends StatelessWidget {
               }
               return SongList(
                   songs: provider
-                          .getSongs()
-                          ?.where((Song song) =>
-                              snapshot.data.contains(song.number))
-                          ?.toList() ??
-                      <Song>[]);
+                      .getSongs()
+                      .where(
+                          (Song song) => snapshot.data!.contains(song.number))
+                      .toList());
             }));
   }
 }

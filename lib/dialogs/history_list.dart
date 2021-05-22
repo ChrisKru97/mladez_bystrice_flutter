@@ -27,9 +27,7 @@ class HistoryList extends StatelessWidget {
               }
               final List<Song> songs = provider.getSongs();
               return SongList(
-                  songs: (songs?.isNotEmpty ?? false)
-                      ? snapshot.data.map(songs.elementAt).toList()
-                      : <Song>[]);
+                  songs: snapshot.data!.map(songs.elementAt).toList());
             }));
   }
 }

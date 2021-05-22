@@ -6,8 +6,8 @@ import '../classes/song.dart';
 import 'bloc.dart';
 
 class SongsBloc implements Bloc {
-  SharedPreferences _preferences;
-  List<Song> _songs;
+  late SharedPreferences _preferences;
+  List<Song>? _songs;
   final StreamController<Set<int>> _controller =
       StreamController<Set<int>>.broadcast();
   final StreamController<List<int>> _historyConttroller =
@@ -19,21 +19,21 @@ class SongsBloc implements Bloc {
 
   Stream<List<int>> get historyStream => _historyConttroller.stream;
 
-  List<Song> getSongs() => _songs;
+  List<Song> getSongs() => _songs ?? <Song>[];
 
-  Song getSong(int number) => _songs?.elementAt(number);
+  Song getSong(int number) => _songs!.elementAt(number);
 
   void addFavorite(int number) {
     _last.add(number);
     _controller.sink.add(_last);
-    _preferences?.setStringList(
+    _preferences.setStringList(
         'favorites', _last.map((int i) => i.toString()).toList());
   }
 
   void removeFavorite(int number) {
     _last.remove(number);
     _controller.sink.add(_last);
-    _preferences?.setStringList(
+    _preferences.setStringList(
         'favorites', _last.map((int i) => i.toString()).toList());
   }
 
@@ -44,7 +44,7 @@ class SongsBloc implements Bloc {
     if (_lastHistory.isEmpty || _lastHistory.elementAt(0) != number) {
       _lastHistory.insert(0, number);
       _historyConttroller.sink.add(_lastHistory);
-      _preferences?.setStringList(
+      _preferences.setStringList(
           'history', _lastHistory.map((int i) => i.toString()).toList());
     }
   }
@@ -65,8 +65,8 @@ class SongsBloc implements Bloc {
   }
 
   Future<void> loadSongs({bool force = false}) async {
-    if (!force && _preferences != null && _preferences.containsKey('songs')) {
-      final dynamic decodedList = jsonDecode(_preferences.getString('songs'));
+    if (!force && _preferences.containsKey('songs')) {
+      final dynamic decodedList = jsonDecode(_preferences.getString('songs')!);
       if (decodedList is List) {
         _songs = parseSongList(decodedList);
       }
@@ -78,7 +78,7 @@ class SongsBloc implements Bloc {
               .get())
           .docs);
       _songs = data;
-      await _preferences?.setString('songs', jsonEncode(data));
+      await _preferences.setString('songs', jsonEncode(data));
     }
   }
 
@@ -92,12 +92,15 @@ class SongsBloc implements Bloc {
     loadSongs();
     if (prefs.containsKey('favorites')) {
       final Set<int> newFavorites = <int>{};
-      prefs.getStringList('favorites').map(int.parse).forEach(newFavorites.add);
+      prefs
+          .getStringList('favorites')!
+          .map(int.parse)
+          .forEach(newFavorites.add);
       _controller.sink.add(newFavorites);
       _last = newFavorites;
     }
     if (prefs.containsKey('history')) {
-      _lastHistory = prefs.getStringList('history').map(int.parse).toList();
+      _lastHistory = prefs.getStringList('history')!.map(int.parse).toList();
       _historyConttroller.sink.add(_lastHistory);
     }
   }

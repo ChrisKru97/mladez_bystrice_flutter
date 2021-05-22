@@ -9,7 +9,7 @@ import '../dialogs/search_song.dart';
 import '../dialogs/settings.dart';
 
 class ButtonContainer extends StatelessWidget {
-  const ButtonContainer({this.child});
+  const ButtonContainer({required this.child});
 
   final Widget child;
 
@@ -26,10 +26,10 @@ class ButtonContainer extends StatelessWidget {
 }
 
 class MenuRow extends StatelessWidget {
-  const MenuRow({this.setBottomSheet, this.lastNumber});
+  const MenuRow({required this.setBottomSheet, required this.lastNumber});
 
   final int lastNumber;
-  final void Function(PersistentBottomSheetController<int>) setBottomSheet;
+  final void Function(PersistentBottomSheetController<int>?) setBottomSheet;
 
   @override
   Widget build(BuildContext context) => Container(

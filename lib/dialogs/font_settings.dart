@@ -44,7 +44,7 @@ class FontSettings extends StatelessWidget {
                               style: TextStyle(fontSize: 22),
                             )),
                         Switch(
-                          value: snapshot.data.showChords,
+                          value: snapshot.data!.showChords,
                           onChanged: (bool value) {
                             provider.updateConfig('showChords', value);
                           },
@@ -56,7 +56,7 @@ class FontSettings extends StatelessWidget {
                         Icons.format_align_left,
                         Icons.format_align_center
                       ],
-                      initialLabelIndex: snapshot.data.alignCenter ? 1 : 0,
+                      initialLabelIndex: snapshot.data!.alignCenter ? 1 : 0,
                       activeFgColor: Colors.white,
                       labels: const <String>['', ''],
                       inactiveBgColor: Colors.black26,
@@ -73,17 +73,17 @@ class FontSettings extends StatelessWidget {
                 ),
                 Slider(
                   min: MediaQuery.of(context).size.width * 0.015 >
-                          snapshot.data.songFontSize
-                      ? snapshot.data.songFontSize
+                          snapshot.data!.songFontSize
+                      ? snapshot.data!.songFontSize
                       : MediaQuery.of(context).size.width * 0.015,
                   max: MediaQuery.of(context).size.width * 0.06 <
-                          snapshot.data.songFontSize
-                      ? snapshot.data.songFontSize
+                          snapshot.data!.songFontSize
+                      ? snapshot.data!.songFontSize
                       : MediaQuery.of(context).size.width * 0.06,
                   onChanged: (double value) {
                     provider.updateConfig('songFontSize', value);
                   },
-                  value: snapshot.data.songFontSize,
+                  value: snapshot.data!.songFontSize,
                 ),
               ],
             ),

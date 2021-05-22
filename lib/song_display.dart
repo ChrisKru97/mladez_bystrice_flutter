@@ -12,7 +12,7 @@ import 'dialogs/font_settings.dart';
 class SongDisplay extends StatefulWidget {
   const SongDisplay(this._number, {this.song});
   final int _number;
-  final Song song;
+  final Song? song;
 
   @override
   _SongDisplayState createState() => _SongDisplayState();
@@ -27,7 +27,7 @@ class _SongDisplayState extends State<SongDisplay> {
     final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
     final Song song = widget.song ??
         BlocProvider.of<SongsBloc>(context).getSong(widget._number);
-    final String title = '${song?.number}. ${song?.name}';
+    final String title = '${song.number}. ${song.name}';
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -44,20 +44,21 @@ class _SongDisplayState extends State<SongDisplay> {
         }))),
         actions: widget.song != null
             ? null
-            : <Widget>[FavoriteIcon(song?.number ?? -1, white: true)],
+            : <Widget>[FavoriteIcon(song.number, white: true)],
       ),
       body: StreamBuilder<Config>(
           stream: provider.stream,
           builder: (BuildContext context, AsyncSnapshot<Config> snapshot) {
-            if (snapshot.data == null || song == null) {
+            if (snapshot.data == null) {
               provider.refresh();
               return const Center(child: CircularProgressIndicator());
             }
-            final double fontSize = snapshot.data.songFontSize;
+            final double fontSize = snapshot.data!.songFontSize;
             final Text textWidget = Text(
               provider.showChords ? song.withChords : song.withoutChords,
-              textAlign:
-                  snapshot.data.alignCenter ? TextAlign.center : TextAlign.left,
+              textAlign: snapshot.data!.alignCenter
+                  ? TextAlign.center
+                  : TextAlign.left,
               style: TextStyle(
                   fontSize: fontSize,
                   color: Theme.of(context).brightness == Brightness.dark
@@ -77,7 +78,7 @@ class _SongDisplayState extends State<SongDisplay> {
               },
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(15),
-                child: snapshot.data.alignCenter
+                child: snapshot.data!.alignCenter
                     ? Center(child: textWidget)
                     : textWidget,
               ),

@@ -12,7 +12,7 @@ class StartingInfo extends StatefulWidget {
 }
 
 class _StartingInfoState extends State<StartingInfo> {
-  SharedPreferences _prefs;
+  late SharedPreferences _prefs;
   final StreamController<bool> _dontShowStream = StreamController<bool>();
 
   @override
@@ -70,9 +70,10 @@ class _StartingInfoState extends State<StartingInfo> {
                                       fontSize:
                                           MediaQuery.of(context).size.width *
                                               0.035)),
-                              onChanged: (bool value) {
+                              onChanged: (bool? value) {
                                 _dontShowStream.sink.add(value ?? false);
-                                _prefs?.setBool(dontShowStartingInfoKey, value);
+                                _prefs.setBool(
+                                    dontShowStartingInfoKey, value ?? false);
                               },
                               value: snapshot.data ?? false))),
               Padding(

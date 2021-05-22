@@ -20,17 +20,17 @@ class MyApp extends StatelessWidget {
         Firebase.initializeApp(),
       ]),
       builder: (_, AsyncSnapshot<List<dynamic>> snapshot) {
-        if (!snapshot.hasData || snapshot.data.isEmpty) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const MaterialApp(
               home: Center(child: CircularProgressIndicator()));
         } else {
           final Config initialConfig = Config();
           final ConfigBloc configBloc = ConfigBloc()
             ..initFromPrefs(
-                snapshot.data[0] as SharedPreferences, initialConfig);
+                snapshot.data![0] as SharedPreferences, initialConfig);
           final SongsBloc songsBloc = SongsBloc();
           FirebaseAuth.instance.signInAnonymously().then((_) =>
-              songsBloc.initFromPrefs(snapshot.data[0] as SharedPreferences));
+              songsBloc.initFromPrefs(snapshot.data![0] as SharedPreferences));
           return BlocProvider<ConfigBloc>(
             bloc: configBloc,
             child: BlocProvider<SongsBloc>(

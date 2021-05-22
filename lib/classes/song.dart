@@ -3,7 +3,11 @@ import 'package:flutter/material.dart' show immutable;
 
 @immutable
 class Song {
-  const Song({this.number, this.name, this.withoutChords, this.withChords});
+  const Song(
+      {required this.number,
+      required this.name,
+      required this.withoutChords,
+      required this.withChords});
 
   final int number;
   final String name;

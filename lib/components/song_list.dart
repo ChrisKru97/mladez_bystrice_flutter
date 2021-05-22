@@ -10,21 +10,22 @@ import 'favorite_icon.dart';
 
 class SongList extends StatelessWidget {
   SongList(
-      {this.songs,
-      this.bottomSheetController,
+      {required this.songs,
       this.setBottomSheet,
+      this.bottomSheetController,
       this.trimmed = false});
 
   final ScrollController _controller = ScrollController();
   final bool trimmed;
   final List<Song> songs;
-  final PersistentBottomSheetController<int> bottomSheetController;
-  final void Function(PersistentBottomSheetController<int>) setBottomSheet;
+  final PersistentBottomSheetController<int>? bottomSheetController;
+  final void Function(PersistentBottomSheetController<int>?)? setBottomSheet;
 
   void _openSong(BuildContext context, int number) {
     try {
       BlocProvider.of<SongsBloc>(context).addToHistory(number);
       bottomSheetController?.close();
+      setBottomSheet?.call(null);
     } on Exception catch (_) {}
     Navigator.of(context)
         .push(CupertinoPageRoute<void>(builder: (_) => SongDisplay(number)));
