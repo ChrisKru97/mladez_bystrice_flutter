@@ -18,8 +18,9 @@ class SongList extends StatelessWidget {
   final ScrollController _controller = ScrollController();
   final bool trimmed;
   final List<Song> songs;
-  final PersistentBottomSheetController<int>? bottomSheetController;
-  final void Function(PersistentBottomSheetController<int>?)? setBottomSheet;
+  final PersistentBottomSheetController<dynamic>? bottomSheetController;
+  final void Function(PersistentBottomSheetController<dynamic>?)?
+      setBottomSheet;
 
   void _openSong(BuildContext context, int number) {
     try {
@@ -65,8 +66,7 @@ class SongList extends StatelessWidget {
                           : Colors.black),
                 ),
                 onTap: () {
-                  _openSong(context,
-                      song.number < 198 ? song.number - 1 : song.number - 3);
+                  _openSong(context, song.number);
                 },
                 trailing: FavoriteIcon(song.number),
               );

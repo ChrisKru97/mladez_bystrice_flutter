@@ -17,15 +17,12 @@ class NumberSelect extends StatelessWidget {
     int parsedNumber;
     parsedNumber = int.parse(number);
     _fieldController.text = '';
-    if (!parsedNumber.isNaN &&
-        (parsedNumber > 0 && parsedNumber < 198 ||
-            parsedNumber > 199 && parsedNumber < lastNumber)) {
-      final int finalNumber = parsedNumber - (parsedNumber < 198 ? 1 : 3);
+    if (!parsedNumber.isNaN && parsedNumber > 0 && parsedNumber < lastNumber) {
       try {
-        BlocProvider.of<SongsBloc>(context).addToHistory(finalNumber);
+        BlocProvider.of<SongsBloc>(context).addToHistory(parsedNumber);
       } on Exception catch (_) {}
       Navigator.of(context).push(CupertinoPageRoute<void>(
-        builder: (BuildContext context) => SongDisplay(finalNumber),
+        builder: (BuildContext context) => SongDisplay(parsedNumber),
       ));
     } else {
       Navigator.pop(context);
@@ -53,8 +50,7 @@ class NumberSelect extends StatelessWidget {
             } on Exception catch (_) {
               _fieldController.text = data.substring(0, data.length - 1);
             }
-            if (!(number > 0 && number < 198 ||
-                number > 199 && number < lastNumber)) {
+            if (!(number > 0 && number < lastNumber)) {
               _fieldController.text = data.substring(0, data.length - 1);
             }
           },

@@ -18,7 +18,9 @@ class FontSettings extends StatelessWidget {
           return Container(
             margin: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-                color: Colors.grey[400],
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey[700]
+                    : Colors.grey[200],
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: const <BoxShadow>[
                   BoxShadow(
@@ -37,11 +39,16 @@ class FontSettings extends StatelessWidget {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        const Padding(
-                            padding: EdgeInsets.all(10),
+                        Padding(
+                            padding: const EdgeInsets.all(10),
                             child: Text(
                               'Akordy',
-                              style: TextStyle(fontSize: 22),
+                              style: TextStyle(
+                                  fontSize: 22,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black),
                             )),
                         Switch(
                           value: snapshot.data!.showChords,
@@ -72,14 +79,14 @@ class FontSettings extends StatelessWidget {
                   ],
                 ),
                 Slider(
-                  min: MediaQuery.of(context).size.width * 0.015 >
+                  min: MediaQuery.of(context).size.width * 0.02 >
                           snapshot.data!.songFontSize
                       ? snapshot.data!.songFontSize
-                      : MediaQuery.of(context).size.width * 0.015,
-                  max: MediaQuery.of(context).size.width * 0.06 <
+                      : MediaQuery.of(context).size.width * 0.02,
+                  max: MediaQuery.of(context).size.width * 0.1 <
                           snapshot.data!.songFontSize
                       ? snapshot.data!.songFontSize
-                      : MediaQuery.of(context).size.width * 0.06,
+                      : MediaQuery.of(context).size.width * 0.1,
                   onChanged: (double value) {
                     provider.updateConfig('songFontSize', value);
                   },

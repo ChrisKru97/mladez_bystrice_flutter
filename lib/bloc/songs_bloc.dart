@@ -21,7 +21,7 @@ class SongsBloc implements Bloc {
 
   List<Song> getSongs() => _songs ?? <Song>[];
 
-  Song getSong(int number) => _songs!.elementAt(number);
+  Song getSong(int number) => _songs!.elementAt(number - 1);
 
   void addFavorite(int number) {
     _last.add(number);

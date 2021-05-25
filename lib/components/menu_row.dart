@@ -29,7 +29,7 @@ class MenuRow extends StatelessWidget {
   const MenuRow({required this.setBottomSheet, required this.lastNumber});
 
   final int lastNumber;
-  final void Function(PersistentBottomSheetController<int>?) setBottomSheet;
+  final void Function(PersistentBottomSheetController<dynamic>?) setBottomSheet;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -71,13 +71,17 @@ class MenuRow extends StatelessWidget {
                     Icons.keyboard,
                     color: Colors.black,
                   ),
-                  onPressed: () => setBottomSheet(showBottomSheet(
-                      builder: (_) => NumberSelect(lastNumber),
-                      context: context,
-                      backgroundColor: Colors.transparent)
-                    ..closed.then((_) {
+                  onPressed: () {
+                    final bottomSheet = showBottomSheet(
+                        builder: (_) => NumberSelect(lastNumber),
+                        context: context,
+                        backgroundColor: Colors.transparent);
+                    bottomSheet.closed.then((value) {
+                      print(value);
                       setBottomSheet(null);
-                    }))),
+                    });
+                    setBottomSheet(bottomSheet);
+                  }),
             ),
             ButtonContainer(
               child: IconButton(

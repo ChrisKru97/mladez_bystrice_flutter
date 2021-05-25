@@ -20,10 +20,10 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   bool checkedForStartingDialog = false;
-  PersistentBottomSheetController<int>? bottomSheetController;
+  PersistentBottomSheetController<dynamic>? bottomSheetController;
 
   void setBottomSheet(
-          PersistentBottomSheetController<int>? newBottomSheetController) =>
+          PersistentBottomSheetController<dynamic>? newBottomSheetController) =>
       setState(() {
         bottomSheetController = newBottomSheetController;
       });

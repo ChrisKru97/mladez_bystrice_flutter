@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../bloc/bloc_provider.dart';
 import '../bloc/songs_bloc.dart';
-import '../classes/song.dart';
 import '../components/song_list.dart';
 
 class HistoryList extends StatelessWidget {
@@ -25,9 +24,8 @@ class HistoryList extends StatelessWidget {
                 provider.refresh();
                 return const Center(child: CircularProgressIndicator());
               }
-              final List<Song> songs = provider.getSongs();
               return SongList(
-                  songs: snapshot.data!.map(songs.elementAt).toList());
+                  songs: snapshot.data!.map(provider.getSong).toList());
             }));
   }
 }

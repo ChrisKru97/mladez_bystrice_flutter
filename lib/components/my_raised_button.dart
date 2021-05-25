@@ -15,14 +15,10 @@ class MyRaisedButton extends StatelessWidget {
               : Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        // style: ButtonStyle(
-        //   backgroundColor: secondary
-        //       ? Theme.of(context).secondaryHeaderColor
-        //       : Theme.of(context).primaryColor,
-        //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        //   textColor: Colors.white,
-        // ),
         onPressed: onPressed,
-        child: Text(text),
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.white),
+        ),
       );
 }
