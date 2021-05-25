@@ -35,6 +35,7 @@ class NumberSelect extends StatelessWidget {
         TextField(
           decoration:
               const InputDecoration(counterText: '', border: InputBorder.none),
+          style: const TextStyle(color: Colors.black),
           controller: _fieldController,
           autofocus: true,
           keyboardType: TextInputType.number,

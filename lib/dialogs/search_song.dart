@@ -7,7 +7,7 @@ class SearchSong extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         margin: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-            color: Colors.grey[400],
+            color: Colors.grey[500],
             borderRadius: BorderRadius.circular(15),
             boxShadow: const <BoxShadow>[
               BoxShadow(
