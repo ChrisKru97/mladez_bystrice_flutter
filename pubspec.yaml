@@ -1,25 +1,25 @@
 name: mladez_zpevnik
 description: Bystřický mládežový zpěvník
 
-version: 1.6.4+22
+version: 1.6.5+23
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.19.6 <3.0.0'
 
 dependencies:
-  cloud_firestore: ^2.2.0
-  draggable_scrollbar: ^0.1.0
-  firebase_auth: ^1.2.0
-  firebase_core: ^1.2.0
   flutter:
     sdk: flutter
-  shared_preferences: ^2.0.6
-  toggle_switch: ^0.1.9
-  wakelock: ^0.5.2
+    
+  cloud_firestore: ^4.7.1
+  firebase_auth: ^4.6.1
+  firebase_core: ^2.13.0
+  shared_preferences: ^2.1.1
+  toggle_switch: ^2.1.0
+  wakelock: ^0.6.2
+  draggable_scrollbar: ^0.1.0
 
 dev_dependencies:
-  analyzer: ^1.5.0
-  pedantic: ^1.11.0
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true

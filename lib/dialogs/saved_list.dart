@@ -22,7 +22,8 @@ class SavedList extends StatelessWidget {
             builder: (_, AsyncSnapshot<Set<int>> snapshot) {
               if (snapshot.data == null) {
                 provider.refresh();
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
               }
               return SongList(
                   songs: provider

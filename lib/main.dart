@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'bloc/bloc_provider.dart';
 import 'bloc/config_bloc.dart';
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
       builder: (_, AsyncSnapshot<List<dynamic>> snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const MaterialApp(
-              home: Center(child: CircularProgressIndicator()));
+              home: Center(child: CircularProgressIndicator.adaptive()));
         } else {
           final Config initialConfig = Config();
           final ConfigBloc configBloc = ConfigBloc()

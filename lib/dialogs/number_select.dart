@@ -8,8 +8,8 @@ import '../dialogs/bottom_sheet.dart';
 import '../song_display.dart';
 
 class NumberSelect extends StatelessWidget {
-  NumberSelect(this.lastNumber);
-
+  NumberSelect(this.lastNumber, {required this.bottom});
+  final double bottom;
   final int lastNumber;
   final TextEditingController _fieldController = TextEditingController();
 
@@ -31,7 +31,8 @@ class NumberSelect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CustomBottomSheet(
-          child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      bottom: bottom,
+      child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         TextField(
           decoration:
               const InputDecoration(counterText: '', border: InputBorder.none),

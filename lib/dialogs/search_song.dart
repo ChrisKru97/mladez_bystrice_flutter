@@ -1,11 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../bloc/bloc_provider.dart';
 import '../bloc/search_bloc.dart';
 
 class SearchSong extends StatelessWidget {
+  const SearchSong({required this.bottom});
+  final double bottom;
+
   @override
   Widget build(BuildContext context) => Container(
-        margin: const EdgeInsets.all(15),
+        margin: const EdgeInsets.all(15).copyWith(bottom: max(15, bottom)),
         decoration: BoxDecoration(
             color: Colors.grey[500],
             borderRadius: BorderRadius.circular(15),

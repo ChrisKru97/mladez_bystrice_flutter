@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import '../bloc/bloc_provider.dart';
@@ -5,6 +7,9 @@ import '../bloc/config_bloc.dart';
 import '../classes/config.dart';
 
 class FontSettings extends StatelessWidget {
+  const FontSettings({required this.bottom});
+  final double bottom;
+
   @override
   Widget build(BuildContext context) {
     final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
@@ -13,10 +18,10 @@ class FontSettings extends StatelessWidget {
         builder: (_, AsyncSnapshot<Config> snapshot) {
           if (snapshot.data == null) {
             provider.refresh();
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator.adaptive());
           }
           return Container(
-            margin: const EdgeInsets.all(20),
+            margin: const EdgeInsets.all(20).copyWith(bottom: max(20, bottom)),
             decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.grey[700]
@@ -50,7 +55,7 @@ class FontSettings extends StatelessWidget {
                                       ? Colors.white
                                       : Colors.black),
                             )),
-                        Switch(
+                        Switch.adaptive(
                           value: snapshot.data!.showChords,
                           onChanged: (bool value) {
                             provider.updateConfig('showChords', value);
@@ -67,18 +72,18 @@ class FontSettings extends StatelessWidget {
                       activeFgColor: Colors.white,
                       labels: const <String>['', ''],
                       inactiveBgColor: Colors.black26,
-                      activeBgColor: Theme.of(context).secondaryHeaderColor,
+                      activeBgColor: [Theme.of(context).secondaryHeaderColor],
                       inactiveFgColor:
                           Theme.of(context).brightness == Brightness.dark
                               ? Colors.white
                               : Colors.black,
-                      onToggle: (int selected) {
+                      onToggle: (int? selected) {
                         provider.updateConfig('alignCenter', 1 == selected);
                       },
                     )
                   ],
                 ),
-                Slider(
+                Slider.adaptive(
                   min: MediaQuery.of(context).size.width * 0.02 >
                           snapshot.data!.songFontSize
                       ? snapshot.data!.songFontSize

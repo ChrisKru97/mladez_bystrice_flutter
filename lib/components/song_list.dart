@@ -74,7 +74,7 @@ class SongList extends StatelessWidget {
     if (!trimmed) {
       return list;
     }
-    return RefreshIndicator(
+    return RefreshIndicator.adaptive(
         onRefresh: () =>
             BlocProvider.of<SongsBloc>(context).loadSongs(force: true),
         child: list);

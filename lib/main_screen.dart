@@ -52,7 +52,8 @@ class _MainScreenState extends State<MainScreen> {
             provider.refresh();
             return Container(
                 color: Colors.white,
-                child: const Center(child: CircularProgressIndicator()));
+                child:
+                    const Center(child: CircularProgressIndicator.adaptive()));
           }
           final SongsBloc songsProvider = BlocProvider.of<SongsBloc>(context);
           final List<Song> songs = songsProvider.getSongs();
@@ -60,7 +61,8 @@ class _MainScreenState extends State<MainScreen> {
             provider.refresh();
             return Container(
                 color: Colors.white,
-                child: const Center(child: CircularProgressIndicator()));
+                child:
+                    const Center(child: CircularProgressIndicator.adaptive()));
           }
           return StreamBuilder<String?>(
               stream: BlocProvider.of<SearchBloc>(context).stream,

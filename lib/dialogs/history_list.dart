@@ -22,7 +22,8 @@ class HistoryList extends StatelessWidget {
             builder: (_, AsyncSnapshot<List<int>> snapshot) {
               if (snapshot.data == null) {
                 provider.refresh();
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
               }
               return SongList(
                   songs: snapshot.data!.map(provider.getSong).toList());

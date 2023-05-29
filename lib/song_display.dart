@@ -28,20 +28,17 @@ class _SongDisplayState extends State<SongDisplay> {
     final Song song = widget.song ??
         BlocProvider.of<SongsBloc>(context).getSong(widget._number);
     final String title = '${song.number}. ${song.name}';
+    final bottom = MediaQuery.of(context).padding.bottom;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: widget.song != null ? null : const BackButton(),
-        flexibleSpace: SafeArea(child: Center(
-            child: LayoutBuilder(builder: (_, BoxConstraints constraints) {
-          final double titleSize =
-              ((constraints.maxWidth - 100) / title.length) * 2;
-          return Text(
+        title: FittedBox(
+          child: Text(
             title,
-            style: TextStyle(
-                color: Colors.white, fontSize: titleSize < 38 ? titleSize : 38),
-          );
-        }))),
+            style: const TextStyle(color: Colors.white, fontSize: 38),
+          ),
+        ),
         actions: widget.song != null
             ? null
             : <Widget>[FavoriteIcon(song.number, white: true)],
@@ -51,7 +48,7 @@ class _SongDisplayState extends State<SongDisplay> {
           builder: (BuildContext context, AsyncSnapshot<Config> snapshot) {
             if (snapshot.data == null) {
               provider.refresh();
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator.adaptive());
             }
             final double fontSize = snapshot.data!.songFontSize;
             final Text textWidget = Text(
@@ -100,7 +97,7 @@ class _SongDisplayState extends State<SongDisplay> {
                         });
                         showBottomSheet(
                                 context: context,
-                                builder: (_) => FontSettings(),
+                                builder: (_) => FontSettings(bottom: bottom),
                                 backgroundColor: Colors.transparent)
                             .closed
                             .then((_) {

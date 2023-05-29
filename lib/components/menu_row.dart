@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../bloc/bloc_provider.dart';
@@ -34,7 +36,8 @@ class MenuRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         color: Colors.black54,
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: 20)
+            .copyWith(bottom: max(20, MediaQuery.of(context).padding.bottom)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -58,7 +61,8 @@ class MenuRow extends StatelessWidget {
                   ),
                   onPressed: () => setBottomSheet(showBottomSheet(
                       context: context,
-                      builder: (_) => SearchSong(),
+                      builder: (_) => SearchSong(
+                          bottom: MediaQuery.of(context).padding.bottom),
                       backgroundColor: Colors.transparent)
                     ..closed.then((_) {
                       setBottomSheet(null);
@@ -73,11 +77,11 @@ class MenuRow extends StatelessWidget {
                   ),
                   onPressed: () {
                     final bottomSheet = showBottomSheet(
-                        builder: (_) => NumberSelect(lastNumber),
+                        builder: (_) => NumberSelect(lastNumber,
+                            bottom: MediaQuery.of(context).padding.bottom),
                         context: context,
                         backgroundColor: Colors.transparent);
                     bottomSheet.closed.then((value) {
-                      print(value);
                       setBottomSheet(null);
                     });
                     setBottomSheet(bottomSheet);
@@ -101,7 +105,8 @@ class MenuRow extends StatelessWidget {
                   ),
                   onPressed: () => setBottomSheet(showBottomSheet(
                       context: context,
-                      builder: (_) => Settings(),
+                      builder: (_) => Settings(
+                          bottom: MediaQuery.of(context).padding.bottom),
                       backgroundColor: Colors.transparent)
                     ..closed.then((_) {
                       setBottomSheet(null);

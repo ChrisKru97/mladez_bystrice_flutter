@@ -6,16 +6,20 @@ import '../classes/config.dart';
 import 'bottom_sheet.dart';
 
 class Settings extends StatelessWidget {
+  const Settings({required this.bottom});
+  final double bottom;
+
   @override
   Widget build(BuildContext context) {
     final ConfigBloc provider = BlocProvider.of<ConfigBloc>(context);
     return CustomBottomSheet(
+      bottom: bottom,
       child: StreamBuilder<Config>(
           stream: provider.stream,
           builder: (BuildContext context, AsyncSnapshot<Config> snapshot) {
             if (snapshot.data == null) {
               provider.refresh();
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator.adaptive());
             }
             final Color primary =
                 Theme.of(context).brightness == Brightness.dark
@@ -31,7 +35,7 @@ class Settings extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   const Text('Světlé', style: TextStyle(color: textColor)),
-                  Switch(
+                  Switch.adaptive(
                     value: snapshot.data!.darkMode,
                     activeTrackColor: primary.withOpacity(0.6),
                     activeColor: primary,
