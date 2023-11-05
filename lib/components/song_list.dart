@@ -1,9 +1,8 @@
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../bloc/bloc_provider.dart';
-import '../bloc/songs_bloc.dart';
+import 'package:get/get.dart';
+import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import '../classes/song.dart';
 import '../song_display.dart';
 import 'favorite_icon.dart';
@@ -24,7 +23,8 @@ class SongList extends StatelessWidget {
 
   void _openSong(BuildContext context, int number) {
     try {
-      BlocProvider.of<SongsBloc>(context).addToHistory(number);
+      final SongsController songsController = Get.find();
+      songsController.addToHistory(number);
       bottomSheetController?.close();
       setBottomSheet?.call(null);
     } on Exception catch (_) {}
@@ -75,8 +75,10 @@ class SongList extends StatelessWidget {
       return list;
     }
     return RefreshIndicator.adaptive(
-        onRefresh: () =>
-            BlocProvider.of<SongsBloc>(context).loadSongs(force: true),
+        onRefresh: () {
+          final SongsController songsController = Get.find();
+          return songsController.loadSongs();
+        },
         child: list);
   }
 }

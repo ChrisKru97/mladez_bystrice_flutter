@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import '../bloc/bloc_provider.dart';
-import '../bloc/search_bloc.dart';
+import 'package:flutter/material.dart' hide SearchController;
+import 'package:get/get.dart';
+import '../bloc/search_controller.dart';
 import '../dialogs/history_list.dart';
 import '../dialogs/number_select.dart';
 import '../dialogs/saved_list.dart';
@@ -11,7 +11,7 @@ import '../dialogs/search_song.dart';
 import '../dialogs/settings.dart';
 
 class ButtonContainer extends StatelessWidget {
-  const ButtonContainer({required this.child});
+  const ButtonContainer({super.key, required this.child});
 
   final Widget child;
 
@@ -28,7 +28,7 @@ class ButtonContainer extends StatelessWidget {
 }
 
 class MenuRow extends StatelessWidget {
-  const MenuRow({required this.setBottomSheet, required this.lastNumber});
+  const MenuRow({super.key, required this.setBottomSheet, required this.lastNumber});
 
   final int lastNumber;
   final void Function(PersistentBottomSheetController<dynamic>?) setBottomSheet;
@@ -66,7 +66,8 @@ class MenuRow extends StatelessWidget {
                       backgroundColor: Colors.transparent)
                     ..closed.then((_) {
                       setBottomSheet(null);
-                      BlocProvider.of<SearchBloc>(context).search('');
+                      final SearchController searchController = Get.find();
+                      searchController.search.value = '';
                     }))),
             ),
             ButtonContainer(

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-
-import '../bloc/bloc_provider.dart';
-import '../bloc/songs_bloc.dart';
+import 'package:get/get.dart';
+import '../bloc/songs_controller.dart';
 import '../components/song_list.dart';
 
 class HistoryList extends StatelessWidget {
+  const HistoryList({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final SongsBloc provider = BlocProvider.of<SongsBloc>(context);
+    final SongsController songsController = Get.find();
     return Scaffold(
         appBar: AppBar(
             leading: const BackButton(),
@@ -17,16 +18,8 @@ class HistoryList extends StatelessWidget {
               'Naposledy otevřené',
               style: TextStyle(color: Colors.white, fontSize: 30),
             )))),
-        body: StreamBuilder<List<int>>(
-            stream: provider.historyStream,
-            builder: (_, AsyncSnapshot<List<int>> snapshot) {
-              if (snapshot.data == null) {
-                provider.refresh();
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
-              }
-              return SongList(
-                  songs: snapshot.data!.map(provider.getSong).toList());
-            }));
+        body: Obx(() => songsController.songs.isEmpty
+            ? const Center(child: CircularProgressIndicator.adaptive())
+            : SongList(songs: songsController.songs)));
   }
 }

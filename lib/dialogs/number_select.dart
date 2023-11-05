@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../bloc/bloc_provider.dart';
-import '../bloc/songs_bloc.dart';
+import 'package:get/get.dart';
+import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import '../components/my_raised_button.dart';
 import '../dialogs/bottom_sheet.dart';
 import '../song_display.dart';
 
 class NumberSelect extends StatelessWidget {
-  NumberSelect(this.lastNumber, {required this.bottom});
+  NumberSelect(this.lastNumber, {super.key, required this.bottom});
+
   final double bottom;
   final int lastNumber;
   final TextEditingController _fieldController = TextEditingController();
@@ -19,7 +19,8 @@ class NumberSelect extends StatelessWidget {
     _fieldController.text = '';
     if (!parsedNumber.isNaN && parsedNumber > 0 && parsedNumber < lastNumber) {
       try {
-        BlocProvider.of<SongsBloc>(context).addToHistory(parsedNumber);
+        final SongsController songsController = Get.find();
+        songsController.addToHistory(parsedNumber);
       } on Exception catch (_) {}
       Navigator.of(context).push(CupertinoPageRoute<void>(
         builder: (BuildContext context) => SongDisplay(parsedNumber),

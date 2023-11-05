@@ -1,5 +1,4 @@
-import 'dart:async';
-import 'bloc.dart';
+import 'package:get/get.dart';
 
 const List<String> lettersToDeburr = <String>[
   'ě',
@@ -62,22 +61,6 @@ String deburr(String s) {
   return buffer.toString();
 }
 
-class SearchBloc implements Bloc {
-  final StreamController<String?> _controller = StreamController<String?>();
-
-  Stream<String?> get stream => _controller.stream;
-
-  void search(String s) {
-    final String newS = deburr(s).toLowerCase();
-    _controller.sink.add(newS);
-  }
-
-  void closeSearch() {
-    _controller.sink.add(null);
-  }
-
-  @override
-  void dispose() {
-    _controller.close();
-  }
+class SearchController extends GetxController {
+  var search = ''.obs;
 }

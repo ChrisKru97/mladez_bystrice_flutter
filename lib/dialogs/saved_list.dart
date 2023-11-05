@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import '../bloc/bloc_provider.dart';
-import '../bloc/songs_bloc.dart';
-import '../classes/song.dart';
+import 'package:get/get.dart';
+import '../bloc/songs_controller.dart';
 import '../components/song_list.dart';
 
 class SavedList extends StatelessWidget {
+  const SavedList({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final SongsBloc provider = BlocProvider.of<SongsBloc>(context);
+    final SongsController songsController = Get.find();
     return Scaffold(
         appBar: AppBar(
             leading: const BackButton(),
@@ -17,20 +18,10 @@ class SavedList extends StatelessWidget {
               'Oblíbené',
               style: TextStyle(color: Colors.white, fontSize: 30),
             )))),
-        body: StreamBuilder<Set<int>>(
-            stream: provider.stream,
-            builder: (_, AsyncSnapshot<Set<int>> snapshot) {
-              if (snapshot.data == null) {
-                provider.refresh();
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
-              }
-              return SongList(
-                  songs: provider
-                      .getSongs()
-                      .where(
-                          (Song song) => snapshot.data!.contains(song.number))
-                      .toList());
-            }));
+        body: Obx(() => SongList(
+            songs: songsController.songs
+                .where(
+                    (song) => songsController.favorites.contains(song.number))
+                .toList())));
   }
 }
