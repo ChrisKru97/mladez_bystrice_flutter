@@ -31,9 +31,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final configController = ConfigController();
-    final isDarkMode = configController.init();
+    final config = configController.init();
     Get.put(configController);
-    Get.put(SongsController()..init());
+    Get.put(SongsController()..init(config));
     return GetMaterialApp(
       title: 'Mládežový zpěvník',
       initialRoute: '/',
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
       ),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      themeMode: config?.isDarkMode ?? false ? ThemeMode.dark : ThemeMode.light,
       routingCallback: (routing) {
         switch (routing?.current) {
           case '/song':

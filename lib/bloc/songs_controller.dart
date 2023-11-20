@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:get/get.dart';
+import 'package:mladez_zpevnik/bloc/config_controller.dart';
+import 'package:mladez_zpevnik/classes/config.dart';
 import 'package:mladez_zpevnik/classes/history_entry.dart';
 import 'package:mladez_zpevnik/classes/song.dart';
 import 'package:mladez_zpevnik/main.dart';
@@ -55,10 +57,20 @@ class SongsController extends GetxController {
     final parsedSongs = parseSongList(docs.docs);
     songs.assignAll(parsedSongs);
     songBox.putMany(parsedSongs);
+    Get.find<ConfigController>().config.update((val) {
+      if (val == null) return;
+      val.lastFirestoreFetch = DateTime.now();
+    });
   }
 
-  Future<void> loadSongs({bool force = false}) async {
-    if (force || songBox.isEmpty()) {
+  Future<void> loadSongs({bool force = false, Config? config}) async {
+    final lastFirestoreFetch = config?.lastFirestoreFetch;
+    final shouldRefresh = force ||
+        songBox.isEmpty() ||
+        (config != null &&
+            (lastFirestoreFetch == null ||
+                -lastFirestoreFetch.difference(DateTime.now()).inDays > 7));
+    if (shouldRefresh) {
       await loadFromFirestore();
     } else {
       songs.assignAll(songBox.getAll());
@@ -76,8 +88,8 @@ class SongsController extends GetxController {
     history.assignAll(parsedHistory);
   }
 
-  void init() {
-    loadSongs();
+  void init(Config? config) {
+    loadSongs(config: config);
     loadHistory();
   }
 

@@ -6,18 +6,21 @@ class ConfigController extends GetxController {
   final configBox = objectbox.store.box<Config>();
   Rx<Config> config = Config().obs;
 
-  bool init() {
-    if (configBox.isEmpty()) return false;
+  Config? init() {
+    if (configBox.isEmpty()) return null;
     final configVal = configBox.get(1);
     config.update((val) {
       val = configVal;
     });
-    return configVal?.isDarkMode ?? false;
+    return configVal;
   }
 
   @override
   void onInit() {
-    ever(config, (config) => configBox.put(config));
+    ever(
+        config,
+        (config) =>
+            config.lastFirestoreFetch != null ? configBox.put(config) : null);
     super.onInit();
   }
 }
