@@ -1,35 +1,19 @@
-import 'package:draggable_scrollbar/draggable_scrollbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import '../classes/song.dart';
-import '../song_display.dart';
 import 'favorite_icon.dart';
 
 class SongList extends StatelessWidget {
-  SongList(
-      {required this.songs,
-      this.setBottomSheet,
-      this.bottomSheetController,
-      this.trimmed = false});
+  const SongList({super.key, required this.songs, this.trimmed = false});
 
-  final ScrollController _controller = ScrollController();
   final bool trimmed;
   final List<Song> songs;
-  final PersistentBottomSheetController<dynamic>? bottomSheetController;
-  final void Function(PersistentBottomSheetController<dynamic>?)?
-      setBottomSheet;
 
-  void _openSong(BuildContext context, int number) {
-    try {
-      final SongsController songsController = Get.find();
-      songsController.addToHistory(number);
-      bottomSheetController?.close();
-      setBottomSheet?.call(null);
-    } on Exception catch (_) {}
-    Navigator.of(context)
-        .push(CupertinoPageRoute<void>(builder: (_) => SongDisplay(number)));
+  void _openSong(int number) {
+    final SongsController songsController = Get.find();
+    songsController.addToHistory(number);
+    Get.toNamed('/song', arguments: number);
   }
 
   @override
@@ -38,46 +22,30 @@ class SongList extends StatelessWidget {
       return const Center(
           child: Text('Zatím žádné písně', style: TextStyle(fontSize: 30)));
     }
-    final Widget list = DraggableScrollbar.rrect(
-        backgroundColor: Theme.of(context).brightness == Brightness.dark
-            ? Colors.white70
-            : Theme.of(context).secondaryHeaderColor,
-        padding: EdgeInsets.only(right: 4, bottom: trimmed ? 80 : 0),
-        alwaysVisibleScrollThumb: true,
-        controller: _controller,
-        child: ListView.separated(
-            controller: _controller,
-            separatorBuilder: (_, __) => const Divider(
-                  height: 2,
-                  color: Colors.black12,
-                ),
-            itemCount: songs.length + (trimmed ? 1 : 0),
-            itemBuilder: (BuildContext context, int index) {
-              if (trimmed && index == songs.length) {
-                return ListTile(title: Container(height: 70));
-              }
-              final Song song = songs.elementAt(index);
-              return ListTile(
-                title: Text(
-                  '${song.number}. ${song.name}',
-                  style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black),
-                ),
-                onTap: () {
-                  _openSong(context, song.number);
-                },
-                trailing: FavoriteIcon(song.number),
-              );
-            }));
+    final Widget list = ListView.separated(
+        separatorBuilder: (_, __) => const Divider(
+              height: 2,
+              // color: Colors.black12,
+            ),
+        itemCount: songs.length + (trimmed ? 1 : 0),
+        itemBuilder: (BuildContext context, int index) {
+          if (trimmed && index == songs.length) {
+            return ListTile(title: Container(height: 70));
+          }
+          final Song song = songs.elementAt(index);
+          return ListTile(
+            title: Text('${song.number}. ${song.name}'),
+            onTap: () => _openSong(song.number),
+            trailing: FavoriteIcon(song.isFavorite, song.number),
+          );
+        });
     if (!trimmed) {
       return list;
     }
     return RefreshIndicator.adaptive(
         onRefresh: () {
           final SongsController songsController = Get.find();
-          return songsController.loadSongs();
+          return songsController.loadSongs(force: true);
         },
         child: list);
   }

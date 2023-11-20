@@ -1,39 +1,20 @@
-import 'dart:convert' show jsonEncode;
-import 'package:flutter/material.dart' show immutable;
+import 'package:objectbox/objectbox.dart';
 
-@immutable
+@Entity()
 class Song {
-  const Song(
-      {required this.number,
-      required this.name,
-      required this.withoutChords,
-      required this.withChords});
-
-  final int number;
+  @Id(assignable: true)
+  int number;
   final String name;
   final String withChords;
   final String withoutChords;
+  final String searchValue;
+  bool isFavorite;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Song &&
-          runtimeType == other.runtimeType &&
-          number == other.number;
-
-  @override
-  int get hashCode =>
-      name.hashCode ^
-      withChords.hashCode & withoutChords.hashCode ^
-      number.hashCode;
-
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'number': number,
-        'name': name,
-        'withChords': withChords,
-        'withoutChords': withoutChords,
-      };
-
-  @override
-  String toString() => jsonEncode(this);
+  Song(
+      {required this.number,
+      required this.name,
+      required this.withChords,
+      required this.withoutChords,
+      required this.searchValue,
+      this.isFavorite = false});
 }

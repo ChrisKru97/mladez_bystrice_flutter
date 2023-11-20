@@ -18,8 +18,6 @@ class HistoryList extends StatelessWidget {
               'Naposledy otevřené',
               style: TextStyle(color: Colors.white, fontSize: 30),
             )))),
-        body: Obx(() => songsController.songs.isEmpty
-            ? const Center(child: CircularProgressIndicator.adaptive())
-            : SongList(songs: songsController.songs)));
+        body: Obx(() => SongList(songs: songsController.historySongs)));
   }
 }

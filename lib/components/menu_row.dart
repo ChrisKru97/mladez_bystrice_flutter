@@ -1,14 +1,10 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' hide SearchController;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../bloc/search_controller.dart';
-import '../dialogs/history_list.dart';
+import 'package:mladez_zpevnik/dialogs/search_song.dart';
+import 'package:mladez_zpevnik/dialogs/settings.dart';
 import '../dialogs/number_select.dart';
-import '../dialogs/saved_list.dart';
-import '../dialogs/search_song.dart';
-import '../dialogs/settings.dart';
 
 class ButtonContainer extends StatelessWidget {
   const ButtonContainer({super.key, required this.child});
@@ -21,21 +17,18 @@ class ButtonContainer extends StatelessWidget {
         width: 40,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
+          // color: Colors.white,
         ),
         child: Center(child: child),
       );
 }
 
 class MenuRow extends StatelessWidget {
-  const MenuRow({super.key, required this.setBottomSheet, required this.lastNumber});
-
-  final int lastNumber;
-  final void Function(PersistentBottomSheetController<dynamic>?) setBottomSheet;
+  const MenuRow({super.key});
 
   @override
   Widget build(BuildContext context) => Container(
-        color: Colors.black54,
+        // color: Colors.black54,
         padding: const EdgeInsets.symmetric(vertical: 20)
             .copyWith(bottom: max(20, MediaQuery.of(context).padding.bottom)),
         child: Row(
@@ -48,9 +41,7 @@ class MenuRow extends StatelessWidget {
                   Icons.favorite,
                   color: Colors.red,
                 ),
-                onPressed: () => Navigator.of(context).push(
-                    CupertinoPageRoute<void>(
-                        builder: (BuildContext context) => SavedList())),
+                onPressed: () => Get.toNamed('/favourite'),
               ),
             ),
             ButtonContainer(
@@ -59,44 +50,23 @@ class MenuRow extends StatelessWidget {
                     Icons.search,
                     color: Colors.black,
                   ),
-                  onPressed: () => setBottomSheet(showBottomSheet(
-                      context: context,
-                      builder: (_) => SearchSong(
-                          bottom: MediaQuery.of(context).padding.bottom),
-                      backgroundColor: Colors.transparent)
-                    ..closed.then((_) {
-                      setBottomSheet(null);
-                      final SearchController searchController = Get.find();
-                      searchController.search.value = '';
-                    }))),
+                  onPressed: () => Get.bottomSheet(const SearchSong())),
             ),
             ButtonContainer(
-              child: IconButton(
-                  icon: const Icon(
-                    Icons.keyboard,
-                    color: Colors.black,
-                  ),
-                  onPressed: () {
-                    final bottomSheet = showBottomSheet(
-                        builder: (_) => NumberSelect(lastNumber,
-                            bottom: MediaQuery.of(context).padding.bottom),
-                        context: context,
-                        backgroundColor: Colors.transparent);
-                    bottomSheet.closed.then((value) {
-                      setBottomSheet(null);
-                    });
-                    setBottomSheet(bottomSheet);
-                  }),
-            ),
+                child: IconButton(
+                    icon: const Icon(
+                      Icons.keyboard,
+                      color: Colors.black,
+                    ),
+                    onPressed: () => Get.bottomSheet(NumberSelect()))),
             ButtonContainer(
               child: IconButton(
-                  icon: const Icon(
-                    Icons.history,
-                    color: Colors.black,
-                  ),
-                  onPressed: () => Navigator.of(context).push(
-                      CupertinoPageRoute<void>(
-                          builder: (BuildContext context) => HistoryList()))),
+                icon: const Icon(
+                  Icons.history,
+                  color: Colors.black,
+                ),
+                onPressed: () => Get.toNamed('/history'),
+              ),
             ),
             ButtonContainer(
               child: IconButton(
@@ -104,14 +74,7 @@ class MenuRow extends StatelessWidget {
                     Icons.settings,
                     color: Colors.black,
                   ),
-                  onPressed: () => setBottomSheet(showBottomSheet(
-                      context: context,
-                      builder: (_) => Settings(
-                          bottom: MediaQuery.of(context).padding.bottom),
-                      backgroundColor: Colors.transparent)
-                    ..closed.then((_) {
-                      setBottomSheet(null);
-                    }))),
+                  onPressed: () => Get.bottomSheet(const Settings())),
             )
           ],
         ),

@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import '../bloc/songs_controller.dart';
 import '../components/song_list.dart';
 
-class SavedList extends StatelessWidget {
-  const SavedList({super.key});
+class FavouriteList extends StatelessWidget {
+  const FavouriteList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +20,7 @@ class SavedList extends StatelessWidget {
             )))),
         body: Obx(() => SongList(
             songs: songsController.songs
-                .where(
-                    (song) => songsController.favorites.contains(song.number))
+                .where((song) => song.isFavorite)
                 .toList())));
   }
 }

@@ -4,18 +4,12 @@ import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'bottom_sheet.dart';
 
 class Settings extends StatelessWidget {
-  const Settings({super.key, required this.bottom});
-
-  final double bottom;
+  const Settings({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ConfigController configController = Get.find();
-    final Color primary = Theme.of(context).brightness == Brightness.dark
-        ? Colors.black54
-        : configController.config.value.primary;
+    ConfigController configController = Get.find();
     return CustomBottomSheet(
-      bottom: bottom,
       child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         const Padding(
             padding: EdgeInsets.all(15),
@@ -25,14 +19,16 @@ class Settings extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             const Text('Světlé', style: TextStyle(color: Colors.black)),
-            Switch.adaptive(
-              value: configController.config.value.darkMode,
-              activeTrackColor: primary.withOpacity(0.6),
-              activeColor: primary,
-              onChanged: (bool value) {
-                configController.config.value.darkMode = value;
-              },
-            ),
+            Obx(() => Switch.adaptive(
+                value:
+                    configController.config.value.isDarkMode ?? Get.isDarkMode,
+                onChanged: (bool value) {
+                  Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
+                  configController.config.update((val) {
+                    if (val == null) return;
+                    val.isDarkMode = value;
+                  });
+                })),
             const Text('Tmavé', style: TextStyle(color: Colors.black)),
           ],
         ),

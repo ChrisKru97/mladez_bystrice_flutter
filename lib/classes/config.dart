@@ -1,31 +1,21 @@
-import 'dart:convert' show jsonEncode;
-import 'package:flutter/material.dart' show Colors, Color, MaterialColor;
+import 'package:objectbox/objectbox.dart';
 
+@Entity()
 class Config {
   Config(
-      {this.primary = Colors.blue,
-      this.secondary = const Color(0xFF2E7D32),
-      this.songFontSize = 22,
+      {this.id = 1,
       this.showChords = false,
-      this.darkMode = false,
-      this.alignCenter = false});
+      this.alignCenter = true,
+      this.lastFirestoreFetch,
+      this.isDarkMode,
+      this.songFontSize = 20});
 
-  MaterialColor primary;
-  Color secondary;
-  double songFontSize;
+  @Id(assignable: true)
+  int id;
   bool showChords;
-  bool darkMode;
   bool alignCenter;
-
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'primary': primary.toString(),
-        'secondary': secondary.toString(),
-        'songFontSize': songFontSize,
-        'showChords': showChords,
-        'darkMode': darkMode,
-        'alignCenter': alignCenter,
-      };
-
-  @override
-  String toString() => jsonEncode(this);
+  bool? isDarkMode;
+  @Property(type: PropertyType.date)
+  DateTime? lastFirestoreFetch;
+  double songFontSize;
 }
