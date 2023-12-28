@@ -1,82 +1,62 @@
-import 'package:draggable_scrollbar/draggable_scrollbar.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'dart:math';
 
-import '../bloc/bloc_provider.dart';
-import '../bloc/songs_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import '../classes/song.dart';
-import '../song_display.dart';
 import 'favorite_icon.dart';
 
 class SongList extends StatelessWidget {
-  SongList(
-      {required this.songs,
-      this.setBottomSheet,
-      this.bottomSheetController,
-      this.trimmed = false});
+  const SongList({super.key, required this.songs, this.trimmed = false});
 
-  final ScrollController _controller = ScrollController();
   final bool trimmed;
   final List<Song> songs;
-  final PersistentBottomSheetController<dynamic>? bottomSheetController;
-  final void Function(PersistentBottomSheetController<dynamic>?)?
-      setBottomSheet;
-
-  void _openSong(BuildContext context, int number) {
-    try {
-      BlocProvider.of<SongsBloc>(context).addToHistory(number);
-      bottomSheetController?.close();
-      setBottomSheet?.call(null);
-    } on Exception catch (_) {}
-    Navigator.of(context)
-        .push(CupertinoPageRoute<void>(builder: (_) => SongDisplay(number)));
-  }
 
   @override
   Widget build(BuildContext context) {
+    final SongsController songsController = Get.find();
     if (songs.isEmpty) {
-      return const Center(
-          child: Text('Zatím žádné písně', style: TextStyle(fontSize: 30)));
+      return Center(
+          child: Text('Žádné písně',
+              style: TextStyle(
+                  fontSize: 30,
+                  color: Get.isDarkMode ? Colors.white : Colors.black)));
     }
-    final Widget list = DraggableScrollbar.rrect(
-        backgroundColor: Theme.of(context).brightness == Brightness.dark
-            ? Colors.white70
-            : Theme.of(context).secondaryHeaderColor,
-        padding: EdgeInsets.only(right: 4, bottom: trimmed ? 80 : 0),
-        alwaysVisibleScrollThumb: true,
-        controller: _controller,
+    final Widget list = Scrollbar(
+        thumbVisibility: trimmed,
+        thickness: 10,
+        radius: const Radius.circular(5),
         child: ListView.separated(
-            controller: _controller,
             separatorBuilder: (_, __) => const Divider(
                   height: 2,
-                  color: Colors.black12,
                 ),
-            itemCount: songs.length + (trimmed ? 1 : 0),
+            padding: trimmed
+                ? EdgeInsets.only(
+                    bottom: max(20, MediaQuery.of(context).padding.bottom) + 60)
+                : null,
+            itemCount: songs.length,
             itemBuilder: (BuildContext context, int index) {
-              if (trimmed && index == songs.length) {
-                return ListTile(title: Container(height: 70));
-              }
               final Song song = songs.elementAt(index);
               return ListTile(
-                title: Text(
-                  '${song.number}. ${song.name}',
-                  style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black),
-                ),
+                onLongPress: () => songsController.toggleFavorite(song.number),
+                title: Text('${song.number}. ${song.name}',
+                    overflow: TextOverflow.ellipsis),
                 onTap: () {
-                  _openSong(context, song.number);
+                  songsController.addToHistory(song.number);
+                  Get.toNamed('/song', arguments: song.number);
                 },
-                trailing: FavoriteIcon(song.number),
+                trailing: FavoriteIcon(song.isFavorite, number: song.number),
+                contentPadding: const EdgeInsets.only(left: 16, right: 12),
               );
             }));
     if (!trimmed) {
       return list;
     }
     return RefreshIndicator.adaptive(
-        onRefresh: () =>
-            BlocProvider.of<SongsBloc>(context).loadSongs(force: true),
+        onRefresh: () {
+          final SongsController songsController = Get.find();
+          return songsController.loadSongs(force: true);
+        },
         child: list);
   }
 }
