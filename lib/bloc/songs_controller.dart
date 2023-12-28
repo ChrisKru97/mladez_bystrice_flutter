@@ -27,11 +27,12 @@ class SongsController extends GetxController {
           searchValue: '')
       .obs;
 
-  void getSong(int number) {
+  Rx<Song> getSong(int number) {
     if (openSong.value.number != number) {
       final song = songBox.get(number);
       if (song != null) openSong.value = song;
     }
+    return openSong;
   }
 
   List<Song> get filteredSongs => searchString.value.isEmpty
@@ -80,6 +81,7 @@ class SongsController extends GetxController {
           List<QueryDocumentSnapshot<Map<String, dynamic>>> data) =>
       data.map<Song>((e) {
         final song = e.data();
+        final songState = songBox.get(song['number'] as int);
         return Song(
           number: song['number'] as int,
           name: song['name'] as String,
@@ -88,6 +90,8 @@ class SongsController extends GetxController {
           searchValue: removeDiacritics(
               '${song['number']}.${song['name']}${song['withoutChords']}'
                   .toLowerCase()),
+          isFavorite: songState?.isFavorite ?? false,
+          fontSize: songState?.fontSize ?? 20,
         );
       }).toList();
 

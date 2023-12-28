@@ -18,6 +18,8 @@ class SearchInfo extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text.rich(TextSpan(
+                    style: TextStyle(
+                        color: Get.isDarkMode ? Colors.white : Colors.black),
                     children: <TextSpan>[
                       const TextSpan(
                         text: 'Hledám: ',

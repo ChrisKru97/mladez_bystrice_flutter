@@ -9,9 +9,7 @@ class ConfigController extends GetxController {
   Config? init() {
     if (configBox.isEmpty()) return null;
     final configVal = configBox.get(1);
-    config.update((val) {
-      val = configVal;
-    });
+    if (configVal != null) config.value = configVal;
     return configVal;
   }
 
