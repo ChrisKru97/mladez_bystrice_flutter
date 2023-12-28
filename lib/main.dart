@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/classes/store.dart';
@@ -32,26 +34,46 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final configController = ConfigController();
     final config = configController.init();
+    final songsController = SongsController()..init(config);
     Get.put(configController);
-    Get.put(SongsController()..init(config));
+    Get.put(songsController);
     return GetMaterialApp(
       title: 'Mládežový zpěvník',
       initialRoute: '/',
-      theme: ThemeData(),
+      theme: ThemeData(
+          appBarTheme: const AppBarTheme(
+            // color: Color.fromRGBO(165, 201, 175, 1),
+            color: Color.fromRGBO(143, 181, 250, 1),
+            foregroundColor: Colors.white,
+            elevation: 5,
+            scrolledUnderElevation: 5,
+            shadowColor: Colors.black45,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarBrightness: Brightness.dark,
+            ),
+            // 249, 199, 145
+          ),
+          primaryColor: const Color.fromRGBO(165, 201, 175, 1),
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              foregroundColor: Colors.white,
+              backgroundColor: Color.fromRGBO(143, 181, 222, 1)),
+          textTheme: GoogleFonts.interTextTheme()),
       darkTheme: ThemeData(
-        brightness: Brightness.dark,
-      ),
-      themeMode: config?.isDarkMode ?? false ? ThemeMode.dark : ThemeMode.light,
+          brightness: Brightness.dark,
+          appBarTheme: AppBarTheme(
+              backgroundColor: Colors.grey[900],
+              elevation: 0,
+              scrolledUnderElevation: 0),
+          primaryColor: Colors.black,
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              foregroundColor: Colors.black87, backgroundColor: Colors.grey),
+          textTheme: GoogleFonts.interTextTheme()),
       routingCallback: (routing) {
         switch (routing?.current) {
           case '/song':
             Wakelock.enable();
             break;
           case '/':
-            configController.config.update((val) {
-              if (val == null) return;
-              val.songFontSize = MediaQuery.of(context).size.width / 20;
-            });
             Wakelock.disable();
             break;
         }

@@ -10,14 +10,7 @@ class FavouriteList extends StatelessWidget {
   Widget build(BuildContext context) {
     final SongsController songsController = Get.find();
     return Scaffold(
-        appBar: AppBar(
-            leading: const BackButton(),
-            flexibleSpace: const SafeArea(
-                child: Center(
-                    child: Text(
-              'Oblíbené',
-              style: TextStyle(color: Colors.white, fontSize: 30),
-            )))),
+        appBar: AppBar(leading: const BackButton(), title: const Text('Oblíbené')),
         body: Obx(() => SongList(
             songs: songsController.songs
                 .where((song) => song.isFavorite)

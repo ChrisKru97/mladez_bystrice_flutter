@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
@@ -10,35 +12,43 @@ class SongList extends StatelessWidget {
   final bool trimmed;
   final List<Song> songs;
 
-  void _openSong(int number) {
-    final SongsController songsController = Get.find();
-    songsController.addToHistory(number);
-    Get.toNamed('/song', arguments: number);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final SongsController songsController = Get.find();
     if (songs.isEmpty) {
-      return const Center(
-          child: Text('Zatím žádné písně', style: TextStyle(fontSize: 30)));
+      return Center(
+          child: Text('Žádné písně',
+              style: TextStyle(
+                  fontSize: 30,
+                  color: Get.isDarkMode ? Colors.white : Colors.black)));
     }
-    final Widget list = ListView.separated(
-        separatorBuilder: (_, __) => const Divider(
-              height: 2,
-              // color: Colors.black12,
-            ),
-        itemCount: songs.length + (trimmed ? 1 : 0),
-        itemBuilder: (BuildContext context, int index) {
-          if (trimmed && index == songs.length) {
-            return ListTile(title: Container(height: 70));
-          }
-          final Song song = songs.elementAt(index);
-          return ListTile(
-            title: Text('${song.number}. ${song.name}'),
-            onTap: () => _openSong(song.number),
-            trailing: FavoriteIcon(song.isFavorite, song.number),
-          );
-        });
+    final Widget list = Scrollbar(
+        thumbVisibility: trimmed,
+        thickness: 10,
+        radius: const Radius.circular(5),
+        child: ListView.separated(
+            separatorBuilder: (_, __) => const Divider(
+                  height: 2,
+                ),
+            padding: trimmed
+                ? EdgeInsets.only(
+                    bottom: max(20, MediaQuery.of(context).padding.bottom) + 60)
+                : null,
+            itemCount: songs.length,
+            itemBuilder: (BuildContext context, int index) {
+              final Song song = songs.elementAt(index);
+              return ListTile(
+                onLongPress: () => songsController.toggleFavorite(song.number),
+                title: Text('${song.number}. ${song.name}',
+                    overflow: TextOverflow.ellipsis),
+                onTap: () {
+                  songsController.addToHistory(song.number);
+                  Get.toNamed('/song', arguments: song.number);
+                },
+                trailing: FavoriteIcon(song.isFavorite, number: song.number),
+                contentPadding: const EdgeInsets.only(left: 16, right: 12),
+              );
+            }));
     if (!trimmed) {
       return list;
     }

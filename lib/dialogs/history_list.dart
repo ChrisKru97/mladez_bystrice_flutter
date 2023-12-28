@@ -12,12 +12,9 @@ class HistoryList extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
             leading: const BackButton(),
-            flexibleSpace: const SafeArea(
-                child: Center(
-                    child: Text(
+            title: const Text(
               'Naposledy otevřené',
-              style: TextStyle(color: Colors.white, fontSize: 30),
-            )))),
+            )),
         body: Obx(() => SongList(songs: songsController.historySongs)));
   }
 }

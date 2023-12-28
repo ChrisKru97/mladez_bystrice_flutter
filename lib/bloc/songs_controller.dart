@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
+import 'package:flutter/gestures.dart' show ScaleUpdateDetails;
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/classes/config.dart';
@@ -8,12 +11,28 @@ import 'package:mladez_zpevnik/main.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:mladez_zpevnik/objectbox.g.dart';
 
+const HISTORY_LIMIT = 50;
+
 class SongsController extends GetxController {
   final history = <int>[].obs;
   final songs = <Song>[].obs;
   final searchString = ''.obs;
   final songBox = objectbox.store.box<Song>();
   final historyBox = objectbox.store.box<HistoryEntry>();
+  final Rx<Song> openSong = Song(
+          number: 0,
+          name: '',
+          withChords: '',
+          withoutChords: '',
+          searchValue: '')
+      .obs;
+
+  void getSong(int number) {
+    if (openSong.value.number != number) {
+      final song = songBox.get(number);
+      if (song != null) openSong.value = song;
+    }
+  }
 
   List<Song> get filteredSongs => searchString.value.isEmpty
       ? songs.value
@@ -22,16 +41,40 @@ class SongsController extends GetxController {
           .toList();
 
   List<Song> get historySongs => history.value
-      .map((songNumber) => songBox.get(songNumber))
-      .whereType<Song>()
+      .map((songNumber) =>
+          songs.value.firstWhere((element) => element.number == songNumber))
       .toList();
 
-  void toggleFavorite(int number) {
+  void toggleFavorite(int? number) {
+    if (number == null) {
+      openSong.update((val) {
+        if (val == null) return;
+        val.isFavorite = !val.isFavorite;
+        songBox.put(val);
+      });
+    }
+    number ??= openSong.value.number;
     final songIndex = songs.indexWhere((element) => element.number == number);
     songs[songIndex].isFavorite = !songs[songIndex].isFavorite;
     songs.refresh();
     songBox.put(songs[songIndex]);
   }
+
+  void updateFontScale(ScaleUpdateDetails scaleDetails) =>
+      openSong.update((val) {
+        if (val == null) return;
+        val.fontSize = min(
+            Get.width * 0.1,
+            max(Get.width * 0.02,
+                val.fontSize * pow(scaleDetails.scale, 1 / 16)));
+      });
+
+  void updateFontSize(double fontSize) => openSong.update((val) {
+        if (val == null) return;
+        val.fontSize = fontSize;
+      });
+
+  void saveFontSize(dynamic _) => songBox.put(openSong.value);
 
   List<Song> parseSongList(
           List<QueryDocumentSnapshot<Map<String, dynamic>>> data) =>
@@ -95,7 +138,7 @@ class SongsController extends GetxController {
 
   void addToHistory(int number) {
     history.insert(0, number);
-    if (history.length > 10) {
+    if (history.length > HISTORY_LIMIT) {
       history.removeLast();
       final lastElement =
           historyBox.query().order(HistoryEntry_.openedAt).build().find().first;

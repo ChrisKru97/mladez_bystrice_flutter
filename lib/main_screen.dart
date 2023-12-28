@@ -16,7 +16,6 @@ class MainScreen extends StatelessWidget {
               child: const FittedBox(
                   child: Text(
                 'Mládežový zpěvník',
-                style: TextStyle(color: Colors.white),
               )))),
       body: Stack(
         alignment: Alignment.bottomCenter,
@@ -24,7 +23,7 @@ class MainScreen extends StatelessWidget {
           const SongsWithSearch(),
           ClipRect(
             child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
                 child: const MenuRow()),
           ),
         ],

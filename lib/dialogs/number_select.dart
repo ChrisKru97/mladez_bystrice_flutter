@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/dialogs/bottom_sheet.dart';
-import '../components/my_raised_button.dart';
 
 class NumberSelect extends StatelessWidget {
   NumberSelect({super.key});
@@ -33,7 +32,6 @@ class NumberSelect extends StatelessWidget {
       TextField(
         decoration:
             const InputDecoration(counterText: '', border: InputBorder.none),
-        style: const TextStyle(color: Colors.black),
         controller: _fieldController,
         autofocus: true,
         keyboardType: TextInputType.number,
@@ -55,13 +53,13 @@ class NumberSelect extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          MyRaisedButton(
-            'Otevřít',
-            () => openSong(_fieldController.text),
+          TextButton(
+            child: const Text('Otevřít'),
+            onPressed: () => openSong(_fieldController.text),
           ),
-          MyRaisedButton(
-            'Zavřít',
-            () => Get.back(),
+          TextButton(
+            child: const Text('Zavřít'),
+            onPressed: () => Get.back(),
           )
         ],
       )

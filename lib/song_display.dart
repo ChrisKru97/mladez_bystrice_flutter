@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
@@ -14,63 +12,48 @@ class SongDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     final number = Get.arguments as int;
     SongsController songsController = Get.find();
-    final song = songsController.songBox.get(number);
-    if (song == null) {
-      Get.back();
-      return const Center();
-    }
+    songsController.getSong(number);
+    final song = songsController.openSong;
     final ConfigController configController = Get.find();
-    final String title = '${song.number}. ${song.name}';
+    final String title = '${song.value.number}. ${song.value.name}';
     return Scaffold(
       appBar: AppBar(
         title: FittedBox(
           child: Text(
             title,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(fontSize: 28),
           ),
         ),
-        actions: <Widget>[
-          FavoriteIcon(song.isFavorite, song.number, white: true)
-        ],
+        actions: <Widget>[Obx(() => FavoriteIcon(song.value.isFavorite))],
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onScaleUpdate: (ScaleUpdateDetails scaleDetails) =>
-            configController.config.update((val) {
-          if (val == null) return;
-          val.songFontSize = min(
-              40, max(12, val.songFontSize * pow(scaleDetails.scale, 1 / 16)));
+        onScaleUpdate: songsController.updateFontScale,
+        onScaleEnd: songsController.saveFontSize,
+        child: Obx(() {
+          final songText = configController.config.value.showChords
+              ? song.value.withChords
+              : song.value.withoutChords;
+          final textStyle = TextStyle(fontSize: song.value.fontSize);
+          final alignCenter = configController.config.value.alignCenter;
+          final textWidget = Text(
+            songText,
+            textAlign: alignCenter ? TextAlign.center : TextAlign.left,
+            style: textStyle,
+          );
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(15),
+            child: ConstrainedBox(
+                constraints:
+                    BoxConstraints(minHeight: Get.height - Get.statusBarHeight),
+                child: textWidget),
+          );
         }),
-        child: Obx(() => SingleChildScrollView(
-              padding: const EdgeInsets.all(15),
-              child: configController.config.value.alignCenter
-                  ? Center(
-                      child: Text(
-                      configController.config.value.showChords
-                          ? song.withChords
-                          : song.withoutChords,
-                      textAlign: configController.config.value.alignCenter
-                          ? TextAlign.center
-                          : TextAlign.left,
-                      style: TextStyle(
-                          fontSize: configController.config.value.songFontSize),
-                    ))
-                  : Text(
-                      configController.config.value.showChords
-                          ? song.withChords
-                          : song.withoutChords,
-                      textAlign: configController.config.value.alignCenter
-                          ? TextAlign.center
-                          : TextAlign.left,
-                      style: TextStyle(
-                          fontSize: configController.config.value.songFontSize),
-                    ),
-            )),
       ),
       floatingActionButton: FloatingActionButton(
         mini: true,
         onPressed: () => Get.bottomSheet(const FontSettings()),
-        child: const Icon(Icons.format_size, color: Colors.white),
+        child: const Icon(Icons.format_size),
       ),
     );
   }

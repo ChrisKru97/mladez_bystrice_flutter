@@ -8,6 +8,7 @@ class Song {
   final String withChords;
   final String withoutChords;
   final String searchValue;
+  double fontSize;
   bool isFavorite;
 
   Song(
@@ -16,5 +17,6 @@ class Song {
       required this.withChords,
       required this.withoutChords,
       required this.searchValue,
-      this.isFavorite = false});
+      this.isFavorite = false,
+      this.fontSize = 20});
 }

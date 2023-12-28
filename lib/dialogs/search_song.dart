@@ -12,20 +12,21 @@ class SearchSong extends StatelessWidget {
     return Container(
         margin: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-            // color: Colors.grey[500],
+            color: Get.isDarkMode ? Colors.grey[600] : Colors.white,
             borderRadius: BorderRadius.circular(15),
-            boxShadow: const <BoxShadow>[
-              BoxShadow(
-                  // color: Colors.black54,
-                  offset: Offset(0, 0),
-                  blurRadius: 10,
-                  spreadRadius: 1)
-            ]),
+            boxShadow: Get.isDarkMode
+                ? null
+                : <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        offset: const Offset(0, 0),
+                        blurRadius: 10,
+                        spreadRadius: 2)
+                  ]),
         height: 80,
         padding: const EdgeInsets.all(15),
         child: TextField(
           decoration: const InputDecoration(border: InputBorder.none),
-          style: const TextStyle(color: Colors.white),
           autofocus: true,
           autocorrect: false,
           textAlign: TextAlign.left,
