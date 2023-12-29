@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../bloc/songs_controller.dart';
-import '../components/song_list.dart';
+import 'package:mladez_zpevnik/bloc/songs_controller.dart';
+import 'package:mladez_zpevnik/components/song_list.dart';
 
 class HistoryList extends StatelessWidget {
   const HistoryList({super.key});
@@ -9,12 +9,13 @@ class HistoryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SongsController songsController = Get.find();
+    final historyList = songsController.historyList();
     return Scaffold(
         appBar: AppBar(
             leading: const BackButton(),
             title: const Text(
               'Naposledy otevřené',
             )),
-        body: Obx(() => SongList(songs: songsController.historySongs)));
+        body: SongList(historyList: historyList));
   }
 }

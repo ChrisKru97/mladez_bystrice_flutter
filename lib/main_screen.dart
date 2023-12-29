@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mladez_zpevnik/components/songs_with_search.dart';
 import 'components/menu_row.dart';
 
@@ -10,9 +11,8 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          centerTitle: true,
           title: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.65,
+              width: Get.width * 0.65,
               child: const FittedBox(
                   child: Text(
                 'Mládežový zpěvník',

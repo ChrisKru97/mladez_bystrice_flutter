@@ -68,7 +68,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(2, 3495550992937678796),
       name: 'Config',
-      lastPropertyId: const IdUid(7, 6069906534708667740),
+      lastPropertyId: const IdUid(8, 5023599416128962234),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -90,6 +90,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(5, 4883858607844163198),
             name: 'lastFirestoreFetch',
             type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 5023599416128962234),
+            name: 'migrated',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -227,11 +232,12 @@ ModelDefinition getObjectBoxModel() {
           object.id = id;
         },
         objectToFB: (Config object, fb.Builder fbb) {
-          fbb.startTable(8);
+          fbb.startTable(9);
           fbb.addInt64(0, object.id);
           fbb.addBool(1, object.showChords);
           fbb.addBool(3, object.alignCenter);
           fbb.addInt64(4, object.lastFirestoreFetch?.millisecondsSinceEpoch);
+          fbb.addBool(7, object.migrated);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -246,6 +252,8 @@ ModelDefinition getObjectBoxModel() {
               const fb.BoolReader().vTableGet(buffer, rootOffset, 6, false);
           final alignCenterParam =
               const fb.BoolReader().vTableGet(buffer, rootOffset, 10, false);
+          final migratedParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 18, false);
           final lastFirestoreFetchParam = lastFirestoreFetchValue == null
               ? null
               : DateTime.fromMillisecondsSinceEpoch(lastFirestoreFetchValue);
@@ -253,6 +261,7 @@ ModelDefinition getObjectBoxModel() {
               id: idParam,
               showChords: showChordsParam,
               alignCenter: alignCenterParam,
+              migrated: migratedParam,
               lastFirestoreFetch: lastFirestoreFetchParam);
 
           return object;
@@ -338,6 +347,10 @@ class Config_ {
   /// see [Config.lastFirestoreFetch]
   static final lastFirestoreFetch =
       QueryIntegerProperty<Config>(_entities[1].properties[3]);
+
+  /// see [Config.migrated]
+  static final migrated =
+      QueryBooleanProperty<Config>(_entities[1].properties[4]);
 }
 
 /// [HistoryEntry] entity fields to define ObjectBox queries.

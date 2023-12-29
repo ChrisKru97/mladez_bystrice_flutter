@@ -18,7 +18,7 @@ class NumberSelect extends StatelessWidget {
         final SongsController songsController = Get.find();
         songsController.addToHistory(parsedNumber);
       } on Exception catch (_) {}
-      Get.toNamed('/song', arguments: parsedNumber);
+      Get.offNamed('/song', arguments: parsedNumber);
     } else {
       Get.back();
     }

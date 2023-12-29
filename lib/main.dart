@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final configController = ConfigController();
     final config = configController.init();
-    final songsController = SongsController()..init(config);
+    final songsController = SongsController()..loadSongs(config: config);
     Get.put(configController);
     Get.put(songsController);
     return GetMaterialApp(

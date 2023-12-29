@@ -30,6 +30,7 @@ class SearchSong extends StatelessWidget {
           autofocus: true,
           autocorrect: false,
           textAlign: TextAlign.left,
+          onSubmitted: (_) => Get.back(),
           onChanged: (String s) => songsController.searchString.value =
               removeDiacritics(s.toLowerCase()),
         ));

@@ -6,11 +6,11 @@ class ConfigController extends GetxController {
   final configBox = objectbox.store.box<Config>();
   Rx<Config> config = Config().obs;
 
-  Config? init() {
-    if (configBox.isEmpty()) return null;
+  Config init() {
+    if (configBox.isEmpty()) return config.value;
     final configVal = configBox.get(1);
     if (configVal != null) config.value = configVal;
-    return configVal;
+    return configVal ?? config.value;
   }
 
   @override

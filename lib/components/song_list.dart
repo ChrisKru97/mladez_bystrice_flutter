@@ -3,19 +3,23 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
-import '../classes/song.dart';
+import 'package:mladez_zpevnik/classes/song.dart';
+import 'package:mladez_zpevnik/classes/song_with_history.dart';
 import 'favorite_icon.dart';
 
 class SongList extends StatelessWidget {
-  const SongList({super.key, required this.songs, this.trimmed = false});
+  const SongList(
+      {super.key, this.songs, this.historyList, this.trimmed = false});
 
   final bool trimmed;
-  final List<Song> songs;
+  final List<Song>? songs;
+  final List<SongWithHistory>? historyList;
 
   @override
   Widget build(BuildContext context) {
     final SongsController songsController = Get.find();
-    if (songs.isEmpty) {
+    final songsList = songs ?? historyList;
+    if (songsList == null || songsList.isEmpty) {
       return Center(
           child: Text('Žádné písně',
               style: TextStyle(
@@ -34,9 +38,13 @@ class SongList extends StatelessWidget {
                 ? EdgeInsets.only(
                     bottom: max(20, MediaQuery.of(context).padding.bottom) + 60)
                 : null,
-            itemCount: songs.length,
+            itemCount: songsList.length,
             itemBuilder: (BuildContext context, int index) {
-              final Song song = songs.elementAt(index);
+              final dynamic element = songsList.elementAt(index);
+              final Song song =
+                  element is SongWithHistory ? element.song : element;
+              final openedAt =
+                  element is SongWithHistory ? element.openedAt : null;
               return ListTile(
                 onLongPress: () => songsController.toggleFavorite(song.number),
                 title: Text('${song.number}. ${song.name}',
@@ -45,7 +53,10 @@ class SongList extends StatelessWidget {
                   songsController.addToHistory(song.number);
                   Get.toNamed('/song', arguments: song.number);
                 },
-                trailing: FavoriteIcon(song.isFavorite, number: song.number),
+                trailing: openedAt == null
+                    ? FavoriteIcon(song.isFavorite, number: song.number)
+                    : Text(
+                        '${openedAt.hour.toString().padLeft(2, '0')}:${openedAt.minute.toString().padLeft(2, '0')} ${openedAt.day}.${openedAt.month}.${openedAt.year - 2000}'),
                 contentPadding: const EdgeInsets.only(left: 16, right: 12),
               );
             }));
