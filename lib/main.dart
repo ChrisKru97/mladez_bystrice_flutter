@@ -7,14 +7,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/classes/store.dart';
-import 'package:mladez_zpevnik/dialogs/favourite_list.dart';
-import 'package:mladez_zpevnik/dialogs/history_list.dart';
+import 'package:mladez_zpevnik/screens/favorite_list.dart';
+import 'package:mladez_zpevnik/screens/history_list.dart';
 import 'package:mladez_zpevnik/firebase_options.dart';
 import 'package:mladez_zpevnik/song_display.dart';
 import 'package:wakelock/wakelock.dart';
 import 'main_screen.dart';
 
 late ObjectBox objectbox;
+const primaryColor = Color.fromRGBO(165, 201, 175, 1);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,18 +43,19 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       theme: ThemeData(
           appBarTheme: const AppBarTheme(
-            // color: Color.fromRGBO(165, 201, 175, 1),
             color: Color.fromRGBO(143, 181, 250, 1),
             foregroundColor: Colors.white,
-            elevation: 5,
-            scrolledUnderElevation: 5,
+            elevation: 10,
+            scrolledUnderElevation: 10,
             shadowColor: Colors.black45,
             systemOverlayStyle: SystemUiOverlayStyle(
               statusBarBrightness: Brightness.dark,
             ),
-            // 249, 199, 145
           ),
-          primaryColor: const Color.fromRGBO(165, 201, 175, 1),
+          primaryColor: primaryColor,
+          colorScheme: const ColorScheme.light(
+              primary: Color.fromRGBO(249, 199, 145, 1),
+              outlineVariant: Colors.black26),
           floatingActionButtonTheme: const FloatingActionButtonThemeData(
               foregroundColor: Colors.white,
               backgroundColor: Color.fromRGBO(143, 181, 222, 1)),
@@ -65,6 +67,8 @@ class MyApp extends StatelessWidget {
               elevation: 0,
               scrolledUnderElevation: 0),
           primaryColor: Colors.black,
+          colorScheme: const ColorScheme.dark(
+              primary: Colors.black, outlineVariant: Colors.white24),
           floatingActionButtonTheme: const FloatingActionButtonThemeData(
               foregroundColor: Colors.black87, backgroundColor: Colors.grey),
           textTheme: GoogleFonts.interTextTheme()),
@@ -81,7 +85,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/', page: () => const MainScreen()),
         GetPage(name: '/song', page: () => const SongDisplay()),
-        GetPage(name: '/favourite', page: () => const FavouriteList()),
+        GetPage(name: '/favorite', page: () => const FavoriteList()),
         GetPage(name: '/history', page: () => const HistoryList()),
       ],
     );

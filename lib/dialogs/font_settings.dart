@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
+import 'package:mladez_zpevnik/dialogs/bottom_dialog_container.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class FontSettings extends StatelessWidget {
@@ -11,23 +12,9 @@ class FontSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     final ConfigController configController = Get.find();
     final SongsController songsController = Get.find();
-    return Container(
-      margin: const EdgeInsets.all(20).copyWith(bottom: 30),
-      decoration: BoxDecoration(
-          color: Get.isDarkMode ? Colors.grey[400] : Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: Get.isDarkMode
-              ? null
-              : <BoxShadow>[
-                  BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      offset: const Offset(0, 0),
-                      blurRadius: 10,
-                      spreadRadius: 2)
-                ]),
-      height: 160,
-      padding: const EdgeInsets.all(15),
+    return BottomDialogContainer(
       child: Obx(() => Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Row(

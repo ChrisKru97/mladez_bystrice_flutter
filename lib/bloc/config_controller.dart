@@ -4,7 +4,8 @@ import 'package:mladez_zpevnik/main.dart';
 
 class ConfigController extends GetxController {
   final configBox = objectbox.store.box<Config>();
-  Rx<Config> config = Config().obs;
+  final Rx<Config> config = Config().obs;
+  final Rx<double> bottomBarHeight = 0.0.obs;
 
   Config init() {
     if (configBox.isEmpty()) return config.value;

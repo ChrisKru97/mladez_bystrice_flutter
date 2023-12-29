@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
-import 'package:mladez_zpevnik/dialogs/bottom_sheet.dart';
+import 'package:mladez_zpevnik/dialogs/bottom_dialog_container.dart';
 
 class NumberSelect extends StatelessWidget {
   NumberSelect({super.key});
@@ -27,7 +27,7 @@ class NumberSelect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lastNumber = songsController.songs.last.number;
-    return CustomBottomSheet(
+    return BottomDialogContainer(
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       TextField(
         decoration:

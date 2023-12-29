@@ -25,7 +25,7 @@ class ButtonContainer extends StatelessWidget {
 }
 
 final buttonList = [
-  {'icon': Icons.favorite_border, 'onPressed': () => Get.toNamed('/favourite')},
+  {'icon': Icons.favorite_border, 'onPressed': () => Get.toNamed('/favorite')},
   {
     'icon': Icons.search,
     'onPressed': () {
@@ -39,6 +39,7 @@ final buttonList = [
     'onPressed': () => Get.bottomSheet(NumberSelect())
   },
   {'icon': Icons.history, 'onPressed': () => Get.toNamed('/history')},
+  {'icon': Icons.queue_music, 'onPressed': () => Get.toNamed('/playlists')}
 ];
 
 class MenuRow extends StatelessWidget {
@@ -46,7 +47,7 @@ class MenuRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        color: Theme.of(context).primaryColor.withOpacity(0.4),
+        color: Get.theme.primaryColor.withOpacity(0.4),
         padding: const EdgeInsets.symmetric(vertical: 20)
             .copyWith(bottom: max(20, MediaQuery.of(context).padding.bottom)),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -58,7 +59,7 @@ class MenuRow extends StatelessWidget {
                   .map((button) => ButtonContainer(
                         child: IconButton(
                           icon: Icon(button['icon'] as IconData),
-                          color: Colors.black.withOpacity(0.7),
+                          color: const Color(0xB2000000),
                           onPressed: button['onPressed'] as void Function()?,
                         ),
                       ))
