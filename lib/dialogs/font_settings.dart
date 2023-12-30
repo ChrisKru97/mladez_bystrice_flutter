@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
@@ -57,8 +59,8 @@ class FontSettings extends StatelessWidget {
                 ],
               ),
               Slider.adaptive(
-                  min: Get.width * 0.02,
-                  max: Get.width * 0.1,
+                  min: min(Get.width * 0.02, 20),
+                  max: max(Get.width * 0.1, 20),
                   onChanged: songsController.updateFontSize,
                   onChangeEnd: songsController.saveFontSize,
                   value: songsController.openSong.value.fontSize),

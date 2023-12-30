@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
-import 'package:mladez_zpevnik/classes/song.dart';
 
 class HistoryList extends StatelessWidget {
   const HistoryList({super.key});
@@ -28,7 +27,8 @@ class HistoryList extends StatelessWidget {
                 itemCount: historyList.length,
                 itemBuilder: (BuildContext context, int index) {
                   final element = historyList.elementAt(index);
-                  final song = element['song'] as Song?;
+                  final songNumber = element['songNumber'] as int;
+                  final song = songsController.songBox.get(songNumber);
                   final openedAt = element["openedAt"] as DateTime;
                   if (song == null) return const Center();
                   return ListTile(

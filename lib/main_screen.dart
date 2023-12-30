@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,7 +15,7 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           title: SizedBox(
-              width: Get.width * 0.65,
+              width: min(Get.width * 0.65, 400),
               child: const FittedBox(
                   child: Text(
                 'Mládežový zpěvník',

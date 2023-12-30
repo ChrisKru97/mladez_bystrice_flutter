@@ -60,8 +60,8 @@ class SongsController extends GetxController {
       openSong.update((val) {
         if (val == null) return;
         val.fontSize = min(
-            Get.width * 0.1,
-            max(Get.width * 0.02,
+            max(Get.width * 0.1, 20),
+            max(min(Get.width * 0.02, 20),
                 val.fontSize * pow(scaleDetails.scale, 1 / 16)));
       });
 

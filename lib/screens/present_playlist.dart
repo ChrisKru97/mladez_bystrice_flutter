@@ -30,13 +30,17 @@ class PresentPlaylist extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   child: Text('${song.number}. ${song.name}',
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Get.isDarkMode ? Colors.white : Colors.black)),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 100),
                   child: Text(songText,
-                      style: TextStyle(fontSize: song.fontSize),
+                      style: TextStyle(
+                          fontSize: song.fontSize,
+                          color: Get.isDarkMode ? Colors.white : Colors.black),
                       textAlign: configController.config.value.alignCenter
                           ? TextAlign.center
                           : TextAlign.left),

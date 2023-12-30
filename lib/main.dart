@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Mládežový zpěvník',
       initialRoute: '/',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           appBarTheme: const AppBarTheme(
             color: Color.fromRGBO(143, 181, 250, 1),

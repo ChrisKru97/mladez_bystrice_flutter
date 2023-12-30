@@ -22,7 +22,8 @@ class CreatePlaylist extends StatelessWidget {
       Expanded(
           child: TextField(
         controller: textEditingController,
-        decoration: const InputDecoration(border: InputBorder.none),
+        decoration: const InputDecoration(
+            border: InputBorder.none, hintText: 'Název playlistu'),
         autofocus: true,
         autocorrect: false,
         textAlign: TextAlign.left,

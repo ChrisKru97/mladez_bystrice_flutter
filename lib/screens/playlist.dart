@@ -26,7 +26,7 @@ class PlaylistDisplay extends StatelessWidget {
               onPressed: () => Get.bottomSheet(SongPicker()),
             ),
             IconButton(
-                icon: const Icon(Icons.onetwothree),
+                icon: const Icon(Icons.plus_one),
                 onPressed: () => Get.bottomSheet(
                     NumberSelect(onSelect: playlistController.addToPlaylist))),
           ],
@@ -56,12 +56,14 @@ class PlaylistDisplay extends StatelessWidget {
                         onRemove: () =>
                             playlistController.removeFromPlaylist(index),
                         child: ListTile(
-                          title: Text('${song.number}. ${song.name}',
-                              overflow: TextOverflow.ellipsis),
-                          onTap: () =>
-                              Get.toNamed('/song', arguments: song.number),
-                          trailing: const Icon(Icons.drag_handle),
-                        ));
+                            title: Text('${song.number}. ${song.name}',
+                                overflow: TextOverflow.ellipsis),
+                            onTap: () =>
+                                Get.toNamed('/song', arguments: song.number),
+                            trailing: ReorderableDragStartListener(
+                              index: index,
+                              child: const Icon(Icons.drag_handle),
+                            )));
                   }))
               : Center(
                   child: Row(
@@ -81,7 +83,7 @@ class PlaylistDisplay extends StatelessWidget {
                         child: const Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.onetwothree, size: 50),
+                              Icon(Icons.plus_one, size: 50),
                               Text('Zadat číslo'),
                             ])),
                   ],
