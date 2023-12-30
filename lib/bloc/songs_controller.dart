@@ -7,7 +7,6 @@ import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/classes/config.dart';
 import 'package:mladez_zpevnik/classes/history_entry.dart';
 import 'package:mladez_zpevnik/classes/song.dart';
-import 'package:mladez_zpevnik/classes/song_with_history.dart';
 import 'package:mladez_zpevnik/main.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:mladez_zpevnik/objectbox.g.dart';
@@ -75,7 +74,7 @@ class SongsController extends GetxController {
 
   List<Song> parseSongList(
           List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
-          List<int>? favorites) =>
+          Iterable<int>? favorites) =>
       data.map<Song>((e) {
         final song = e.data();
         final songState = songBox.get(song['number'] as int);
@@ -94,7 +93,7 @@ class SongsController extends GetxController {
         );
       }).toList();
 
-  Future<void> loadFromFirestore(List<int>? favorites) async {
+  Future<void> loadFromFirestore(Iterable<int>? favorites) async {
     final docs = await FirebaseFirestore.instance
         .collection('songs')
         .where('checkRequired', isEqualTo: false)
@@ -109,10 +108,10 @@ class SongsController extends GetxController {
     });
   }
 
-  Future<List<int>?> migrate() async {
+  Future<Iterable<int>?> migrate() async {
     final prefs = await SharedPreferences.getInstance();
-    final history = prefs.getStringList('history')?.map(int.parse).toList();
-    final favorites = prefs.getStringList('favorites')?.map(int.parse).toList();
+    final history = prefs.getStringList('history')?.map(int.parse);
+    final favorites = prefs.getStringList('favorites')?.map(int.parse);
     if (history != null) {
       historyBox.putMany(history
           .map((e) => HistoryEntry(songNumber: e, openedAt: DateTime.now()))
@@ -127,7 +126,7 @@ class SongsController extends GetxController {
   }
 
   Future<void> loadSongs({bool force = false, Config? config}) async {
-    List<int>? favorites;
+    Iterable<int>? favorites;
     if (config != null && !config.migrated) {
       favorites = await migrate();
     }
@@ -144,13 +143,13 @@ class SongsController extends GetxController {
     }
   }
 
-  List<SongWithHistory> historyList() => historyBox
+  List<Map<String, dynamic>> historyList() => historyBox
       .query()
       .order(HistoryEntry_.openedAt, flags: Order.descending)
       .build()
       .find()
-      .map((entry) => SongWithHistory(
-          openedAt: entry.openedAt, song: songBox.get(entry.songNumber)))
+      .map((entry) =>
+          {'songNumber': entry.songNumber, 'openedAt': entry.openedAt})
       .toList();
 
   void addToHistory(int number) {

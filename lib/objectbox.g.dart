@@ -16,6 +16,7 @@ import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'classes/config.dart';
 import 'classes/history_entry.dart';
+import 'classes/playlist.dart';
 import 'classes/song.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
@@ -122,6 +123,30 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(4, 6106716663120164357),
+      name: 'Playlist',
+      lastPropertyId: const IdUid(3, 3668803288161027088),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 846629112253538065),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 745777107672929449),
+            name: 'name',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 3668803288161027088),
+            name: 'songsOrder',
+            type: 27,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -152,7 +177,7 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(3, 6002352585571872981),
+      lastEntityId: const IdUid(4, 6106716663120164357),
       lastIndexId: const IdUid(0, 0),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
@@ -297,6 +322,41 @@ ModelDefinition getObjectBoxModel() {
               songNumber: songNumberParam);
 
           return object;
+        }),
+    Playlist: EntityDefinition<Playlist>(
+        model: _entities[3],
+        toOneRelations: (Playlist object) => [],
+        toManyRelations: (Playlist object) => {},
+        getId: (Playlist object) => object.id,
+        setId: (Playlist object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Playlist object, fb.Builder fbb) {
+          final nameOffset = fbb.writeString(object.name);
+          final songsOrderOffset = object.songsOrder == null
+              ? null
+              : fbb.writeListInt64(object.songsOrder!);
+          fbb.startTable(4);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, nameOffset);
+          fbb.addOffset(2, songsOrderOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final songsOrderParam =
+              const fb.ListReader<int>(fb.Int64Reader(), lazy: false)
+                  .vTableGetNullable(buffer, rootOffset, 8);
+          final object = Playlist(
+              id: idParam, name: nameParam, songsOrder: songsOrderParam);
+
+          return object;
         })
   };
 
@@ -366,4 +426,17 @@ class HistoryEntry_ {
   /// see [HistoryEntry.openedAt]
   static final openedAt =
       QueryIntegerProperty<HistoryEntry>(_entities[2].properties[2]);
+}
+
+/// [Playlist] entity fields to define ObjectBox queries.
+class Playlist_ {
+  /// see [Playlist.id]
+  static final id = QueryIntegerProperty<Playlist>(_entities[3].properties[0]);
+
+  /// see [Playlist.name]
+  static final name = QueryStringProperty<Playlist>(_entities[3].properties[1]);
+
+  /// see [Playlist.songsOrder]
+  static final songsOrder =
+      QueryIntegerVectorProperty<Playlist>(_entities[3].properties[2]);
 }

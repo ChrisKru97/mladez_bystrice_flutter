@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
+import 'package:mladez_zpevnik/components/dismissible_remove.dart';
 import 'package:mladez_zpevnik/components/favorite_icon.dart';
 
 class FavoriteList extends StatelessWidget {
@@ -29,20 +30,23 @@ class FavoriteList extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 final song = songs.elementAt(index);
                 removeFavorite() => songsController.toggleFavorite(song.number);
-                return ListTile(
-                  title: Text('${song.number}. ${song.name}',
-                      overflow: TextOverflow.ellipsis),
-                  onLongPress: removeFavorite,
-                  onTap: () {
-                    songsController.addToHistory(song.number);
-                    Get.toNamed('/song', arguments: song.number);
-                  },
-                  trailing: IconButton(
-                      onPressed: removeFavorite,
-                      icon: const Icon(Icons.favorite,
-                          color: redColor, size: 30)),
-                  contentPadding: const EdgeInsets.only(left: 16, right: 8),
-                );
+                return DismissibleRemove(
+                    onRemove: removeFavorite,
+                    dismissibleKey: song.number,
+                    child: ListTile(
+                      title: Text('${song.number}. ${song.name}',
+                          overflow: TextOverflow.ellipsis),
+                      onLongPress: removeFavorite,
+                      onTap: () {
+                        songsController.addToHistory(song.number);
+                        Get.toNamed('/song', arguments: song.number);
+                      },
+                      trailing: IconButton(
+                          onPressed: removeFavorite,
+                          icon: const Icon(Icons.favorite,
+                              color: redColor, size: 30)),
+                      contentPadding: const EdgeInsets.only(left: 16, right: 8),
+                    ));
               });
         }));
   }

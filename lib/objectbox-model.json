@@ -104,9 +104,33 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "4:6106716663120164357",
+      "lastPropertyId": "3:3668803288161027088",
+      "name": "Playlist",
+      "properties": [
+        {
+          "id": "1:846629112253538065",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:745777107672929449",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:3668803288161027088",
+          "name": "songsOrder",
+          "type": 27
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "3:6002352585571872981",
+  "lastEntityId": "4:6106716663120164357",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

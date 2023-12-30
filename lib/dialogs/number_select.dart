@@ -4,7 +4,9 @@ import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/dialogs/bottom_dialog_container.dart';
 
 class NumberSelect extends StatelessWidget {
-  NumberSelect({super.key});
+  NumberSelect({super.key, this.onSelect});
+
+  final Function(int)? onSelect;
 
   final TextEditingController _fieldController = TextEditingController();
   final SongsController songsController = Get.find();
@@ -14,10 +16,13 @@ class NumberSelect extends StatelessWidget {
     parsedNumber = int.parse(number);
     _fieldController.text = '';
     if (!parsedNumber.isNaN && parsedNumber > 0) {
-      try {
-        final SongsController songsController = Get.find();
-        songsController.addToHistory(parsedNumber);
-      } on Exception catch (_) {}
+      if (onSelect != null) {
+        onSelect!(parsedNumber);
+        Get.back();
+        return;
+      }
+      final SongsController songsController = Get.find();
+      songsController.addToHistory(parsedNumber);
       Get.offNamed('/song', arguments: parsedNumber);
     } else {
       Get.back();
@@ -51,14 +56,14 @@ class NumberSelect extends StatelessWidget {
         },
       ),
       Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           TextButton(
-            child: const Text('Otevřít'),
+            child: Text(onSelect == null ? 'Otevřít' : 'Přidat'),
             onPressed: () => openSong(_fieldController.text),
           ),
           TextButton(
-            child: const Text('Zavřít'),
+            child: const Text('Zrušit'),
             onPressed: () => Get.back(),
           )
         ],
