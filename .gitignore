@@ -74,4 +74,5 @@ key.properties
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 google-services.json
+GoogleService-Info.plist
 lib/firebase_options.dart

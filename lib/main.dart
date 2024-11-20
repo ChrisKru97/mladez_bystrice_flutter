@@ -15,7 +15,7 @@ import 'package:mladez_zpevnik/screens/playlist.dart';
 import 'package:mladez_zpevnik/screens/playlists.dart';
 import 'package:mladez_zpevnik/screens/present_playlist.dart';
 import 'package:mladez_zpevnik/song_display.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'main_screen.dart';
 
 late ObjectBox objectbox;
@@ -81,10 +81,10 @@ class MyApp extends StatelessWidget {
       routingCallback: (routing) {
         switch (routing?.current) {
           case '/song':
-            Wakelock.enable();
+            WakelockPlus.enable();
             break;
           case '/':
-            Wakelock.disable();
+            WakelockPlus.disable();
             break;
         }
       },
