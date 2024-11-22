@@ -14,6 +14,7 @@ import 'package:mladez_zpevnik/firebase_options.dart';
 import 'package:mladez_zpevnik/screens/playlist.dart';
 import 'package:mladez_zpevnik/screens/playlists.dart';
 import 'package:mladez_zpevnik/screens/present_playlist.dart';
+import 'package:mladez_zpevnik/screens/present_song.dart';
 import 'package:mladez_zpevnik/song_display.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'main_screen.dart';
@@ -91,6 +92,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/', page: () => const MainScreen()),
         GetPage(name: '/song', page: () => const SongDisplay()),
+        GetPage(name: '/present-song', page: () => PresentSong()),
         GetPage(name: '/favorite', page: () => const FavoriteList()),
         GetPage(name: '/history', page: () => const HistoryList()),
         GetPage(name: '/playlists', page: () => const Playlists()),

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
+import 'package:mladez_zpevnik/components/song_fab.dart';
 import 'components/favorite_icon.dart';
-import 'dialogs/font_settings.dart';
 
 class SongDisplay extends StatelessWidget {
   const SongDisplay({super.key});
@@ -82,13 +82,7 @@ class SongDisplay extends StatelessWidget {
             );
           }),
         ),
-        floatingActionButton: showFab.value
-            ? FloatingActionButton(
-                mini: true,
-                onPressed: () => Get.bottomSheet(const FontSettings()),
-                child: const Icon(Icons.format_size),
-              )
-            : null,
+        floatingActionButton: showFab.value ? SongFab(number: number) : null,
       );
     }, true.obs);
   }
