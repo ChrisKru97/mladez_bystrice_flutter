@@ -1,7 +1,7 @@
 name: mladez_zpevnik
 description: Bystřický mládežový zpěvník
 
-version: 2.0.0+28
+version: 2.1.0+29
 
 environment:
   sdk: ">=3.5.0"
