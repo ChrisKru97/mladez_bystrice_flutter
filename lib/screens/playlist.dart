@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/playlist_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/components/dismissible_remove.dart';
+import 'package:mladez_zpevnik/components/playlist_fab.dart';
 import 'package:mladez_zpevnik/dialogs/number_select.dart';
 import 'package:mladez_zpevnik/dialogs/song_picker.dart';
 
@@ -33,11 +34,7 @@ class PlaylistDisplay extends StatelessWidget {
         ),
         floatingActionButton: Obx(() =>
             playlist.value.songsOrder?.isNotEmpty == true
-                ? FloatingActionButton(
-                    onPressed: () =>
-                        Get.toNamed('/present-playlist', arguments: id),
-                    mini: true,
-                    child: const Icon(Icons.play_arrow))
+                ? PlaylistFab(playlist: playlist.value)
                 : const Center()),
         body: Obx(() {
           final randomOffset = Random().nextInt(1000);
