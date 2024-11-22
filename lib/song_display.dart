@@ -46,6 +46,7 @@ class SongDisplay extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onScaleUpdate: songsController.updateFontScale,
           onScaleEnd: songsController.saveFontSize,
+          onLongPress: () => Get.toNamed('/present-song', arguments: song.value.number),
           onDoubleTap: () => configController.config.update((val) {
             if (val == null) return;
             val.showChords = !val.showChords;
