@@ -15,7 +15,8 @@ String mergeLines(String lineWithChords, String lineWithoutChords) {
       chordPattern.allMatches(lineWithChords).map((e) => e.group(0)!);
   final chordSpace = (lineWithoutChords.length / chords.length).floor();
   return chords.indexed.map((item) {
-    return '[${item.$2}]${lineWithoutChords.substring(item.$1 * chordSpace, (item.$1 + 1) * chordSpace)}';
+    final isLast = item.$1 == chords.length - 1;
+    return '[${item.$2}]${lineWithoutChords.substring(item.$1 * chordSpace, isLast ? null : (item.$1 + 1) * chordSpace)}';
   }).join('');
 }
 

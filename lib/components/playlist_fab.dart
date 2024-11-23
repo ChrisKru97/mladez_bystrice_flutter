@@ -13,6 +13,7 @@ class PlaylistFab extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         FloatingActionButton(
+            heroTag: null,
             onPressed: () =>
                 Get.toNamed('/present-song', arguments: playlist.songsOrder),
             mini: true,

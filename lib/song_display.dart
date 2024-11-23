@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/components/song_fab.dart';
+import 'package:mladez_zpevnik/components/text_with_chords.dart';
 import 'components/favorite_icon.dart';
 
 class SongDisplay extends StatelessWidget {
@@ -46,7 +47,8 @@ class SongDisplay extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onScaleUpdate: songsController.updateFontScale,
           onScaleEnd: songsController.saveFontSize,
-          onLongPress: () => Get.toNamed('/present-song', arguments: song.value.number),
+          onLongPress: () =>
+              Get.toNamed('/present-song', arguments: song.value.number),
           onDoubleTap: () => configController.config.update((val) {
             if (val == null) return;
             val.showChords = !val.showChords;
@@ -61,25 +63,27 @@ class SongDisplay extends StatelessWidget {
             }
           },
           child: Obx(() {
-            final songText = configController.config.value.showChords
-                ? song.value.withChords
-                : song.value.withoutChords;
             final textStyle = TextStyle(
                 fontSize: song.value.fontSize,
                 color: Get.isDarkMode ? Colors.white : Colors.black);
             final alignCenter = configController.config.value.alignCenter;
-            final textWidget = Text(
-              songText,
-              textAlign: alignCenter ? TextAlign.center : TextAlign.left,
-              style: textStyle,
-            );
             return SingleChildScrollView(
               padding: const EdgeInsets.all(15),
               child: ConstrainedBox(
                   constraints: BoxConstraints(
                       minHeight: Get.height - Get.statusBarHeight,
                       minWidth: Get.width),
-                  child: textWidget),
+                  child: configController.config.value.showChords
+                      ? Text(
+                          song.value.withoutChords,
+                          textAlign:
+                              alignCenter ? TextAlign.center : TextAlign.left,
+                          style: textStyle,
+                        )
+                      : TextWithChords(
+                          text: song.value.withChords,
+                          textStyle: textStyle,
+                        )),
             );
           }),
         ),
