@@ -1,10 +1,10 @@
 import 'package:mladez_zpevnik/classes/song_with_chords.dart';
 
-final pattern = RegExp(r'\[(\w+\d?\+?)\]', caseSensitive: false);
+final chordsPattern = RegExp(r'\[(\w+\d?\+?)\]', caseSensitive: false);
 
 SongWithChords parseSongWithChords(String songWithChords) {
   final patternMatches =
-      pattern.allMatches(songWithChords).where((e) => e.groupCount > 0);
+      chordsPattern.allMatches(songWithChords).where((e) => e.groupCount > 0);
   String textOnly = songWithChords.substring(0, patternMatches.first.start);
   int offset = 0;
   List<Chord> chords = patternMatches.indexed.map((e) {
