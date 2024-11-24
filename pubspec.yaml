@@ -15,17 +15,14 @@ dependencies:
   firebase_core: ^3.8.0
   toggle_switch: ^2.1.0
   wakelock_plus: ^1.2.8
-  objectbox: ^4.0.3
-  objectbox_flutter_libs: any
   get: ^4.6.6
   diacritic: ^0.1.4
   google_fonts: ^6.1.0
   auto_size_text: ^3.0.0
+  get_storage: ^2.1.1
 
 dev_dependencies:
-  build_runner: ^2.4.6
   flutter_lints: ^5.0.0
-  objectbox_generator: any
 
 flutter:
   uses-material-design: true

@@ -3,21 +3,23 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:flutter/gestures.dart' show ScaleUpdateDetails;
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/classes/config.dart';
 import 'package:mladez_zpevnik/classes/history_entry.dart';
 import 'package:mladez_zpevnik/classes/song.dart';
 import 'package:mladez_zpevnik/main.dart';
 import 'package:diacritic/diacritic.dart';
-import 'package:mladez_zpevnik/objectbox.g.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const HISTORY_LIMIT = 50;
 
 class SongsController extends GetxController {
   final songs = <Song>[].obs;
   final searchString = ''.obs;
-  final songBox = objectbox.store.box<Song>();
-  final historyBox = objectbox.store.box<HistoryEntry>();
+  final historyBox = GetStorage('history');
+  final favoritesBox = GetStorage('favorites');
+  final fontSizesBox = GetStorage('fontSizes');
   final Rx<Song> openSong = Song(
           number: 0,
           name: '',
@@ -28,7 +30,7 @@ class SongsController extends GetxController {
 
   Rx<Song> getSong(int number) {
     if (openSong.value.number != number) {
-      final song = songBox.get(number);
+      final song = songs.firstWhereOrNull((song) => song.number == number);
       if (song != null) openSong.value = song;
     }
     return openSong;
@@ -45,14 +47,13 @@ class SongsController extends GetxController {
       openSong.update((val) {
         if (val == null) return;
         val.isFavorite = !val.isFavorite;
-        songBox.put(val);
+        favoritesBox.write(number.toString(), val.isFavorite);
       });
     }
     number ??= openSong.value.number;
     final songIndex = songs.indexWhere((element) => element.number == number);
     songs[songIndex].isFavorite = !songs[songIndex].isFavorite;
     songs.refresh();
-    songBox.put(songs[songIndex]);
   }
 
   updateTranspose(int increment) => () => openSong.update((val) {
@@ -75,14 +76,13 @@ class SongsController extends GetxController {
         val.fontSize = fontSize;
       });
 
-  void saveFontSize(dynamic _) => songBox.put(openSong.value);
-
   List<Song> parseSongList(
           List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
           Iterable<int>? favorites) =>
       data.map<Song>((e) {
         final song = e.data();
-        final songState = songBox.get(song['number'] as int);
+        final isFavorite = favoritesBox.read(song['number'].toString());
+        final fontSize = fontSizesBox.read(song['number'].toString());
         return Song(
           number: song['number'] as int,
           name: song['name'] as String,
@@ -91,10 +91,9 @@ class SongsController extends GetxController {
           searchValue: removeDiacritics(
               '${song['number']}.${song['name']}${song['withoutChords']}'
                   .toLowerCase()),
-          isFavorite: favorites?.contains(song['number']) ??
-              songState?.isFavorite ??
-              false,
-          fontSize: songState?.fontSize ?? 20,
+          isFavorite:
+              favorites?.contains(song['number']) ?? isFavorite ?? false,
+          fontSize: fontSize ?? 20,
         );
       }).toList();
 
@@ -106,7 +105,6 @@ class SongsController extends GetxController {
         .get();
     final parsedSongs = parseSongList(docs.docs, favorites);
     songs.assignAll(parsedSongs);
-    songBox.putMany(parsedSongs);
     Get.find<ConfigController>().config.update((val) {
       if (val == null) return;
       val.lastFirestoreFetch = DateTime.now();

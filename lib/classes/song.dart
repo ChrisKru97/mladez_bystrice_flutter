@@ -1,8 +1,4 @@
-import 'package:objectbox/objectbox.dart';
-
-@Entity()
 class Song {
-  @Id(assignable: true)
   int number;
   final String name;
   final String withChords;

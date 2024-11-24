@@ -3,11 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/playlist_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
-import 'package:mladez_zpevnik/classes/store.dart';
 import 'package:mladez_zpevnik/screens/favorite_list.dart';
 import 'package:mladez_zpevnik/screens/history_list.dart';
 import 'package:mladez_zpevnik/firebase_options.dart';
@@ -19,7 +19,6 @@ import 'package:mladez_zpevnik/song_display.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'main_screen.dart';
 
-late ObjectBox objectbox;
 const primaryColor = Color.fromRGBO(165, 201, 175, 1);
 
 void main() async {
@@ -28,7 +27,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseAuth.instance.signInAnonymously();
-  objectbox = await ObjectBox.create();
+  await GetStorage.init();
 
   runApp(const MyApp());
 }
