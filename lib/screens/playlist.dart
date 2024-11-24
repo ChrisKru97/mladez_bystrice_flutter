@@ -14,10 +14,10 @@ class PlaylistDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final id = Get.arguments as int;
+    final name = Get.arguments as String;
     final PlaylistController playlistController = Get.find();
     final SongsController songsController = Get.find();
-    final playlist = playlistController.getPlaylist(id);
+    final playlist = playlistController.getPlaylist(name);
     return Scaffold(
         appBar: AppBar(
           title: Text(playlist.value.name),
@@ -44,7 +44,8 @@ class PlaylistDisplay extends StatelessWidget {
                   children: List.generate(playlist.value.songsOrder!.length,
                       (int index) {
                     final songNumber = playlist.value.songsOrder![index];
-                    final song = songsController.songBox.get(songNumber);
+                    final song = songsController.songs
+                        .firstWhereOrNull((song) => song.number == songNumber);
                     final key = '$songNumber${index + randomOffset}';
                     if (song == null) return const Center();
                     return DismissibleRemove(

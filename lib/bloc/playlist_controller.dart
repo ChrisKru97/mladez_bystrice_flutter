@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:mladez_zpevnik/classes/playlist.dart';
-import 'package:mladez_zpevnik/main.dart';
 
 class PlaylistController extends GetxController {
-  final playlistBox = objectbox.store.box<Playlist>();
+  final playlistBox = GetStorage('playlists');
   final playlists = <Playlist>[].obs;
   final openPlaylist = Playlist(name: '').obs;
 
@@ -16,9 +18,10 @@ class PlaylistController extends GetxController {
       });
 
   void syncWithObs(Playlist val) {
-    playlistBox.put(val);
+    // TODO can read also lists and maps
+    playlistBox.write(val.name, jsonEncode(val));
     final playlistIndex =
-        playlists.indexWhere((element) => element.id == val.id);
+        playlists.indexWhere((element) => element.name == val.name);
     playlists[playlistIndex] = val;
     playlists.refresh();
   }
@@ -39,27 +42,35 @@ class PlaylistController extends GetxController {
         syncWithObs(val);
       });
 
-  Rx<Playlist> getPlaylist(int id) {
-    if (openPlaylist.value.id != id) {
-      final playlist = playlistBox.get(id);
-      if (playlist != null) openPlaylist.value = playlist;
+  Rx<Playlist> getPlaylist(String name) {
+    if (openPlaylist.value.name != name) {
+      final asString = playlistBox.read(name);
+      if (asString != null) {
+        final playlist = Playlist.fromJson(jsonDecode(playlistBox.read(name)));
+        openPlaylist.value = playlist;
+      }
     }
     return openPlaylist;
   }
 
   void init() {
-    playlists.value = playlistBox.getAll();
+    print(playlistBox.getValues());
+    // playlists.value = playlistBox
+    //     .getValues()
+    //     .map((e) => Playlist.fromJson(jsonDecode(e)))
+    //     .toList();
   }
 
   void addPlaylist(String name) {
     final playlist = Playlist(name: name);
-    playlistBox.put(playlist);
+    playlistBox.write(name, jsonEncode(playlist));
     playlists.add(playlist);
   }
 
-  void removePlaylist(int id) {
-    playlistBox.remove(id);
-    final playlistIndex = playlists.indexWhere((element) => element.id == id);
+  void removePlaylist(String name) {
+    playlistBox.remove(name);
+    final playlistIndex =
+        playlists.indexWhere((element) => element.name == name);
     playlists.removeAt(playlistIndex);
   }
 }

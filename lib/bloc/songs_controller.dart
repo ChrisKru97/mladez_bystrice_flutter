@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
@@ -6,9 +7,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/classes/config.dart';
-import 'package:mladez_zpevnik/classes/history_entry.dart';
 import 'package:mladez_zpevnik/classes/song.dart';
-import 'package:mladez_zpevnik/main.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +16,6 @@ const HISTORY_LIMIT = 50;
 class SongsController extends GetxController {
   final songs = <Song>[].obs;
   final searchString = ''.obs;
-  final historyBox = GetStorage('history');
   final favoritesBox = GetStorage('favorites');
   final fontSizesBox = GetStorage('fontSizes');
   final Rx<Song> openSong = Song(
@@ -71,14 +69,16 @@ class SongsController extends GetxController {
                 val.fontSize * pow(scaleDetails.scale, 1 / 16)));
       });
 
+  void saveFontSize(_) => fontSizesBox.write(
+      openSong.value.number.toString(), openSong.value.fontSize);
+
   void updateFontSize(double fontSize) => openSong.update((val) {
         if (val == null) return;
         val.fontSize = fontSize;
       });
 
   List<Song> parseSongList(
-          List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
-          Iterable<int>? favorites) =>
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> data) =>
       data.map<Song>((e) {
         final song = e.data();
         final isFavorite = favoritesBox.read(song['number'].toString());
@@ -91,19 +91,18 @@ class SongsController extends GetxController {
           searchValue: removeDiacritics(
               '${song['number']}.${song['name']}${song['withoutChords']}'
                   .toLowerCase()),
-          isFavorite:
-              favorites?.contains(song['number']) ?? isFavorite ?? false,
+          isFavorite: isFavorite ?? false,
           fontSize: fontSize ?? 20,
         );
       }).toList();
 
-  Future<void> loadFromFirestore(Iterable<int>? favorites) async {
+  Future<void> loadFromFirestore() async {
     final docs = await FirebaseFirestore.instance
         .collection('songs')
         .where('checkRequired', isEqualTo: false)
         .orderBy('number')
         .get();
-    final parsedSongs = parseSongList(docs.docs, favorites);
+    final parsedSongs = parseSongList(docs.docs);
     songs.assignAll(parsedSongs);
     Get.find<ConfigController>().config.update((val) {
       if (val == null) return;
@@ -111,36 +110,50 @@ class SongsController extends GetxController {
     });
   }
 
+  Future<void> migrate() async {
+    final prefs = await SharedPreferences.getInstance();
+    final history = prefs.getStringList('history');
+    GetStorage().write('history', jsonEncode(history));
+    final favorites = prefs.getStringList('favorites')?.map(int.parse);
+    favorites?.forEach((favorite) {
+      favoritesBox.write(favorite.toString(), true);
+    });
+    final configController = Get.find<ConfigController>();
+    configController.config.update((val) {
+      if (val == null) return;
+      val.migrated = true;
+    });
+  }
+
   Future<void> loadSongs({bool force = false, Config? config}) async {
-    Iterable<int>? favorites;
+    if (config != null && !config.migrated) {
+      await migrate();
+    }
     final lastFirestoreFetch = config?.lastFirestoreFetch;
     final shouldRefresh = force ||
-        songBox.isEmpty() ||
+        songs.isEmpty ||
         (config != null &&
             (lastFirestoreFetch == null ||
                 -lastFirestoreFetch.difference(DateTime.now()).inDays > 7));
     if (shouldRefresh) {
-      await loadFromFirestore(favorites);
-    } else {
-      songs.assignAll(songBox.getAll());
+      await loadFromFirestore();
     }
   }
 
-  List<Map<String, dynamic>> historyList() => historyBox
-      .query()
-      .order(HistoryEntry_.openedAt, flags: Order.descending)
-      .build()
-      .find()
-      .map((entry) =>
-          {'songNumber': entry.songNumber, 'openedAt': entry.openedAt})
-      .toList();
+  List<int>? historyList() =>
+      jsonDecode(GetStorage().read('history') ?? "[]").cast<int>();
 
   void addToHistory(int number) {
-    if (historyBox.count() > HISTORY_LIMIT) {
-      final lastElement =
-          historyBox.query().order(HistoryEntry_.openedAt).build().find().first;
-      historyBox.remove(lastElement.id);
+    final historyList = this.historyList();
+    if (historyList == null) {
+      GetStorage().write('history', jsonEncode([number]));
+      return;
     }
-    historyBox.put(HistoryEntry(songNumber: number, openedAt: DateTime.now()));
+    historyList.insert(0, number);
+    GetStorage().write(
+        'history',
+        jsonEncode(historyList.length > 50
+            ? historyList.sublist(0, HISTORY_LIMIT)
+            : historyList));
   }
 }

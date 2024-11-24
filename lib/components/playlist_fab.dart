@@ -20,7 +20,7 @@ class PlaylistFab extends StatelessWidget {
             child: const Icon(Icons.present_to_all)),
         FloatingActionButton(
             onPressed: () =>
-                Get.toNamed('/present-playlist', arguments: playlist.id),
+                Get.toNamed('/present-playlist', arguments: playlist.name),
             mini: true,
             child: const Icon(Icons.play_arrow)),
       ],

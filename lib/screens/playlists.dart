@@ -38,16 +38,16 @@ class Playlists extends StatelessWidget {
                   final playlist =
                       playlistController.playlists.elementAt(index);
                   return DismissibleRemove(
-                      dismissibleKey: playlist.id,
+                      dismissibleKey: playlist.name,
                       onRemove: () =>
-                          playlistController.removePlaylist(playlist.id),
+                          playlistController.removePlaylist(playlist.name),
                       confirmDismiss: true,
                       child: ListTile(
                         title: Text(playlist.name,
                             overflow: TextOverflow.ellipsis),
                         trailing: Text('${playlist.songsOrder?.length ?? 0}'),
                         onTap: () =>
-                            Get.toNamed('/playlist', arguments: playlist.id),
+                            Get.toNamed('/playlist', arguments: playlist.name),
                       ));
                 })));
   }

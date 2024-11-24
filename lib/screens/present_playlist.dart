@@ -9,11 +9,11 @@ class PresentPlaylist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final id = Get.arguments as int;
+    final name = Get.arguments as String;
     final PlaylistController playlistController = Get.find();
     final SongsController songsController = Get.find();
     final ConfigController configController = Get.find();
-    final playlist = playlistController.getPlaylist(id);
+    final playlist = playlistController.getPlaylist(name);
     return Scaffold(
         appBar: AppBar(title: Text(playlist.value.name)),
         body: GestureDetector(
@@ -35,7 +35,8 @@ class PresentPlaylist extends StatelessWidget {
                 itemCount: playlist.value.songsOrder!.length,
                 itemBuilder: (context, index) {
                   final songNumber = playlist.value.songsOrder![index];
-                  final song = songsController.songBox.get(songNumber);
+                  final song = songsController.songs
+                      .firstWhereOrNull((song) => song.number == songNumber);
                   if (song == null) return const Center();
                   return Column(children: [
                     Padding(
