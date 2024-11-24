@@ -1,7 +1,8 @@
 import 'package:mladez_zpevnik/classes/song_with_chords.dart';
 import 'package:mladez_zpevnik/helpers/chords.dart';
 
-final chordPattern = RegExp(r'[A-Z][a-z]{0,3}7?\+?(\/[A-Z][a-z]{0,3}7?\+?)?');
+final chordPattern = RegExp(
+    r'[A-Z][a-z]{0,3}7?\+?(\/[A-Z][a-z]{0,3}7?\+?)?(\([A-Z][a-z]{0,3}7?\+?(\/[A-Z][a-z]{0,3}7?\+?)?\))?');
 
 bool isLineWithChords(String line) {
   final chords = chordPattern.allMatches(line).map((e) => e.group(0));
@@ -25,14 +26,15 @@ SongWithChords parseSongWithOldChords(String songWithOldChords) {
   String? lastLineWithChords;
   final List<String> parsedLines = [];
   for (final item in byLines) {
-    final isWithChords = isLineWithChords(item);
+    final withSpacesTrimmed = item.replaceAll(RegExp(r'\s+'), ' ').trim();
+    final isWithChords = isLineWithChords(withSpacesTrimmed);
     if (isWithChords) {
-      lastLineWithChords = item;
+      lastLineWithChords = withSpacesTrimmed;
     } else if (lastLineWithChords != null) {
-      parsedLines.add(mergeLines(lastLineWithChords, item));
+      parsedLines.add(mergeLines(lastLineWithChords, withSpacesTrimmed));
       lastLineWithChords = null;
     } else {
-      parsedLines.add(item);
+      parsedLines.add(withSpacesTrimmed);
     }
   }
   return parseSongWithChords(parsedLines.join('\n'));

@@ -11,35 +11,33 @@ class TextWithChords extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final songWithChoords = isOldChordsVersion(text)
+    final songWithChords = isOldChordsVersion(text)
         ? parseSongWithOldChords(text)
         : parseSongWithChords(text);
-    return RichText(
-        text: TextSpan(
-      style: textStyle.copyWith(height: 2.5),
-      children: songWithChoords.chords.indexed.map((item) {
-        final chord = item.$2;
-        final nextChord = songWithChoords.chords.elementAtOrNull(item.$1 + 1);
-        final chordText =
-            songWithChoords.text.substring(chord.position, nextChord?.position);
-        return TextSpan(
-          children: [
-            WidgetSpan(
-                child: SizedBox(
-              width: 0,
-              child: FractionalTranslation(
-                translation: Offset(0, -0.7),
-                child: Text(chord.text,
-                    maxLines: 1,
-                    style: textStyle.copyWith(
-                        color: Colors.blue.shade600,
-                        fontWeight: FontWeight.bold)),
-              ),
-            )),
-            TextSpan(text: chordText),
-          ],
-        );
-      }).toList(),
-    ));
+    final textOnlyStyle = textStyle.copyWith(height: 2.5);
+    return LayoutBuilder(builder: (context, constraints) {
+      final textPainter = TextPainter(
+        text: TextSpan(text: songWithChords.text, style: textOnlyStyle),
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout(maxWidth: constraints.maxWidth);
+
+      return Stack(clipBehavior: Clip.none, children: [
+        Text(songWithChords.text, style: textOnlyStyle),
+        ...songWithChords.chords.map((chord) {
+          final offset = textPainter.getOffsetForCaret(
+            TextPosition(offset: chord.position),
+            Rect.zero,
+          );
+          return Positioned(
+            left: offset.dx,
+            top: offset.dy - (textOnlyStyle.fontSize ?? 20) * 0.6,
+            child: Text(chord.text,
+                style: textStyle.copyWith(
+                    color: Colors.blue.shade600, fontWeight: FontWeight.w600)),
+          );
+        })
+      ]);
+    });
   }
 }
