@@ -10,7 +10,6 @@ import 'package:mladez_zpevnik/classes/song.dart';
 import 'package:mladez_zpevnik/main.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:mladez_zpevnik/objectbox.g.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 const HISTORY_LIMIT = 50;
 
@@ -108,28 +107,8 @@ class SongsController extends GetxController {
     });
   }
 
-  Future<Iterable<int>?> migrate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final history = prefs.getStringList('history')?.map(int.parse);
-    final favorites = prefs.getStringList('favorites')?.map(int.parse);
-    if (history != null) {
-      historyBox.putMany(history
-          .map((e) => HistoryEntry(songNumber: e, openedAt: DateTime.now()))
-          .toList());
-    }
-    final configController = Get.find<ConfigController>();
-    configController.config.update((val) {
-      if (val == null) return;
-      val.migrated = true;
-    });
-    return favorites;
-  }
-
   Future<void> loadSongs({bool force = false, Config? config}) async {
     Iterable<int>? favorites;
-    if (config != null && !config.migrated) {
-      favorites = await migrate();
-    }
     final lastFirestoreFetch = config?.lastFirestoreFetch;
     final shouldRefresh = force ||
         songBox.isEmpty() ||
