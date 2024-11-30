@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:21566325948268200",
-      "lastPropertyId": "7:5269593133275934922",
+      "lastPropertyId": "8:6411770374701952997",
       "name": "Song",
       "properties": [
         {
@@ -43,6 +43,11 @@
           "id": "7:5269593133275934922",
           "name": "fontSize",
           "type": 8
+        },
+        {
+          "id": "8:6411770374701952997",
+          "name": "transpose",
+          "type": 6
         }
       ],
       "relations": []

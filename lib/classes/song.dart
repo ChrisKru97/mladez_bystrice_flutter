@@ -10,13 +10,14 @@ class Song {
   final String searchValue;
   double fontSize;
   bool isFavorite;
+  int transpose;
 
-  Song(
-      {required this.number,
-      required this.name,
-      required this.withChords,
-      required this.withoutChords,
-      required this.searchValue,
-      this.isFavorite = false,
-      this.fontSize = 20});
+  Song({required this.number,
+    required this.name,
+    required this.withChords,
+    required this.withoutChords,
+    required this.searchValue,
+    this.transpose = 0,
+    this.isFavorite = false,
+    this.fontSize = 20});
 }

@@ -74,17 +74,18 @@ class SongDisplay extends StatelessWidget {
                       minHeight: Get.height - Get.statusBarHeight,
                       minWidth: Get.width),
                   child: configController.config.value.showChords
-                      ? Text(
-                          song.value.withoutChords,
-                          textAlign:
-                              alignCenter ? TextAlign.center : TextAlign.left,
-                          style: textStyle,
-                        )
-                      : TextWithChords(
+                      ? TextWithChords(
                           text: song.value.withChords,
                           textAlign:
                               alignCenter ? TextAlign.center : TextAlign.left,
                           textStyle: textStyle,
+                          transposition: song.value.transpose,
+                        )
+                      : Text(
+                          song.value.withoutChords,
+                          textAlign:
+                              alignCenter ? TextAlign.center : TextAlign.left,
+                          style: textStyle,
                         )),
             );
           }),

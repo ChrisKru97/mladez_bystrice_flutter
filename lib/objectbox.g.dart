@@ -25,7 +25,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 21566325948268200),
       name: 'Song',
-      lastPropertyId: const obx_int.IdUid(7, 5269593133275934922),
+      lastPropertyId: const obx_int.IdUid(8, 6411770374701952997),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -62,6 +62,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(7, 5269593133275934922),
             name: 'fontSize',
             type: 8,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 6411770374701952997),
+            name: 'transpose',
+            type: 6,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -211,7 +216,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final withChordsOffset = fbb.writeString(object.withChords);
           final withoutChordsOffset = fbb.writeString(object.withoutChords);
           final searchValueOffset = fbb.writeString(object.searchValue);
-          fbb.startTable(8);
+          fbb.startTable(9);
           fbb.addInt64(0, object.number);
           fbb.addOffset(1, nameOffset);
           fbb.addOffset(2, withChordsOffset);
@@ -219,6 +224,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addBool(4, object.isFavorite);
           fbb.addOffset(5, searchValueOffset);
           fbb.addFloat64(6, object.fontSize);
+          fbb.addInt64(7, object.transpose);
           fbb.finish(fbb.endTable());
           return object.number;
         },
@@ -237,6 +243,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final searchValueParam =
               const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 14, '');
+          final transposeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0);
           final isFavoriteParam =
               const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false);
           final fontSizeParam =
@@ -247,6 +255,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               withChords: withChordsParam,
               withoutChords: withoutChordsParam,
               searchValue: searchValueParam,
+              transpose: transposeParam,
               isFavorite: isFavoriteParam,
               fontSize: fontSizeParam);
 
@@ -391,6 +400,10 @@ class Song_ {
   /// See [Song.fontSize].
   static final fontSize =
       obx.QueryDoubleProperty<Song>(_entities[0].properties[6]);
+
+  /// See [Song.transpose].
+  static final transpose =
+      obx.QueryIntegerProperty<Song>(_entities[0].properties[7]);
 }
 
 /// [Config] entity fields to define ObjectBox queries.

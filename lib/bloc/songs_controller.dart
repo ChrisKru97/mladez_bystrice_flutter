@@ -55,6 +55,12 @@ class SongsController extends GetxController {
     songBox.put(songs[songIndex]);
   }
 
+  updateTranspose(int increment) => () => openSong.update((val) {
+        if (val == null) return;
+        val.transpose += increment;
+        songBox.put(val);
+      });
+
   void updateFontScale(ScaleUpdateDetails scaleDetails) =>
       openSong.update((val) {
         if (val == null) return;

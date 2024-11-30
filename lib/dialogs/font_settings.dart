@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/dialogs/bottom_dialog_container.dart';
+import 'package:mladez_zpevnik/helpers/chords_migration.dart';
+import 'package:mladez_zpevnik/helpers/transposition.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class FontSettings extends StatelessWidget {
@@ -64,6 +66,54 @@ class FontSettings extends StatelessWidget {
                   onChanged: songsController.updateFontSize,
                   onChangeEnd: songsController.saveFontSize,
                   value: songsController.openSong.value.fontSize),
+              if (configController.config.value.showChords)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Transpozice: ${songsController.openSong.value.transpose}',
+                      style: TextStyle(fontSize: 22),
+                    ),
+                    if (songsController.openSong.value.transpose != 0)
+                      Builder(builder: (context) {
+                        final firstChord = parseAnySongWithChords(
+                                songsController.openSong.value.withChords)
+                            .chords
+                            .firstOrNull
+                            ?.text;
+                        if (firstChord == null) return const Center();
+                        return Text(
+                          '$firstChord -> ${transposeChord(firstChord, songsController.openSong.value.transpose)}',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.blue[700]),
+                        );
+                      }),
+                    Row(children: [
+                      TextButton(
+                        style: ButtonStyle(
+                            shape: WidgetStateProperty.all(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero))),
+                        onPressed: songsController.updateTranspose(-1),
+                        child: Text('-1',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18)),
+                      ),
+                      TextButton(
+                        style: ButtonStyle(
+                            shape: WidgetStateProperty.all(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero))),
+                        onPressed: songsController.updateTranspose(1),
+                        child: Text('+1',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18)),
+                      ),
+                    ])
+                  ],
+                )
             ],
           )),
     );

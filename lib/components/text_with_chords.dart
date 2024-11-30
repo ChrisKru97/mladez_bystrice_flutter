@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:mladez_zpevnik/helpers/chords.dart';
 import 'package:mladez_zpevnik/helpers/chords_migration.dart';
+import 'package:mladez_zpevnik/helpers/transposition.dart';
 
 class TextWithChords extends StatelessWidget {
   const TextWithChords(
       {super.key,
       required this.text,
       required this.textStyle,
-      required this.textAlign});
+      required this.textAlign,
+      required this.transposition});
 
   final String text;
   final TextStyle textStyle;
   final TextAlign textAlign;
+  final int transposition;
 
   @override
   Widget build(BuildContext context) {
-    final songWithChords = isOldChordsVersion(text)
-        ? parseSongWithOldChords(text)
-        : parseSongWithChords(text);
+    final songWithChords = parseAnySongWithChords(text);
     final textScaler = MediaQuery.of(context).textScaler;
     final textOnlyStyle = textStyle.copyWith(height: 2.5);
     return LayoutBuilder(builder: (context, constraints) {
@@ -43,7 +43,7 @@ class TextWithChords extends StatelessWidget {
             left: offset.dx,
             top: offset.dy -
                 textScaler.scale((textOnlyStyle.fontSize ?? 20)) * 0.4,
-            child: Text(chord.text,
+            child: Text(transposeChord(chord.text, transposition),
                 style: textStyle.copyWith(
                     color: Colors.blue.shade600,
                     fontWeight: FontWeight.w600,

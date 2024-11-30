@@ -41,3 +41,7 @@ SongWithChords parseSongWithOldChords(String songWithOldChords) {
 }
 
 bool isOldChordsVersion(String text) => !chordsPattern.hasMatch(text);
+
+SongWithChords parseAnySongWithChords(String text) => isOldChordsVersion(text)
+    ? parseSongWithOldChords(text)
+    : parseSongWithChords(text);
