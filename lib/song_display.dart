@@ -82,6 +82,8 @@ class SongDisplay extends StatelessWidget {
                         )
                       : TextWithChords(
                           text: song.value.withChords,
+                          textAlign:
+                              alignCenter ? TextAlign.center : TextAlign.left,
                           textStyle: textStyle,
                         )),
             );
