@@ -1,54 +1,37 @@
-const chordProgression1 = [
-  'C',
-  'Cis',
-  'D',
-  'Dis',
-  'E',
-  'F',
-  'Fis',
-  'G',
-  'Gis',
-  'A',
+import 'package:mladez_zpevnik/helpers/chords_migration.dart';
+
+const chordProgressionReverse = [
+  'H',
   'Ais',
-  'B',
-];
-
-const chordProgression2 = [
-  'C',
-  'Db',
-  'D',
-  'Eb',
-  'E',
-  'F',
-  'Gb',
-  'G',
-  'Ab',
   'A',
-  'Bb',
-  'B',
-];
-
-const chordProgression3 = [
-  'C',
-  'C#',
-  'D',
-  'D#',
-  'E',
-  'F',
-  'F#',
+  'Gis',
   'G',
-  'G#',
-  'A',
-  'A#',
+  'Fis',
+  'F',
+  'E',
+  'Dis',
+  'D',
+  'Cis',
+  'C',
 ];
 
 String transposeChord(String chord, int semitones) {
-  if (semitones == 0) return chord;
-  final chordProgression = chordProgression1;
-  final index = chordProgression.indexOf(chord);
+  final isMinor = chord.contains('m');
+  final parsedChord = chord.replaceFirst('#', 'is');
+  final secondChordMatch = chordPattern.firstMatch(parsedChord);
+  final secondChord = secondChordMatch?.group(1)?.replaceFirst(r'/', '') ??
+      secondChordMatch?.group(2)?.replaceFirst('(', '').replaceFirst(')', '');
+  final divider = chord.contains('/')
+      ? '/'
+      : chord.contains('(')
+          ? '('
+          : '';
+  if (semitones == 0) return parsedChord;
+  final index =
+      chordProgressionReverse.indexWhere((el) => parsedChord.startsWith(el));
   if (index == -1) {
-    return '?$chord';
+    return '?$parsedChord';
   }
-  final newIndex = (index + semitones) % chordProgression.length;
-  return chordProgression[newIndex];
+  final newIndex = (index - semitones) % chordProgressionReverse.length;
+  return '${chordProgressionReverse[newIndex]}${isMinor ? 'm' : ''}$divider${secondChord != null ? transposeChord(secondChord, semitones) : ''}${divider == '(' ? ')' : ''}';
 }
