@@ -19,11 +19,7 @@ class ConfigController extends GetxController {
 
   @override
   void onInit() {
-    ever(
-        config,
-        (config) => config.lastFirestoreFetch != null
-            ? GetStorage().write('config', jsonEncode(config))
-            : null);
+    ever(config, (config) => GetStorage().write('config', jsonEncode(config)));
     super.onInit();
   }
 }

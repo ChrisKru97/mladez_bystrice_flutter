@@ -45,19 +45,18 @@ class SongsController extends GetxController {
       openSong.update((val) {
         if (val == null) return;
         val.isFavorite = !val.isFavorite;
-        favoritesBox.write(number.toString(), val.isFavorite);
       });
     }
     number ??= openSong.value.number;
     final songIndex = songs.indexWhere((element) => element.number == number);
     songs[songIndex].isFavorite = !songs[songIndex].isFavorite;
+    favoritesBox.write(number.toString(), songs[songIndex].isFavorite);
     songs.refresh();
   }
 
   updateTranspose(int increment) => () => openSong.update((val) {
         if (val == null) return;
         val.transpose += increment;
-        songBox.put(val);
       });
 
   void updateFontScale(ScaleUpdateDetails scaleDetails) =>
@@ -104,16 +103,12 @@ class SongsController extends GetxController {
         .get();
     final parsedSongs = parseSongList(docs.docs);
     songs.assignAll(parsedSongs);
-    Get.find<ConfigController>().config.update((val) {
-      if (val == null) return;
-      val.lastFirestoreFetch = DateTime.now();
-    });
   }
 
   Future<void> migrate() async {
     final prefs = await SharedPreferences.getInstance();
     final history = prefs.getStringList('history');
-    GetStorage().write('history', jsonEncode(history));
+    GetStorage().write('history', jsonEncode(history?.map(int.parse)));
     final favorites = prefs.getStringList('favorites')?.map(int.parse);
     favorites?.forEach((favorite) {
       favoritesBox.write(favorite.toString(), true);
@@ -129,19 +124,14 @@ class SongsController extends GetxController {
     if (config != null && !config.migrated) {
       await migrate();
     }
-    final lastFirestoreFetch = config?.lastFirestoreFetch;
-    final shouldRefresh = force ||
-        songs.isEmpty ||
-        (config != null &&
-            (lastFirestoreFetch == null ||
-                -lastFirestoreFetch.difference(DateTime.now()).inDays > 7));
+    final shouldRefresh = force || songs.isEmpty;
     if (shouldRefresh) {
       await loadFromFirestore();
     }
   }
 
   List<int>? historyList() =>
-      jsonDecode(GetStorage().read('history') ?? "[]").cast<int>();
+      jsonDecode(GetStorage().read('history') ?? "[]")?.cast<int>();
 
   void addToHistory(int number) {
     final historyList = this.historyList();

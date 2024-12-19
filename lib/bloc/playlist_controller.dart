@@ -53,12 +53,26 @@ class PlaylistController extends GetxController {
     return openPlaylist;
   }
 
-  void init() {
-    print(playlistBox.getValues());
-    // playlists.value = playlistBox
-    //     .getValues()
-    //     .map((e) => Playlist.fromJson(jsonDecode(e)))
-    //     .toList();
+  @override
+  void onInit() {
+    ever(
+        playlists,
+        (playlists) => GetStorage()
+            .write('playlists', playlists.map((p) => p.name).toList()));
+    super.onInit();
+  }
+
+  void init() async {
+    await playlistBox.initStorage;
+    final existingPlaylists =
+        List<String>.from(GetStorage().read('playlists') ?? <String>[]);
+    playlists.value = existingPlaylists.map((e) {
+      final asString = playlistBox.read(e);
+      if (asString == null) {
+        return Playlist(name: e);
+      }
+      return Playlist.fromJson(jsonDecode(asString));
+    }).toList();
   }
 
   void addPlaylist(String name) {

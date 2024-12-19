@@ -13,6 +13,6 @@ class Playlist {
 
   factory Playlist.fromJson(Map<String, dynamic> json) => Playlist(
         name: json['name'] as String,
-        songsOrder: jsonDecode(json['songsOrder'] as String).cast<int>(),
+        songsOrder: jsonDecode(json['songsOrder'] as String)?.cast<int>(),
       );
 }
