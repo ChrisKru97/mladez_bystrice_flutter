@@ -108,11 +108,12 @@ class SongsController extends GetxController {
   Future<void> migrate() async {
     final prefs = await SharedPreferences.getInstance();
     final history = prefs.getStringList('history');
-    GetStorage().write('history', jsonEncode(history?.map(int.parse)));
+    GetStorage().write('history', jsonEncode(history?.map(int.parse).toList()));
     final favorites = prefs.getStringList('favorites')?.map(int.parse);
     favorites?.forEach((favorite) {
       favoritesBox.write(favorite.toString(), true);
     });
+    prefs.clear();
     final configController = Get.find<ConfigController>();
     configController.config.update((val) {
       if (val == null) return;
