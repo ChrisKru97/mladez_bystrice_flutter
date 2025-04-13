@@ -1,1 +1,43 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"mladezovy-zpevnik","appId":"1:207934052135:android:02284fb26cd2cbeb0f7b02","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"mladezovy-zpevnik","configurations":{"ios":"1:207934052135:ios:23e79b03cd13e4f80f7b02","web":"1:207934052135:web:d7599ab2d2ede2f00f7b02"}}},"ios":{"default":{"projectId":"mladezovy-zpevnik","appId":"1:207934052135:ios:23e79b03cd13e4f80f7b02","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "mladezovy-zpevnik",
+          "appId": "1:207934052135:android:02284fb26cd2cbeb0f7b02",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "mladezovy-zpevnik",
+          "configurations": {
+            "ios": "1:207934052135:ios:23e79b03cd13e4f80f7b02",
+            "web": "1:207934052135:web:d7599ab2d2ede2f00f7b02"
+          }
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "mladezovy-zpevnik",
+          "appId": "1:207934052135:ios:23e79b03cd13e4f80f7b02",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      }
+    }
+  },
+  "hosting": {
+    "site": "mladezovy-zpevnik",
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

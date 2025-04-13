@@ -98,13 +98,48 @@ class SongsController extends GetxController {
         );
       }).toList();
 
+  List<Song> parseNextSongList(
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> data) =>
+      data.map<Song>((e) {
+        final song = e.data();
+        final isFavorite = favoritesBox.read(song['number'].toString());
+        final fontSize = fontSizesBox.read(song['number'].toString());
+        return Song(
+          number: song['number'] as int,
+          name: song['name'] as String,
+          // In the new collection, 'text' contains the song with chords in [brackets] format
+          withChords: song['text'] as String,
+          // For withoutChords, we'll use the same text but it will be displayed without chords
+          withoutChords: song['text'] as String,
+          searchValue: removeDiacritics(
+              '${song['number']}.${song['name']}${song['text']}'
+                  .toLowerCase()),
+          isFavorite: isFavorite ?? false,
+          fontSize: fontSize ?? 20,
+        );
+      }).toList();
+
   Future<void> loadFromFirestore(Iterable<int>? favorites) async {
-    final docs = await FirebaseFirestore.instance
-        .collection('songs')
-        .where('checkRequired', isEqualTo: false)
-        .orderBy('number')
-        .get();
-    final parsedSongs = parseSongList(docs.docs, favorites);
+    final configController = Get.find<ConfigController>();
+    final useNextCollection = configController.config.value.useNextCollection;
+
+    final collectionName = useNextCollection ? 'songs_next' : 'songs';
+
+    final query = FirebaseFirestore.instance
+        .collection(collectionName);
+
+    // The old collection has a 'checkRequired' field, the new one doesn't
+    final queryWithFilters = useNextCollection
+        ? query.orderBy('number')
+        : query.where('checkRequired', isEqualTo: false).orderBy('number');
+
+    final docs = await queryWithFilters.get();
+
+
+    final parsedSongs = useNextCollection
+        ? parseNextSongList(docs.docs)
+        : parseSongList(docs.docs, favorites);
+
     songs.assignAll(parsedSongs);
     songBox.putMany(parsedSongs);
     Get.find<ConfigController>().config.update((val) {
