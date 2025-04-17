@@ -9,7 +9,6 @@ import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/classes/config.dart';
 import 'package:mladez_zpevnik/classes/song.dart';
 import 'package:diacritic/diacritic.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 const HISTORY_LIMIT = 50;
 
@@ -18,13 +17,14 @@ class SongsController extends GetxController {
   final searchString = ''.obs;
   final favoritesBox = GetStorage('favorites');
   final fontSizesBox = GetStorage('fontSizes');
-  final Rx<Song> openSong = Song(
-          number: 0,
-          name: '',
-          withChords: '',
-          withoutChords: '',
-          searchValue: '')
-      .obs;
+  final Rx<Song> openSong =
+      Song(
+        number: 0,
+        name: '',
+        withChords: '',
+        withoutChords: '',
+        searchValue: '',
+      ).obs;
 
   Rx<Song> getSong(int number) {
     if (openSong.value.number != number) {
@@ -34,11 +34,14 @@ class SongsController extends GetxController {
     return openSong;
   }
 
-  List<Song> get filteredSongs => searchString.value.isEmpty
-      ? songs.value
-      : songs.value
-          .where((element) => element.searchValue.contains(searchString.value))
-          .toList();
+  List<Song> get filteredSongs =>
+      searchString.value.isEmpty
+          ? songs.value
+          : songs.value
+              .where(
+                (element) => element.searchValue.contains(searchString.value),
+              )
+              .toList();
 
   void toggleFavorite(int? number) {
     if (number == null) {
@@ -54,7 +57,8 @@ class SongsController extends GetxController {
     songs.refresh();
   }
 
-  updateTranspose(int increment) => () => openSong.update((val) {
+  updateTranspose(int increment) =>
+      () => openSong.update((val) {
         if (val == null) return;
         val.transpose += increment;
       });
@@ -63,21 +67,27 @@ class SongsController extends GetxController {
       openSong.update((val) {
         if (val == null) return;
         val.fontSize = min(
-            max(Get.width * 0.1, 20),
-            max(min(Get.width * 0.02, 20),
-                val.fontSize * pow(scaleDetails.scale, 1 / 16)));
+          max(Get.width * 0.1, 20),
+          max(
+            min(Get.width * 0.02, 20),
+            val.fontSize * pow(scaleDetails.scale, 1 / 16),
+          ),
+        );
       });
 
   void saveFontSize(_) => fontSizesBox.write(
-      openSong.value.number.toString(), openSong.value.fontSize);
+    openSong.value.number.toString(),
+    openSong.value.fontSize,
+  );
 
   void updateFontSize(double fontSize) => openSong.update((val) {
-        if (val == null) return;
-        val.fontSize = fontSize;
-      });
+    if (val == null) return;
+    val.fontSize = fontSize;
+  });
 
   List<Song> parseSongList(
-          List<QueryDocumentSnapshot<Map<String, dynamic>>> data) =>
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
+  ) =>
       data.map<Song>((e) {
         final song = e.data();
         final isFavorite = favoritesBox.read(song['number'].toString());
@@ -88,38 +98,38 @@ class SongsController extends GetxController {
           withChords: song['withChords'] as String,
           withoutChords: song['withoutChords'] as String,
           searchValue: removeDiacritics(
-              '${song['number']}.${song['name']}${song['withoutChords']}'
-                  .toLowerCase()),
+            '${song['number']}.${song['name']}${song['withoutChords']}'
+                .toLowerCase(),
+          ),
           isFavorite: isFavorite ?? false,
           fontSize: fontSize ?? 20,
         );
       }).toList();
 
-  Future<void> loadFromFirestore() async {
-    final configController = Get.find<ConfigController>();
-    final useNextCollection = configController.config.value.useNextCollection;
-
+  Future<void> loadFromFirestore(bool useNextCollection) async {
     final collectionName = useNextCollection ? 'songs_next' : 'songs';
 
-    final query = FirebaseFirestore.instance
-        .collection(collectionName);
+    final query = FirebaseFirestore.instance.collection(collectionName);
 
     // The old collection has a 'checkRequired' field, the new one doesn't
-    final queryWithFilters = useNextCollection
-        ? query.orderBy('number')
-        : query.where('checkRequired', isEqualTo: false).orderBy('number');
+    final queryWithFilters =
+        useNextCollection
+            ? query.orderBy('number')
+            : query.where('checkRequired', isEqualTo: false).orderBy('number');
 
     final docs = await queryWithFilters.get();
 
-    final parsedSongs = useNextCollection
-        ? parseNextSongList(docs.docs)
-        : parseSongList(docs.docs);
+    final parsedSongs =
+        useNextCollection
+            ? parseNextSongList(docs.docs)
+            : parseSongList(docs.docs);
 
     songs.assignAll(parsedSongs);
   }
 
   List<Song> parseNextSongList(
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> data) =>
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
+  ) =>
       data.map<Song>((e) {
         final song = e.data();
         final isFavorite = favoritesBox.read(song['number'].toString());
@@ -132,36 +142,17 @@ class SongsController extends GetxController {
           // For withoutChords, we'll use the same text but it will be displayed without chords
           withoutChords: song['text'] as String,
           searchValue: removeDiacritics(
-              '${song['number']}.${song['name']}${song['text']}'
-                  .toLowerCase()),
+            '${song['number']}.${song['name']}${song['text']}'.toLowerCase(),
+          ),
           isFavorite: isFavorite ?? false,
           fontSize: fontSize ?? 20,
         );
       }).toList();
 
-  Future<void> migrate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final history = prefs.getStringList('history');
-    GetStorage().write('history', jsonEncode(history?.map(int.parse).toList()));
-    final favorites = prefs.getStringList('favorites')?.map(int.parse);
-    favorites?.forEach((favorite) {
-      favoritesBox.write(favorite.toString(), true);
-    });
-    prefs.clear();
-    final configController = Get.find<ConfigController>();
-    configController.config.update((val) {
-      if (val == null) return;
-      val.migrated = true;
-    });
-  }
-
   Future<void> loadSongs({bool force = false, Config? config}) async {
-    if (config != null && !config.migrated) {
-      await migrate();
-    }
     final shouldRefresh = force || songs.isEmpty;
     if (shouldRefresh) {
-      await loadFromFirestore();
+      await loadFromFirestore(config?.useNextCollection ?? false);
     }
   }
 
@@ -176,9 +167,12 @@ class SongsController extends GetxController {
     }
     historyList.insert(0, number);
     GetStorage().write(
-        'history',
-        jsonEncode(historyList.length > 50
+      'history',
+      jsonEncode(
+        historyList.length > 50
             ? historyList.sublist(0, HISTORY_LIMIT)
-            : historyList));
+            : historyList,
+      ),
+    );
   }
 }

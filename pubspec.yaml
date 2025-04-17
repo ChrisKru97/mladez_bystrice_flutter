@@ -4,29 +4,26 @@ description: Bystřický mládežový zpěvník
 version: 2.1.1+33
 
 environment:
-  sdk: ">=3.6.0"
+  sdk: ">=3.7.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  cloud_firestore: ^5.5.0
-  firebase_auth: ^5.3.3
-  firebase_core: ^3.8.0
-  toggle_switch: ^2.1.0
-  wakelock_plus: ^1.2.8
-  get: ^4.6.6
-  diacritic: ^0.1.4
-  google_fonts: ^6.1.0
+  cloud_firestore: ^5.6.6
+  firebase_auth: ^5.5.2
+  firebase_core: ^3.13.0
+  toggle_switch: ^2.3.0
+  wakelock_plus: ^1.2.11
+  get: ^4.7.2
+  diacritic: ^0.1.6
+  google_fonts: ^6.2.1
   auto_size_text: ^3.0.0
   get_storage: ^2.1.1
-  shared_preferences: ^2.3.3
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
-
-assets:
-  - assets/
