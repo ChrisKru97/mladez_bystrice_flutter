@@ -34,11 +34,14 @@ class SongsController extends GetxController {
     return openSong;
   }
 
-  List<Song> get filteredSongs => searchString.value.isEmpty
-      ? songs.value
-      : songs.value
-          .where((element) => element.searchValue.contains(searchString.value))
-          .toList();
+  List<Song> get filteredSongs =>
+      searchString.value.isEmpty
+          ? songs.value
+          : songs.value
+              .where(
+                (element) => element.searchValue.contains(searchString.value),
+              )
+              .toList();
 
   void toggleFavorite(int? number) {
     if (number == null) {
@@ -55,7 +58,8 @@ class SongsController extends GetxController {
     songBox.put(songs[songIndex]);
   }
 
-  updateTranspose(int increment) => () => openSong.update((val) {
+  updateTranspose(int increment) =>
+      () => openSong.update((val) {
         if (val == null) return;
         val.transpose += increment;
         songBox.put(val);
@@ -65,15 +69,18 @@ class SongsController extends GetxController {
       openSong.update((val) {
         if (val == null) return;
         val.fontSize = min(
-            max(Get.width * 0.1, 20),
-            max(min(Get.width * 0.02, 20),
-                val.fontSize * pow(scaleDetails.scale, 1 / 16)));
+          max(Get.width * 0.1, 20),
+          max(
+            min(Get.width * 0.02, 20),
+            val.fontSize * pow(scaleDetails.scale, 1 / 16),
+          ),
+        );
       });
 
   void updateFontSize(double fontSize) => openSong.update((val) {
-        if (val == null) return;
-        val.fontSize = fontSize;
-      });
+    if (val == null) return;
+    val.fontSize = fontSize;
+  });
 
   void saveFontSize(dynamic _) => songBox.put(openSong.value);
 
@@ -99,7 +106,8 @@ class SongsController extends GetxController {
       }).toList();
 
   List<Song> parseNextSongList(
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> data) =>
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
+  ) =>
       data.map<Song>((e) {
         final song = e.data();
         final isFavorite = favoritesBox.read(song['number'].toString());
@@ -112,8 +120,8 @@ class SongsController extends GetxController {
           // For withoutChords, we'll use the same text but it will be displayed without chords
           withoutChords: song['text'] as String,
           searchValue: removeDiacritics(
-              '${song['number']}.${song['name']}${song['text']}'
-                  .toLowerCase()),
+            '${song['number']}.${song['name']}${song['text']}'.toLowerCase(),
+          ),
           isFavorite: isFavorite ?? false,
           fontSize: fontSize ?? 20,
         );
