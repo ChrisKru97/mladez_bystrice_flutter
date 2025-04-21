@@ -107,11 +107,15 @@ class SongsController extends GetxController {
 
   List<Song> parseNextSongList(
     List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
+    Iterable<int>? favorites,
   ) =>
       data.map<Song>((e) {
         final song = e.data();
-        final isFavorite = favoritesBox.read(song['number'].toString());
-        final fontSize = fontSizesBox.read(song['number'].toString());
+        final songState = songBox.get(song['number'] as int);
+        final isFavorite = favorites?.contains(song['number']) ??
+            songState?.isFavorite ??
+            false;
+        final fontSize = songState?.fontSize ?? 20;
         return Song(
           number: song['number'] as int,
           name: song['name'] as String,
@@ -122,8 +126,8 @@ class SongsController extends GetxController {
           searchValue: removeDiacritics(
             '${song['number']}.${song['name']}${song['text']}'.toLowerCase(),
           ),
-          isFavorite: isFavorite ?? false,
-          fontSize: fontSize ?? 20,
+          isFavorite: isFavorite,
+          fontSize: fontSize,
         );
       }).toList();
 
@@ -145,7 +149,7 @@ class SongsController extends GetxController {
 
 
     final parsedSongs = useNextCollection
-        ? parseNextSongList(docs.docs)
+        ? parseNextSongList(docs.docs,favorites)
         : parseSongList(docs.docs, favorites);
 
     songs.assignAll(parsedSongs);
