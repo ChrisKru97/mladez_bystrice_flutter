@@ -11,20 +11,15 @@ import 'package:mladez_zpevnik/main.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:mladez_zpevnik/objectbox.g.dart';
 
-const HISTORY_LIMIT = 50;
+const historyLimit = 50;
 
 class SongsController extends GetxController {
   final songs = <Song>[].obs;
   final searchString = ''.obs;
   final songBox = objectbox.store.box<Song>();
   final historyBox = objectbox.store.box<HistoryEntry>();
-  final Rx<Song> openSong = Song(
-          number: 0,
-          name: '',
-          withChords: '',
-          withoutChords: '',
-          searchValue: '')
-      .obs;
+  final Rx<Song> openSong =
+      Song(number: 0, name: '', text: '', searchValue: '').obs;
 
   Rx<Song> getSong(int number) {
     if (openSong.value.number != number) {
@@ -85,44 +80,21 @@ class SongsController extends GetxController {
   void saveFontSize(dynamic _) => songBox.put(openSong.value);
 
   List<Song> parseSongList(
-          List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
-          Iterable<int>? favorites) =>
-      data.map<Song>((e) {
-        final song = e.data();
-        final songState = songBox.get(song['number'] as int);
-        return Song(
-          number: song['number'] as int,
-          name: song['name'] as String,
-          withChords: song['withChords'] as String,
-          withoutChords: song['withoutChords'] as String,
-          searchValue: removeDiacritics(
-              '${song['number']}.${song['name']}${song['withoutChords']}'
-                  .toLowerCase()),
-          isFavorite: favorites?.contains(song['number']) ??
-              songState?.isFavorite ??
-              false,
-          fontSize: songState?.fontSize ?? 20,
-        );
-      }).toList();
-
-  List<Song> parseNextSongList(
     List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
     Iterable<int>? favorites,
   ) =>
       data.map<Song>((e) {
         final song = e.data();
         final songState = songBox.get(song['number'] as int);
-        final isFavorite = favorites?.contains(song['number']) ??
+        final isFavorite =
+            favorites?.contains(song['number']) ??
             songState?.isFavorite ??
             false;
         final fontSize = songState?.fontSize ?? 20;
         return Song(
           number: song['number'] as int,
           name: song['name'] as String,
-          // In the new collection, 'text' contains the song with chords in [brackets] format
-          withChords: song['text'] as String,
-          // For withoutChords, we'll use the same text but it will be displayed without chords
-          withoutChords: song['text'] as String,
+          text: song['text'] as String,
           searchValue: removeDiacritics(
             '${song['number']}.${song['name']}${song['text']}'.toLowerCase(),
           ),
@@ -132,25 +104,13 @@ class SongsController extends GetxController {
       }).toList();
 
   Future<void> loadFromFirestore(Iterable<int>? favorites) async {
-    final configController = Get.find<ConfigController>();
-    final useNextCollection = configController.config.value.useNextCollection;
+    final docs =
+        await FirebaseFirestore.instance
+            .collection('songs_next')
+            .orderBy('number')
+            .get();
 
-    final collectionName = useNextCollection ? 'songs_next' : 'songs';
-
-    final query = FirebaseFirestore.instance
-        .collection(collectionName);
-
-    // The old collection has a 'checkRequired' field, the new one doesn't
-    final queryWithFilters = useNextCollection
-        ? query.orderBy('number')
-        : query.where('checkRequired', isEqualTo: false).orderBy('number');
-
-    final docs = await queryWithFilters.get();
-
-
-    final parsedSongs = useNextCollection
-        ? parseNextSongList(docs.docs,favorites)
-        : parseSongList(docs.docs, favorites);
+    final parsedSongs = parseSongList(docs.docs, favorites);
 
     songs.assignAll(parsedSongs);
     songBox.putMany(parsedSongs);
@@ -163,7 +123,8 @@ class SongsController extends GetxController {
   Future<void> loadSongs({bool force = false, Config? config}) async {
     Iterable<int>? favorites;
     final lastFirestoreFetch = config?.lastFirestoreFetch;
-    final shouldRefresh = force ||
+    final shouldRefresh =
+        force ||
         songBox.isEmpty() ||
         (config != null &&
             (lastFirestoreFetch == null ||
@@ -175,17 +136,22 @@ class SongsController extends GetxController {
     }
   }
 
-  List<Map<String, dynamic>> historyList() => historyBox
-      .query()
-      .order(HistoryEntry_.openedAt, flags: Order.descending)
-      .build()
-      .find()
-      .map((entry) =>
-          {'songNumber': entry.songNumber, 'openedAt': entry.openedAt})
-      .toList();
+  List<Map<String, dynamic>> historyList() =>
+      historyBox
+          .query()
+          .order(HistoryEntry_.openedAt, flags: Order.descending)
+          .build()
+          .find()
+          .map(
+            (entry) => {
+              'songNumber': entry.songNumber,
+              'openedAt': entry.openedAt,
+            },
+          )
+          .toList();
 
   void addToHistory(int number) {
-    if (historyBox.count() > HISTORY_LIMIT) {
+    if (historyBox.count() > historyLimit) {
       final lastElement =
           historyBox.query().order(HistoryEntry_.openedAt).build().find().first;
       historyBox.remove(lastElement.id);

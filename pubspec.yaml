@@ -21,6 +21,8 @@ dependencies:
   diacritic: ^0.1.6
   google_fonts: ^6.2.1
   auto_size_text: ^3.0.0
+  path: ^1.9.1
+  path_provider: ^2.1.5
 
 dev_dependencies:
   build_runner: ^2.4.6
