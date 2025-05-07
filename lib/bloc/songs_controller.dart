@@ -31,8 +31,8 @@ class SongsController extends GetxController {
 
   List<Song> get filteredSongs =>
       searchString.value.isEmpty
-          ? songs.value
-          : songs.value
+          ? songs
+          : songs
               .where(
                 (element) => element.searchValue.contains(searchString.value),
               )

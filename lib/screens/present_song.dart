@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
+import 'package:mladez_zpevnik/helpers/chords_migration.dart';
 
 const nextSlideKeys = [
   LogicalKeyboardKey.enter,
@@ -25,23 +26,22 @@ Slides getSlides(dynamic arguments) {
     final List<int> slidesWithUnderline = [0];
     final slides =
         arguments.expand((songNumber) {
-          final songSlides = songsController
-              .getSong(songNumber)
-              .value
-              .text
-              .split('\n');
+          final song = songsController.getSong(songNumber).value;
+          final songText = parseAnySongWithChords(song.text);
+          final songSlides = songText.text.split('\n');
           slidesWithUnderline.add(
             songSlides.length + slidesWithUnderline.last + 1,
           );
-          return [
-            songsController.getSong(songNumber).value.name,
-            ...songsController.getSong(songNumber).value.text.split('\n'),
-          ];
+          return [song.name, ...songText.text.split('\n')];
         }).toList();
     return Slides(slides, slidesWithUnderline: slidesWithUnderline);
   } else if (arguments is int) {
     final songsController = Get.find<SongsController>();
-    return Slides(songsController.getSong(arguments).value.text.split('\n'));
+    final songText =
+        parseAnySongWithChords(
+          songsController.getSong(arguments).value.text,
+        ).text;
+    return Slides(songText.split('\n'));
   }
   return Slides([]);
 }

@@ -14,14 +14,14 @@ class ButtonContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        height: 40,
-        width: 40,
-        decoration: BoxDecoration(
-          color: Get.isDarkMode ? Colors.grey[400] : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Center(child: child),
-      );
+    height: 40,
+    width: 40,
+    decoration: BoxDecoration(
+      color: Get.isDarkMode ? Colors.grey[400] : Colors.white,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Center(child: child),
+  );
 }
 
 final buttonList = [
@@ -32,14 +32,14 @@ final buttonList = [
       final songsController = Get.find<SongsController>();
       songsController.searchString.value = '';
       Get.bottomSheet(const SearchSong());
-    }
+    },
   },
   {
     'icon': Icons.keyboard_outlined,
-    'onPressed': () => Get.bottomSheet(NumberSelect())
+    'onPressed': () => Get.bottomSheet(NumberSelect()),
   },
   {'icon': Icons.history, 'onPressed': () => Get.toNamed('/history')},
-  {'icon': Icons.queue_music, 'onPressed': () => Get.toNamed('/playlists')}
+  {'icon': Icons.queue_music, 'onPressed': () => Get.toNamed('/playlists')},
 ];
 
 class MenuRow extends StatelessWidget {
@@ -47,23 +47,31 @@ class MenuRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        color: Get.theme.primaryColor.withOpacity(0.4),
-        padding: const EdgeInsets.symmetric(vertical: 20)
-            .copyWith(bottom: max(20, MediaQuery.of(context).padding.bottom)),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const SearchInfo(),
-          Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: buttonList
-                  .map((button) => ButtonContainer(
-                        child: IconButton(
-                          icon: Icon(button['icon'] as IconData),
-                          color: const Color(0xB2000000),
-                          onPressed: button['onPressed'] as void Function()?,
-                        ),
-                      ))
-                  .toList())
-        ]),
-      );
+    color: Get.theme.primaryColor.withAlpha(100),
+    padding: const EdgeInsets.symmetric(
+      vertical: 20,
+    ).copyWith(bottom: max(20, MediaQuery.of(context).padding.bottom)),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SearchInfo(),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children:
+              buttonList
+                  .map(
+                    (button) => ButtonContainer(
+                      child: IconButton(
+                        icon: Icon(button['icon'] as IconData),
+                        color: const Color(0xB2000000),
+                        onPressed: button['onPressed'] as void Function()?,
+                      ),
+                    ),
+                  )
+                  .toList(),
+        ),
+      ],
+    ),
+  );
 }

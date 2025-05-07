@@ -70,66 +70,89 @@ class FontSettings extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Transpozice: ${songsController.openSong.value.transpose}',
-                    style: TextStyle(fontSize: 22),
+                  Flexible(
+                    child: Text(
+                      'Transpozice${songsController.openSong.value.transpose != 0 ? ': ' : ''}',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 20),
+                    ),
                   ),
                   if (songsController.openSong.value.transpose != 0)
-                    Builder(
-                      builder: (context) {
-                        final firstChord =
-                            parseAnySongWithChords(
-                              songsController.openSong.value.text,
-                            ).chords.firstOrNull?.text;
-                        if (firstChord == null) return const Center();
-                        return Text(
-                          '$firstChord -> ${transposeChord(firstChord, songsController.openSong.value.transpose)}',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontStyle: FontStyle.italic,
-                            color: Colors.blue[700],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Transform.translate(
+                          offset: Offset(0, 3),
+                          child: Text(
+                            songsController.openSong.value.transpose.toString(),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        );
-                      },
+                        ),
+                        Transform.translate(
+                          offset: Offset(0, -3),
+                          child: Builder(
+                            builder: (context) {
+                              final firstChord =
+                                  parseAnySongWithChords(
+                                    songsController.openSong.value.text,
+                                  ).chords.firstOrNull?.text;
+                              if (firstChord == null) return const Center();
+                              return Text(
+                                '$firstChord -> ${transposeChord(firstChord, songsController.openSong.value.transpose)}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.blue[700],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            minimumSize: Size.zero,
+                          ),
+                          onPressed: songsController.updateTranspose(-1),
+                          child: Text(
+                            '-1',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            minimumSize: Size.zero,
+                          ),
+                          onPressed: songsController.updateTranspose(1),
+                          child: Text(
+                            '+1',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  Row(
-                    children: [
-                      TextButton(
-                        style: ButtonStyle(
-                          shape: WidgetStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero,
-                            ),
-                          ),
-                        ),
-                        onPressed: songsController.updateTranspose(-1),
-                        child: Text(
-                          '-1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        style: ButtonStyle(
-                          shape: WidgetStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero,
-                            ),
-                          ),
-                        ),
-                        onPressed: songsController.updateTranspose(1),
-                        child: Text(
-                          '+1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
           ],

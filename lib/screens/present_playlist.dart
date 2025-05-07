@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/playlist_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
+import 'package:mladez_zpevnik/helpers/chords_migration.dart';
 
 class PresentPlaylist extends StatelessWidget {
   const PresentPlaylist({super.key});
@@ -38,6 +39,7 @@ class PresentPlaylist extends StatelessWidget {
             final songNumber = playlist.value.songsOrder![index];
             final song = songsController.songBox.get(songNumber);
             if (song == null) return const Center();
+            final songText = parseAnySongWithChords(song.text).text;
             return Column(
               children: [
                 Padding(
@@ -53,9 +55,8 @@ class PresentPlaylist extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 100),
-                  child: Obx(() {
-                    final songText = song.text;
-                    return Text(
+                  child: Obx(
+                    () => Text(
                       songText,
                       style: TextStyle(
                         fontSize: song.fontSize,
@@ -65,8 +66,8 @@ class PresentPlaylist extends StatelessWidget {
                           configController.config.value.alignCenter
                               ? TextAlign.center
                               : TextAlign.left,
-                    );
-                  }),
+                    ),
+                  ),
                 ),
               ],
             );
