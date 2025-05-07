@@ -23,9 +23,7 @@ const primaryColor = Color.fromRGBO(165, 201, 175, 1);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAuth.instance.signInAnonymously();
   await GetStorage.init();
 
@@ -37,9 +35,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final configController = ConfigController();
-    final config = configController.init();
-    final songsController = SongsController()..loadSongs(config: config);
+    final configController = ConfigController()..init();
+    final songsController = SongsController()..loadSongs();
     Get.put(configController);
     Get.put(songsController);
     Get.put(PlaylistController()..init());
@@ -48,36 +45,45 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-            color: Color.fromRGBO(143, 181, 250, 1),
-            foregroundColor: Colors.white,
-            elevation: 6,
-            scrolledUnderElevation: 6,
-            shadowColor: Colors.black45,
-            systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarBrightness: Brightness.dark,
-            ),
+        appBarTheme: const AppBarTheme(
+          color: Color.fromRGBO(143, 181, 250, 1),
+          foregroundColor: Colors.white,
+          elevation: 6,
+          scrolledUnderElevation: 6,
+          shadowColor: Colors.black45,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarBrightness: Brightness.dark,
           ),
-          primaryColor: primaryColor,
-          colorScheme: const ColorScheme.light(
-              primary: Color(0xFF88A691), //Color.fromRGBO(249, 199, 145, 1),
-              outlineVariant: Colors.black12),
-          floatingActionButtonTheme: const FloatingActionButtonThemeData(
-              foregroundColor: Colors.white,
-              backgroundColor: Color.fromRGBO(143, 181, 222, 1)),
-          textTheme: GoogleFonts.interTextTheme()),
+        ),
+        primaryColor: primaryColor,
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF88A691), //Color.fromRGBO(249, 199, 145, 1),
+          outlineVariant: Colors.black12,
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          foregroundColor: Colors.white,
+          backgroundColor: Color.fromRGBO(143, 181, 222, 1),
+        ),
+        textTheme: GoogleFonts.interTextTheme(),
+      ),
       darkTheme: ThemeData(
-          brightness: Brightness.dark,
-          appBarTheme: AppBarTheme(
-              backgroundColor: Colors.grey[900],
-              elevation: 0,
-              scrolledUnderElevation: 0),
-          primaryColor: Colors.black,
-          colorScheme: const ColorScheme.dark(
-              primary: Colors.black, outlineVariant: Colors.white24),
-          floatingActionButtonTheme: const FloatingActionButtonThemeData(
-              foregroundColor: Colors.black87, backgroundColor: Colors.grey),
-          textTheme: GoogleFonts.interTextTheme()),
+        brightness: Brightness.dark,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.grey[900],
+          elevation: 0,
+          scrolledUnderElevation: 0,
+        ),
+        primaryColor: Colors.black,
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.black,
+          outlineVariant: Colors.white24,
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          foregroundColor: Colors.black87,
+          backgroundColor: Colors.grey,
+        ),
+        textTheme: GoogleFonts.interTextTheme(),
+      ),
       routingCallback: (routing) {
         switch (routing?.current) {
           case '/song':
@@ -96,7 +102,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/history', page: () => const HistoryList()),
         GetPage(name: '/playlists', page: () => const Playlists()),
         GetPage(name: '/playlist', page: () => const PlaylistDisplay()),
-        GetPage(name: '/present-playlist', page: () => const PresentPlaylist())
+        GetPage(name: '/present-playlist', page: () => const PresentPlaylist()),
       ],
     );
   }

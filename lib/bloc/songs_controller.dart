@@ -5,12 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:flutter/gestures.dart' show ScaleUpdateDetails;
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:mladez_zpevnik/bloc/config_controller.dart';
-import 'package:mladez_zpevnik/classes/config.dart';
 import 'package:mladez_zpevnik/classes/song.dart';
 import 'package:diacritic/diacritic.dart';
 
-const HISTORY_LIMIT = 50;
+const historyLimit = 50;
 
 class SongsController extends GetxController {
   final songs = <Song>[].obs;
@@ -18,13 +16,7 @@ class SongsController extends GetxController {
   final favoritesBox = GetStorage('favorites');
   final fontSizesBox = GetStorage('fontSizes');
   final Rx<Song> openSong =
-      Song(
-        number: 0,
-        name: '',
-        withChords: '',
-        withoutChords: '',
-        searchValue: '',
-      ).obs;
+      Song(number: 0, name: '', text: '', searchValue: '').obs;
 
   Rx<Song> getSong(int number) {
     if (openSong.value.number != number) {
@@ -36,8 +28,8 @@ class SongsController extends GetxController {
 
   List<Song> get filteredSongs =>
       searchString.value.isEmpty
-          ? songs.value
-          : songs.value
+          ? songs
+          : songs
               .where(
                 (element) => element.searchValue.contains(searchString.value),
               )
@@ -95,52 +87,7 @@ class SongsController extends GetxController {
         return Song(
           number: song['number'] as int,
           name: song['name'] as String,
-          withChords: song['withChords'] as String,
-          withoutChords: song['withoutChords'] as String,
-          searchValue: removeDiacritics(
-            '${song['number']}.${song['name']}${song['withoutChords']}'
-                .toLowerCase(),
-          ),
-          isFavorite: isFavorite ?? false,
-          fontSize: fontSize ?? 20,
-        );
-      }).toList();
-
-  Future<void> loadFromFirestore(bool useNextCollection) async {
-    final collectionName = useNextCollection ? 'songs_next' : 'songs';
-
-    final query = FirebaseFirestore.instance.collection(collectionName);
-
-    // The old collection has a 'checkRequired' field, the new one doesn't
-    final queryWithFilters =
-        useNextCollection
-            ? query.orderBy('number')
-            : query.where('checkRequired', isEqualTo: false).orderBy('number');
-
-    final docs = await queryWithFilters.get();
-
-    final parsedSongs =
-        useNextCollection
-            ? parseNextSongList(docs.docs)
-            : parseSongList(docs.docs);
-
-    songs.assignAll(parsedSongs);
-  }
-
-  List<Song> parseNextSongList(
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
-  ) =>
-      data.map<Song>((e) {
-        final song = e.data();
-        final isFavorite = favoritesBox.read(song['number'].toString());
-        final fontSize = fontSizesBox.read(song['number'].toString());
-        return Song(
-          number: song['number'] as int,
-          name: song['name'] as String,
-          // In the new collection, 'text' contains the song with chords in [brackets] format
-          withChords: song['text'] as String,
-          // For withoutChords, we'll use the same text but it will be displayed without chords
-          withoutChords: song['text'] as String,
+          text: song['text'] as String,
           searchValue: removeDiacritics(
             '${song['number']}.${song['name']}${song['text']}'.toLowerCase(),
           ),
@@ -149,10 +96,22 @@ class SongsController extends GetxController {
         );
       }).toList();
 
-  Future<void> loadSongs({bool force = false, Config? config}) async {
+  Future<void> loadFromFirestore() async {
+    final docs =
+        await FirebaseFirestore.instance
+            .collection('songs_next')
+            .orderBy('number')
+            .get();
+
+    final parsedSongs = parseSongList(docs.docs);
+
+    songs.assignAll(parsedSongs);
+  }
+
+  Future<void> loadSongs({bool force = false}) async {
     final shouldRefresh = force || songs.isEmpty;
     if (shouldRefresh) {
-      await loadFromFirestore(config?.useNextCollection ?? false);
+      await loadFromFirestore();
     }
   }
 
@@ -170,7 +129,7 @@ class SongsController extends GetxController {
       'history',
       jsonEncode(
         historyList.length > 50
-            ? historyList.sublist(0, HISTORY_LIMIT)
+            ? historyList.sublist(0, historyLimit)
             : historyList,
       ),
     );

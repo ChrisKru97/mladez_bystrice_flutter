@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
+import 'package:mladez_zpevnik/classes/song_with_chords.dart';
 import 'package:mladez_zpevnik/components/song_fab.dart';
 import 'package:mladez_zpevnik/components/text_with_chords.dart';
+import 'package:mladez_zpevnik/helpers/chords_migration.dart';
 import 'components/favorite_icon.dart';
 
 class SongDisplay extends StatelessWidget {
@@ -33,10 +35,7 @@ class SongDisplay extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           title: FittedBox(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 28),
-            ),
+            child: Text(title, style: const TextStyle(fontSize: 28)),
           ),
           actions: <Widget>[Obx(() => FavoriteIcon(song.value.isFavorite))],
         ),
@@ -47,12 +46,13 @@ class SongDisplay extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onScaleUpdate: songsController.updateFontScale,
           onScaleEnd: songsController.saveFontSize,
-          onLongPress: () =>
-              Get.toNamed('/present-song', arguments: song.value.number),
-          onDoubleTap: () => configController.config.update((val) {
-            if (val == null) return;
-            val.showChords = !val.showChords;
-          }),
+          onLongPress:
+              () => Get.toNamed('/present-song', arguments: song.value.number),
+          onDoubleTap:
+              () => configController.config.update((val) {
+                if (val == null) return;
+                val.showChords = !val.showChords;
+              }),
           onHorizontalDragUpdate: (details) {
             if (details.primaryDelta != null &&
                 (details.primaryDelta! > 15 || details.primaryDelta! < -15)) {
@@ -64,29 +64,36 @@ class SongDisplay extends StatelessWidget {
           },
           child: Obx(() {
             final textStyle = TextStyle(
-                fontSize: song.value.fontSize,
-                color: Get.isDarkMode ? Colors.white : Colors.black);
+              fontSize: song.value.fontSize,
+              color: Get.isDarkMode ? Colors.white : Colors.black,
+            );
             final alignCenter = configController.config.value.alignCenter;
+            final SongWithChords songWithChords = parseAnySongWithChords(
+              song.value.text,
+            );
             return SingleChildScrollView(
               padding: const EdgeInsets.all(15),
               child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                      minHeight: Get.height - Get.statusBarHeight,
-                      minWidth: Get.width),
-                  child: configController.config.value.showChords
-                      ? TextWithChords(
-                          text: song.value.withChords,
+                constraints: BoxConstraints(
+                  minHeight: Get.height - Get.statusBarHeight,
+                  minWidth: Get.width,
+                ),
+                child:
+                    configController.config.value.showChords
+                        ? TextWithChords(
+                          songWithChords: songWithChords,
                           textAlign:
                               alignCenter ? TextAlign.center : TextAlign.left,
                           textStyle: textStyle,
                           transposition: song.value.transpose,
                         )
-                      : Text(
-                          song.value.withoutChords,
+                        : Text(
+                          songWithChords.text,
                           textAlign:
                               alignCenter ? TextAlign.center : TextAlign.left,
                           style: textStyle,
-                        )),
+                        ),
+              ),
             );
           }),
         ),
