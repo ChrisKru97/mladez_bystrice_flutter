@@ -11,9 +11,6 @@ allprojects {
         google()
         mavenCentral()
     }
-    dependencies {
-        classpath("com.google.firebase:firebase-crashlytics-gradle:2.7.1")
-    }
 }
 
 rootProject.layout.buildDirectory.value(
@@ -38,6 +35,10 @@ subprojects {
             lockAllConfigurations()
         }
     }
+}
+
+plugins {
+    id("com.google.firebase.crashlytics") version "3.0.3" apply false
 }
 
 tasks.register<Delete>("clean") {
