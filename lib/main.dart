@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -15,6 +18,7 @@ import 'package:mladez_zpevnik/screens/playlist.dart';
 import 'package:mladez_zpevnik/screens/playlists.dart';
 import 'package:mladez_zpevnik/screens/present_playlist.dart';
 import 'package:mladez_zpevnik/screens/present_song.dart';
+import 'package:mladez_zpevnik/services/analytics_service.dart';
 import 'package:mladez_zpevnik/song_display.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'main_screen.dart';
@@ -27,6 +31,16 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
+  final analyticsService = AnalyticsService();
+  Get.put(analyticsService);
+
   await FirebaseAuth.instance.signInAnonymously();
   objectbox = await ObjectBox.create();
 

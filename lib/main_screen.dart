@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/screens/songs_with_search.dart';
+import 'package:mladez_zpevnik/services/analytics_service.dart';
 import 'components/menu_row.dart';
 
 class MainScreen extends StatelessWidget {
@@ -12,6 +13,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final configController = Get.find<ConfigController>();
+    Get.find<AnalyticsService>().logScreenView('main_screen');
     return Scaffold(
       appBar: AppBar(
         title: SizedBox(

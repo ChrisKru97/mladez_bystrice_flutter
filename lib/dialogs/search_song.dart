@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/dialogs/bottom_dialog_container.dart';
+import 'package:mladez_zpevnik/services/analytics_service.dart';
 
 class SearchSong extends StatelessWidget {
   const SearchSong({super.key});
@@ -16,7 +17,12 @@ class SearchSong extends StatelessWidget {
       autofocus: true,
       autocorrect: false,
       textAlign: TextAlign.left,
-      onSubmitted: (_) => Get.back(),
+      onSubmitted: (String searchTerm) {
+        if (searchTerm.isNotEmpty) {
+          Get.find<AnalyticsService>().logSearch(searchTerm);
+        }
+        Get.back();
+      },
       onChanged: (String s) => songsController.searchString.value =
           removeDiacritics(s.toLowerCase()),
     ));

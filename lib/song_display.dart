@@ -9,6 +9,7 @@ import 'package:mladez_zpevnik/classes/song_with_chords.dart';
 import 'package:mladez_zpevnik/components/song_fab.dart';
 import 'package:mladez_zpevnik/components/text_with_chords.dart';
 import 'package:mladez_zpevnik/helpers/chords_migration.dart';
+import 'package:mladez_zpevnik/services/analytics_service.dart';
 import 'components/favorite_icon.dart';
 
 class SongDisplay extends StatelessWidget {
@@ -21,6 +22,8 @@ class SongDisplay extends StatelessWidget {
     final song = songsController.getSong(number);
     final ConfigController configController = Get.find();
     final String title = '${song.value.number}. ${song.value.name}';
+
+    Get.find<AnalyticsService>().logScreenView('song_display');
 
     Timer? hideFabFuture;
     void setHideFabTimer(Rx<bool> showFab) {
@@ -46,19 +49,41 @@ class SongDisplay extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onScaleUpdate: songsController.updateFontScale,
           onScaleEnd: songsController.saveFontSize,
-          onLongPress:
-              () => Get.toNamed('/present-song', arguments: song.value.number),
-          onDoubleTap:
-              () => configController.config.update((val) {
-                if (val == null) return;
-                val.showChords = !val.showChords;
-              }),
+          onLongPress: () {
+            Get.find<AnalyticsService>().logSongPresentation(
+              song.value.number.toString(),
+              song.value.name,
+            );
+            Get.toNamed('/present-song', arguments: song.value.number);
+          },
+          onDoubleTap: () {
+            configController.config.update((val) {
+              if (val == null) return;
+              val.showChords = !val.showChords;
+
+              Get.find<AnalyticsService>().logSettingsChanged(
+                'show_chords',
+                val.showChords.toString(),
+              );
+            });
+          },
           onHorizontalDragUpdate: (details) {
             if (details.primaryDelta != null &&
                 (details.primaryDelta! > 15 || details.primaryDelta! < -15)) {
               configController.config.update((val) {
                 if (val == null) return;
-                val.alignCenter = details.primaryDelta! > 0;
+                bool newAlignCenter = details.primaryDelta! > 0;
+
+                if (val.alignCenter != newAlignCenter) {
+                  val.alignCenter = newAlignCenter;
+
+                  Get.find<AnalyticsService>().logSettingsChanged(
+                    'align_center',
+                    val.alignCenter.toString(),
+                  );
+                } else {
+                  val.alignCenter = newAlignCenter;
+                }
               });
             }
           },
