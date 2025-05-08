@@ -11,6 +11,9 @@ allprojects {
         google()
         mavenCentral()
     }
+    dependencies {
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.7.1")
+    }
 }
 
 rootProject.layout.buildDirectory.value(

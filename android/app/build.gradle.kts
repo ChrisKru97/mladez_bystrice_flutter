@@ -9,6 +9,7 @@ plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.firebase.crashlytics")
 }
 
 val keystoreProperties = Properties()
