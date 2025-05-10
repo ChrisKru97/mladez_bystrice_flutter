@@ -1,14 +1,12 @@
 import java.util.Properties
 import java.io.FileInputStream
 
-// Copyright 2014 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services")
+    id("kotlin-android")
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
 }
 
@@ -19,25 +17,23 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace ="com.bystrice.mladez"
+    namespace = "com.bystrice.mladez"
     compileSdk = flutter.compileSdkVersion
-
-    // Flutter's CI installs the NDK at a non-standard path.
-    // This non-standard structure is initially created by
-    // https://github.com/flutter/engine/blob/3.27.0/tools/android_sdk/create_cipd_packages.sh.
-    val systemNdkPath: String? = System.getenv("ANDROID_NDK_PATH")
-    if (systemNdkPath != null) {
-        ndkVersion = flutter.ndkVersion
-        ndkPath = systemNdkPath
-    }
+    ndkVersion = "27.0.12077973" // flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     defaultConfig {
         applicationId = "com.bystrice.mladez"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 23 // flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -54,7 +50,7 @@ android {
     }
 
     buildTypes {
-        named("release") {
+        release {
             signingConfig = signingConfigs.getByName("release")
         }
     }
