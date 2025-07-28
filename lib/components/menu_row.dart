@@ -140,7 +140,7 @@ class _ModernNavButtonState extends State<ModernNavButton>
 
 final buttonList = [
   {
-    'icon': Icons.favorite_rounded,
+    'icon': Icons.favorite_outline,
     'label': 'Oblíbené',
     'onPressed': () {
       Get.find<AnalyticsService>().logScreenView('favorites');
@@ -158,7 +158,7 @@ final buttonList = [
     },
   },
   {
-    'icon': Icons.dialpad_rounded,
+    'icon': Icons.numbers,
     'label': 'Číslo',
     'onPressed': () {
       Get.find<AnalyticsService>().logEvent(name: 'open_number_select');
