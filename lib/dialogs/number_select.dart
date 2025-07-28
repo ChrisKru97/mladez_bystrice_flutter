@@ -29,7 +29,9 @@ class NumberSelect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lastNumber = songsController.songs.last.number;
+    final lastNumber = songsController.songs.isNotEmpty 
+        ? songsController.songs.last.number 
+        : 1;
     return BottomDialogContainer(
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       TextField(

@@ -221,9 +221,12 @@ class SongsController extends GetxController {
       }
 
       if (historyBox.count() > historyLimit) {
-        final lastElement =
-            historyBox.query().order(HistoryEntry_.openedAt).build().find().first;
-        historyBox.remove(lastElement.id);
+        final oldestEntries =
+            historyBox.query().order(HistoryEntry_.openedAt).build().find();
+        if (oldestEntries.isNotEmpty) {
+          final lastElement = oldestEntries.first;
+          historyBox.remove(lastElement.id);
+        }
       }
       historyBox.put(HistoryEntry(songNumber: number, openedAt: DateTime.now()));
     } catch (error, stackTrace) {
