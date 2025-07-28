@@ -118,7 +118,6 @@ class MainScreen extends StatelessWidget {
                     ],
                   ),
                   child: GlassContainer(
-                    blur: 15,
                     opacity: isDark ? 0.6 : 0.75,
                     child: const MenuRow(),
                   ),

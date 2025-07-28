@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
@@ -110,8 +109,7 @@ class SongsWithSearch extends StatelessWidget {
         return await songsController.loadSongs(force: true);
       },
       color: AppColors.primary,
-      child: AnimationLimiter(
-        child: Scrollbar(
+      child: Scrollbar(
           thumbVisibility: true,
           trackVisibility: true,
           thickness: 10,
@@ -128,13 +126,7 @@ class SongsWithSearch extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
             final song = songs.elementAt(index);
 
-            return AnimationConfiguration.staggeredList(
-              position: index,
-              duration: AppAnimations.medium,
-              child: SlideAnimation(
-                verticalOffset: 50.0,
-                child: FadeInAnimation(
-                  child: AnimatedCard(
+            return AnimatedCard(
                     margin: const EdgeInsets.only(bottom: 6.0),
                     useGradient: false,
                     onTap: () {
@@ -230,13 +222,11 @@ class SongsWithSearch extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-            );
+                  ).animate(delay: Duration(milliseconds: index * 50))
+                   .fadeIn(duration: AppAnimations.medium)
+                   .slideY(begin: 0.3, end: 0, duration: AppAnimations.medium);
             },
           ),
-        ),
       ),
     );
   });
