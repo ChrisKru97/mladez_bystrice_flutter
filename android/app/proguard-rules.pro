@@ -20,6 +20,13 @@
 # Google Fonts
 -keep class com.google.** { *; }
 
+# Google Play Core - needed for Flutter deferred components
+-keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.play.core.**
+
+# Fix for R8 reflection warnings
+-dontwarn java.lang.reflect.AnnotatedType
+
 # Crashlytics
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
