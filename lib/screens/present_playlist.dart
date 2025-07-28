@@ -4,6 +4,7 @@ import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/playlist_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/helpers/chords_migration.dart';
+import 'package:mladez_zpevnik/services/analytics_service.dart';
 
 class PresentPlaylist extends StatelessWidget {
   const PresentPlaylist({super.key});
@@ -15,6 +16,8 @@ class PresentPlaylist extends StatelessWidget {
     final SongsController songsController = Get.find();
     final ConfigController configController = Get.find();
     final playlist = playlistController.getPlaylist(id);
+    Get.find<AnalyticsService>().logPlaylistPresentation(id.toString(), playlist.value.name);
+    Get.find<AnalyticsService>().logScreenView('present_playlist');
     return Scaffold(
       appBar: AppBar(title: Text(playlist.value.name)),
       body: GestureDetector(

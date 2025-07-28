@@ -18,8 +18,8 @@ class FavoriteIcon extends StatelessWidget {
           duration: const Duration(milliseconds: 400),
           crossFadeState:
               isFavorite ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-          firstChild: const Icon(Icons.favorite, size: 30, color: redColor),
-          secondChild: const Icon(Icons.favorite_border, size: 30),
+          firstChild: const Icon(Icons.favorite, size: 24, color: redColor),
+          secondChild: const Icon(Icons.favorite_border, size: 24),
         ),
         onPressed: () => songsController.toggleFavorite(number));
   }

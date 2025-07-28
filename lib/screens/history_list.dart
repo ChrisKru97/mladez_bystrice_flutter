@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
+import 'package:mladez_zpevnik/services/analytics_service.dart';
 
 class HistoryList extends StatelessWidget {
   const HistoryList({super.key});
@@ -9,6 +10,7 @@ class HistoryList extends StatelessWidget {
   Widget build(BuildContext context) {
     final SongsController songsController = Get.find();
     final historyList = songsController.historyList();
+    Get.find<AnalyticsService>().logScreenView('history_list');
     return Scaffold(
         appBar: AppBar(
             title: const Text(
@@ -18,7 +20,7 @@ class HistoryList extends StatelessWidget {
             ? Center(
                 child: Text('Žádné písně',
                     style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 20,
                         color: Get.isDarkMode ? Colors.white : Colors.black)))
             : ListView.separated(
                 separatorBuilder: (_, __) => const Divider(

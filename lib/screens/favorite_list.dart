@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/components/dismissible_remove.dart';
 import 'package:mladez_zpevnik/components/favorite_icon.dart';
+import 'package:mladez_zpevnik/services/analytics_service.dart';
 
 class FavoriteList extends StatelessWidget {
   const FavoriteList({super.key});
@@ -10,6 +11,7 @@ class FavoriteList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SongsController songsController = Get.find();
+    Get.find<AnalyticsService>().logScreenView('favorite_list');
     return Scaffold(
         appBar: AppBar(title: const Text('Oblíbené')),
         body: Obx(() {
@@ -19,7 +21,7 @@ class FavoriteList extends StatelessWidget {
             return Center(
                 child: Text('Žádné písně',
                     style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 20,
                         color: Get.isDarkMode ? Colors.white : Colors.black)));
           }
           return ListView.separated(

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/playlist_controller.dart';
 import 'package:mladez_zpevnik/components/dismissible_remove.dart';
 import 'package:mladez_zpevnik/dialogs/create_playlist.dart';
+import 'package:mladez_zpevnik/services/analytics_service.dart';
 
 class Playlists extends StatelessWidget {
   const Playlists({super.key});
@@ -10,6 +11,7 @@ class Playlists extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PlaylistController playlistController = Get.find();
+    Get.find<AnalyticsService>().logScreenView('playlists');
     return Scaffold(
         appBar: AppBar(
           title: const Text('Playlisty'),

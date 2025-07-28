@@ -1,4 +1,3 @@
-import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
@@ -23,8 +22,7 @@ class SearchSong extends StatelessWidget {
         }
         Get.back();
       },
-      onChanged: (String s) => songsController.searchString.value =
-          removeDiacritics(s.toLowerCase()),
+      onChanged: (String s) => songsController.updateSearchString(s),
     ));
   }
 }
