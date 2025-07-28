@@ -1,2 +1,10 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 #include "Generated.xcconfig"
+
+// iOS app size optimizations
+SWIFT_OPTIMIZATION_LEVEL = -O
+SWIFT_COMPILATION_MODE = wholemodule
+ENABLE_BITCODE = NO
+STRIP_INSTALLED_PRODUCT = YES
+SYMBOLS_HIDDEN_BY_DEFAULT = YES
+DEPLOYMENT_POSTPROCESSING = YES
