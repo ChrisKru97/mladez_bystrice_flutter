@@ -126,92 +126,100 @@ class SongsWithSearch extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
             final song = songs.elementAt(index);
 
-            return AnimatedCard(
-                    margin: const EdgeInsets.only(bottom: 6.0),
-                    useGradient: false,
-                    child: InkWell(
-                      onTap: () {
-                        Get.toNamed('/song', arguments: song.number);
-                      },
-                      onLongPress: () {
-                        songsController.toggleFavorite(song.number);
-                        final analyticsService = Get.find<AnalyticsService>();
-                        if (song.isFavorite) {
-                          analyticsService.logRemoveFromFavorites(
-                            song.number.toString(),
-                            song.name,
-                          );
-                        } else {
-                          analyticsService.logAddToFavorites(
-                            song.number.toString(),
-                            song.name,
-                          );
-                        }
-                      },
-                      borderRadius: BorderRadius.circular(AppBorderRadius.lg),
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Row(
+            return Container(
+              margin: const EdgeInsets.only(bottom: 6.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(AppBorderRadius.lg),
+                boxShadow: [isDark ? AppShadows.medium : AppShadows.soft],
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
+                  width: 1,
+                ),
+              ),
+              child: InkWell(
+                onTap: () {
+                  Get.toNamed('/song', arguments: song.number);
+                },
+                onLongPress: () {
+                  songsController.toggleFavorite(song.number);
+                  final analyticsService = Get.find<AnalyticsService>();
+                  if (song.isFavorite) {
+                    analyticsService.logRemoveFromFavorites(
+                      song.number.toString(),
+                      song.name,
+                    );
+                  } else {
+                    analyticsService.logAddToFavorites(
+                      song.number.toString(),
+                      song.name,
+                    );
+                  }
+                },
+                borderRadius: BorderRadius.circular(AppBorderRadius.lg),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Row(
+                    children: [
+                      // Song number with modern styling
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(AppBorderRadius.md),
+                          boxShadow: [AppShadows.soft],
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${song.number}',
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 8.0),
+
+                      // Song name and details
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Song number with modern styling
-                            Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                gradient: AppColors.primaryGradient,
-                                borderRadius: BorderRadius.circular(AppBorderRadius.md),
-                                boxShadow: [AppShadows.soft],
+                            Text(
+                              song.name,
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? AppColors.textLight : AppColors.textPrimary,
                               ),
-                              child: Center(
-                                child: Text(
-                                  '${song.number}',
-                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(width: 8.0),
-
-                            // Song name and details
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    song.name,
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: isDark ? AppColors.textLight : AppColors.textPrimary,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Enhanced favorite icon
-                            Container(
-                              padding: const EdgeInsets.all(0),
-                              decoration: BoxDecoration(
-                                color: song.isFavorite
-                                  ? AppColors.favorite.withValues(alpha: 0.1)
-                                  : Colors.transparent,
-                                borderRadius: BorderRadius.circular(AppBorderRadius.sm),
-                              ),
-                              child: FavoriteIcon(song.isFavorite, number: song.number),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ).animate(delay: Duration(milliseconds: index * 50))
-                   .fadeIn(duration: AppAnimations.medium)
-                   .slideY(begin: 0.3, end: 0, duration: AppAnimations.medium);
+
+                      // Enhanced favorite icon
+                      Container(
+                        padding: const EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                          color: song.isFavorite
+                            ? AppColors.favorite.withValues(alpha: 0.1)
+                            : Colors.transparent,
+                          borderRadius: BorderRadius.circular(AppBorderRadius.sm),
+                        ),
+                        child: FavoriteIcon(song.isFavorite, number: song.number),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ).animate()
+             .fadeIn(duration: 200.ms)
+             .slideY(begin: 0.1, end: 0, duration: 200.ms);
             },
           ),
       ),
