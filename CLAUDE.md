@@ -65,7 +65,7 @@ This is a Flutter songbook application ("Bystřický mládežový zpěvník") wi
 
 ### UI Components
 - Modern Material Design with custom theme (lib/theme/)
-- Animated components using flutter_animate
+- Native Flutter animations for smooth UI transitions
 - Chord display with custom text rendering (lib/components/text_with_chords.dart)
 - Responsive design supporting different screen sizes
 

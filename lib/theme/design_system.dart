@@ -129,8 +129,9 @@ class AppShadows {
 }
 
 class AppAnimations {
-  static const Duration fast = Duration(milliseconds: 200);
-  static const Duration medium = Duration(milliseconds: 300);
+  static const Duration fast = Duration(milliseconds: 150);
+  static const Duration medium = Duration(milliseconds: 200);
 
-  static const Curve easeOut = Curves.easeOut;
+  static const Curve easeOut = Curves.easeOutCubic;
+  static const Curve fastOutSlowIn = Curves.fastOutSlowIn;
 }

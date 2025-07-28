@@ -1,15 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/components/favorite_icon.dart';
-import 'package:mladez_zpevnik/components/animated_components.dart';
 import 'package:mladez_zpevnik/services/analytics_service.dart';
 import 'package:mladez_zpevnik/theme/design_system.dart';
 
-class SongsWithSearch extends StatelessWidget {
+class SongsWithSearch extends StatefulWidget {
   const SongsWithSearch({super.key});
+
+  @override
+  State<SongsWithSearch> createState() => _SongsWithSearchState();
+}
+
+class _SongsWithSearchState extends State<SongsWithSearch>
+    with TickerProviderStateMixin {
+  late AnimationController _emptyStateController;
+  late AnimationController _loadingController;
+  
+  @override
+  void initState() {
+    super.initState();
+    _emptyStateController = AnimationController(
+      duration: AppAnimations.medium,
+      vsync: this,
+    );
+    _loadingController = AnimationController(
+      duration: AppAnimations.medium,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _emptyStateController.dispose();
+    _loadingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => Obx(() {
@@ -29,39 +56,67 @@ class SongsWithSearch extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.search_rounded,
-                  size: 64,
-                  color: AppColors.textMuted,
-                )
-                .animate()
-                .scale(duration: AppAnimations.medium)
-                .fadeIn(),
+                TweenAnimationBuilder<double>(
+                  duration: AppAnimations.medium,
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  builder: (context, value, child) {
+                    _emptyStateController.value = value;
+                    return Transform.scale(
+                      scale: value,
+                      child: Opacity(
+                        opacity: value,
+                        child: Icon(
+                          Icons.search_rounded,
+                          size: 64,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    );
+                  },
+                ),
 
                 const SizedBox(height: AppSpacing.lg),
 
-                Text(
-                  'Žádné výsledky',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                )
-                .animate()
-                .fadeIn(delay: 200.ms)
-                .slideY(begin: 0.2, end: 0),
+                TweenAnimationBuilder<double>(
+                  duration: AppAnimations.medium,
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  builder: (context, value, child) {
+                    return Transform.translate(
+                      offset: Offset(0, (1 - value) * 10),
+                      child: Opacity(
+                        opacity: value,
+                        child: Text(
+                          'Žádné výsledky',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
 
                 const SizedBox(height: AppSpacing.sm),
 
-                Text(
-                  'Zkuste jiné hledání',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textMuted,
-                  ),
-                )
-                .animate()
-                .fadeIn(delay: 400.ms)
-                .slideY(begin: 0.2, end: 0),
+                TweenAnimationBuilder<double>(
+                  duration: AppAnimations.medium,
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  builder: (context, value, child) {
+                    return Transform.translate(
+                      offset: Offset(0, (1 - value) * 10),
+                      child: Opacity(
+                        opacity: value,
+                        child: Text(
+                          'Zkuste jiné hledání',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -77,23 +132,37 @@ class SongsWithSearch extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(
-                color: AppColors.primary,
-                strokeWidth: 3,
-              )
-              .animate()
-              .scale(duration: AppAnimations.medium),
+              TweenAnimationBuilder<double>(
+                duration: AppAnimations.medium,
+                tween: Tween(begin: 0.0, end: 1.0),
+                builder: (context, value, child) {
+                  return Transform.scale(
+                    scale: value,
+                    child: CircularProgressIndicator(
+                      color: AppColors.primary,
+                      strokeWidth: 3,
+                    ),
+                  );
+                },
+              ),
 
               const SizedBox(height: AppSpacing.lg),
 
-              Text(
-                'Načítání písní...',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              )
-              .animate()
-              .fadeIn(delay: 300.ms),
+              TweenAnimationBuilder<double>(
+                duration: AppAnimations.medium,
+                tween: Tween(begin: 0.0, end: 1.0),
+                builder: (context, value, child) {
+                  return Opacity(
+                    opacity: value,
+                    child: Text(
+                      'Načítání písní...',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -126,7 +195,16 @@ class SongsWithSearch extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
             final song = songs.elementAt(index);
 
-            return Container(
+            return TweenAnimationBuilder<double>(
+              duration: Duration(milliseconds: 150 + (index * 20).clamp(0, 200)),
+              tween: Tween(begin: 0.0, end: 1.0),
+              curve: Curves.easeOutCubic,
+              builder: (context, animationValue, child) {
+                return Transform.translate(
+                  offset: Offset(0, (1 - animationValue) * 10),
+                  child: Opacity(
+                    opacity: animationValue,
+                    child: Container(
               margin: const EdgeInsets.only(bottom: 6.0),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
@@ -137,26 +215,30 @@ class SongsWithSearch extends StatelessWidget {
                   width: 1,
                 ),
               ),
-              child: InkWell(
-                onTap: () {
-                  Get.toNamed('/song', arguments: song.number);
-                },
-                onLongPress: () {
-                  songsController.toggleFavorite(song.number);
-                  final analyticsService = Get.find<AnalyticsService>();
-                  if (song.isFavorite) {
-                    analyticsService.logRemoveFromFavorites(
-                      song.number.toString(),
-                      song.name,
-                    );
-                  } else {
-                    analyticsService.logAddToFavorites(
-                      song.number.toString(),
-                      song.name,
-                    );
-                  }
-                },
-                borderRadius: BorderRadius.circular(AppBorderRadius.lg),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    Get.toNamed('/song', arguments: song.number);
+                  },
+                  onLongPress: () {
+                    songsController.toggleFavorite(song.number);
+                    final analyticsService = Get.find<AnalyticsService>();
+                    if (song.isFavorite) {
+                      analyticsService.logRemoveFromFavorites(
+                        song.number.toString(),
+                        song.name,
+                      );
+                    } else {
+                      analyticsService.logAddToFavorites(
+                        song.number.toString(),
+                        song.name,
+                      );
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(AppBorderRadius.lg),
+                  splashColor: AppColors.primary.withValues(alpha: 0.1),
+                  highlightColor: AppColors.primary.withValues(alpha: 0.05),
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   child: Row(
@@ -216,10 +298,13 @@ class SongsWithSearch extends StatelessWidget {
                     ],
                   ),
                 ),
+                ),
               ),
-            ).animate()
-             .fadeIn(duration: 200.ms)
-             .slideY(begin: 0.1, end: 0, duration: 200.ms);
+                    ),
+                  ),
+                );
+              },
+            );
             },
           ),
       ),
