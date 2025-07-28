@@ -25,8 +25,10 @@ class MainScreen extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                (isDark ? AppColors.primaryLight : AppColors.primary).withValues(alpha: 0.3),
-                (isDark ? AppColors.secondary : AppColors.secondaryLight).withValues(alpha: 0.2),
+                (isDark ? AppColors.primaryLight : AppColors.primary)
+                    .withValues(alpha: 0.3),
+                (isDark ? AppColors.secondary : AppColors.secondaryLight)
+                    .withValues(alpha: 0.2),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -46,8 +48,8 @@ class MainScreen extends StatelessWidget {
         height: double.infinity,
         decoration: BoxDecoration(
           gradient: isDark
-            ? AppColors.darkBackgroundGradient
-            : AppColors.backgroundGradient,
+              ? AppColors.darkBackgroundGradient
+              : AppColors.backgroundGradient,
         ),
         child: Stack(
           alignment: Alignment.bottomCenter,
@@ -57,26 +59,20 @@ class MainScreen extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   color: isDark
-                    ? AppColors.surfaceDark.withValues(alpha: 0.3)
-                    : Colors.white.withValues(alpha: 0.7),
+                      ? AppColors.surfaceDark.withValues(alpha: 0.3)
+                      : Colors.white.withValues(alpha: 0.7),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(AppBorderRadius.lg),
                     topRight: Radius.circular(AppBorderRadius.lg),
                   ),
                   border: Border.all(
                     color: isDark
-                      ? Colors.white.withValues(alpha: 0.1)
-                      : Colors.black.withValues(alpha: 0.05),
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.black.withValues(alpha: 0.05),
                     width: 1,
                   ),
                 ),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(AppBorderRadius.lg),
-                    topRight: Radius.circular(AppBorderRadius.lg),
-                  ),
-                  child: const SongsWithSearch(),
-                ),
+                child: const SongsWithSearch(),
               ),
             ),
 
@@ -94,23 +90,24 @@ class MainScreen extends StatelessWidget {
                     left: AppSpacing.md,
                     right: AppSpacing.md,
                     top: AppSpacing.md,
-                    bottom: AppSpacing.md + MediaQuery.of(context).padding.bottom,
+                    bottom:
+                        AppSpacing.md + MediaQuery.of(context).padding.bottom,
                   ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(AppBorderRadius.lg),
                     boxShadow: [
                       BoxShadow(
-                        color: isDark 
-                          ? Colors.black.withValues(alpha: 0.4)
-                          : Colors.black.withValues(alpha: 0.15),
+                        color: isDark
+                            ? Colors.black.withValues(alpha: 0.4)
+                            : Colors.black.withValues(alpha: 0.15),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                         spreadRadius: 2,
                       ),
                       BoxShadow(
-                        color: isDark 
-                          ? Colors.black.withValues(alpha: 0.2)
-                          : Colors.black.withValues(alpha: 0.08),
+                        color: isDark
+                            ? Colors.black.withValues(alpha: 0.2)
+                            : Colors.black.withValues(alpha: 0.08),
                         blurRadius: 40,
                         offset: const Offset(0, 16),
                         spreadRadius: 4,
