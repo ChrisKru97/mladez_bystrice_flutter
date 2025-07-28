@@ -129,21 +129,8 @@ class SongsWithSearch extends StatelessWidget {
             return AnimatedCard(
                     margin: const EdgeInsets.only(bottom: 6.0),
                     useGradient: false,
-                    onTap: () {
-                      songsController.addToHistory(song.number);
-                      Get.find<AnalyticsService>().logSongView(
-                        song.number.toString(),
-                        song.name,
-                      );
-                      Get.toNamed('/song', arguments: song.number);
-                    },
                     child: InkWell(
                       onTap: () {
-                        songsController.addToHistory(song.number);
-                        Get.find<AnalyticsService>().logSongView(
-                          song.number.toString(),
-                          song.name,
-                        );
                         Get.toNamed('/song', arguments: song.number);
                       },
                       onLongPress: () {

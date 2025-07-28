@@ -203,6 +203,23 @@ class SongsController extends GetxController {
 
   void addToHistory(int number) {
     try {
+      // Check if the same song was added recently (within last 5 seconds)
+      final now = DateTime.now();
+      final recentEntries = historyBox
+          .query(HistoryEntry_.songNumber.equals(number))
+          .order(HistoryEntry_.openedAt, flags: Order.descending)
+          .build()
+          .find();
+      
+      if (recentEntries.isNotEmpty) {
+        final lastEntry = recentEntries.first;
+        final timeDifference = now.difference(lastEntry.openedAt).inSeconds;
+        if (timeDifference < 5) {
+          // Skip adding if the same song was added within the last 5 seconds
+          return;
+        }
+      }
+
       if (historyBox.count() > historyLimit) {
         final lastElement =
             historyBox.query().order(HistoryEntry_.openedAt).build().find().first;

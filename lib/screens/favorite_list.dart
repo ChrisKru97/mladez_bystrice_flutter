@@ -40,7 +40,6 @@ class FavoriteList extends StatelessWidget {
                           overflow: TextOverflow.ellipsis),
                       onLongPress: removeFavorite,
                       onTap: () {
-                        songsController.addToHistory(song.number);
                         Get.toNamed('/song', arguments: song.number);
                       },
                       trailing: IconButton(
