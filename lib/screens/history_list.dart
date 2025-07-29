@@ -3,10 +3,18 @@ import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/components/common_app_bar.dart';
 import 'package:mladez_zpevnik/components/empty_state.dart';
+import 'package:mladez_zpevnik/components/song_list_tile.dart';
 import 'package:mladez_zpevnik/services/analytics_service.dart';
+import 'package:mladez_zpevnik/theme/design_system.dart';
 
 class HistoryList extends StatelessWidget {
   const HistoryList({super.key});
+
+  String _formatDateTime(DateTime dateTime) {
+    return '${dateTime.hour.toString().padLeft(2, '0')}:'
+           '${dateTime.minute.toString().padLeft(2, '0')} '
+           '${dateTime.day}.${dateTime.month}.${dateTime.year - 2000}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,20 +31,27 @@ class HistoryList extends StatelessWidget {
               subtitle: 'Zatím jste neotevřeli žádné písně',
             )
           : ListView.separated(
-              separatorBuilder: (_, index) => const Divider(height: 2),
+              separatorBuilder: (_, index) => Divider(
+                height: 2,
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+              ),
               itemCount: historyList.length,
               itemBuilder: (BuildContext context, int index) {
                 final element = historyList.elementAt(index);
                 final songNumber = element['songNumber'] as int;
                 final song = songsController.songBox.get(songNumber);
                 final openedAt = element["openedAt"] as DateTime;
+                
                 if (song == null) return const SizedBox.shrink();
-                return ListTile(
-                  title: Text('${song.number}. ${song.name}',
-                      overflow: TextOverflow.ellipsis),
-                  onTap: () => Get.toNamed('/song', arguments: song.number),
+                
+                return SongListTile(
+                  song: song,
                   trailing: Text(
-                      '${openedAt.hour.toString().padLeft(2, '0')}:${openedAt.minute.toString().padLeft(2, '0')} ${openedAt.day}.${openedAt.month}.${openedAt.year - 2000}'),
+                    _formatDateTime(openedAt),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textMuted,
+                    ),
+                  ),
                 );
               },
             ),

@@ -69,6 +69,51 @@ This is a Flutter songbook application ("Bystřický mládežový zpěvník") wi
 - Chord display with custom text rendering (lib/components/text_with_chords.dart)
 - Responsive design supporting different screen sizes
 
+#### Shared Reusable Widgets
+
+**Layout & Structure:**
+- `CommonAppBar` (lib/components/common_app_bar.dart): Consistent app bar with gradient background and proper theming
+- `GradientBackground` (lib/components/gradient_background.dart): Background container with gradient and glass effects
+- `GlassContainer` (lib/components/animated_components.dart): Glassmorphism container with customizable opacity
+
+**Lists & Items:**
+- `SongListView` (lib/components/song_list_view.dart): Reusable song list with loading, empty states, and refresh capability
+- `SongListItem` (lib/components/song_list_item.dart): Modern song item with animations, favorite icon, and tap handling
+- `SongListTile` (lib/components/song_list_tile.dart): Simple list tile variant for consistent song display
+- `EmptyState` (lib/components/empty_state.dart): Consistent empty state display with icon, title, and subtitle
+- `LoadingState` (lib/components/loading_state.dart): Loading indicator with message
+
+**Interactive Elements:**
+- `FavoriteIcon` (lib/components/favorite_icon.dart): Animated favorite toggle with design system colors
+- `ActionButton` (lib/components/action_button.dart): Reusable action button with haptic feedback and animations
+- `ModernNavButton` (lib/components/menu_row.dart): Navigation button with advanced animations and hover effects
+
+**Dialogs:**
+- `BottomDialogContainer` (lib/dialogs/bottom_dialog_container.dart): Base container for bottom sheets with design system styling
+- `ConfirmationDialog` (lib/components/confirmation_dialog.dart): Reusable confirmation dialog with customizable text and actions
+- `ConfirmRemove` (lib/dialogs/confirm_remove.dart): Specific removal confirmation using ConfirmationDialog
+
+**Utilities:**
+- `DismissibleRemove` (lib/components/dismissible_remove.dart): Swipe-to-remove functionality wrapper
+- `PresentationScreenBase` (lib/components/presentation_screen_base.dart): Base class for presentation mode screens
+
+#### Widget Development Guidelines
+
+When creating or modifying widgets, follow these principles:
+
+1. **DRY (Don't Repeat Yourself)**: Use existing reusable components where possible
+2. **KISS (Keep It Simple, Stupid)**: Prefer simple, focused widgets over complex ones
+3. **Design System Consistency**: Always use colors, spacing, and typography from `lib/theme/design_system.dart`
+4. **Accessibility**: Consider accessibility features like proper contrast and semantic labels
+5. **Performance**: Use `const` constructors when possible and minimize rebuilds with proper state management
+
+**Preferred Widget Patterns:**
+- Use `SongListView` for displaying lists of songs
+- Use `CommonAppBar` for consistent app bars
+- Use `ConfirmationDialog` for user confirmations
+- Use design system colors (`AppColors.*`) instead of hardcoded colors
+- Use design system spacing (`AppSpacing.*`) for consistent layouts
+
 ### ObjectBox Database
 - `objectbox-model.json` defines the schema
 - `objectbox.g.dart` contains generated code
