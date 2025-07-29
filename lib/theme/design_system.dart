@@ -15,7 +15,7 @@ class AppColors {
   static const Color accentLight = Color(0xFFFBBF24);
 
   // Favorite Color
-  static const Color favorite = Color(0xFFEF4444);
+  static const Color favorite = Color(0xFFFF6B6B);
 
   // Surface Colors
   static const Color surface = Color(0xFFFAFAFA);

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart' show ScaleUpdateDetails;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
@@ -80,7 +81,7 @@ class SongsController extends GetxController {
     }
   }
 
-  updateTranspose(int increment) =>
+  VoidCallback updateTranspose(int increment) =>
       () => openSong.update((val) {
         if (val == null) return;
         val.transpose += increment;

@@ -12,11 +12,15 @@ class SongListItem extends StatelessWidget {
     required this.song,
     this.onTap,
     this.onLongPress,
+    this.showFavorite = true,
+    this.trailing,
   });
 
   final Song song;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
+  final bool showFavorite;
+  final Widget? trailing;
 
   void _handleTap() {
     if (onTap != null) {
@@ -71,9 +75,9 @@ class SongListItem extends StatelessWidget {
           splashColor: AppColors.primary.withValues(alpha: 0.1),
           highlightColor: AppColors.primary.withValues(alpha: 0.05),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: AppSpacing.sm,
-              vertical: AppSpacing.xs,
+              vertical: (trailing == null && !showFavorite) ? AppSpacing.sm : AppSpacing.xs,
             ),
             child: Row(
               children: [
@@ -118,18 +122,21 @@ class SongListItem extends StatelessWidget {
                   ),
                 ),
 
-                // Enhanced favorite icon
-                Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    color: song.isFavorite
-                        ? AppColors.favorite.withValues(alpha: 0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(AppBorderRadius.sm),
+                // Trailing widget (favorite icon or custom)
+                if (trailing != null)
+                  trailing!
+                else if (showFavorite)
+                  Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: song.isFavorite
+                          ? AppColors.favorite.withValues(alpha: 0.1)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(AppBorderRadius.sm),
+                    ),
+                    child: FavoriteIcon(song.isFavorite, number: song.number),
                   ),
-                  child: FavoriteIcon(song.isFavorite, number: song.number),
-                ),
               ],
             ),
           ),

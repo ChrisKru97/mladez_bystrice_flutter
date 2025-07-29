@@ -3,11 +3,9 @@ import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/components/common_app_bar.dart';
 import 'package:mladez_zpevnik/components/dismissible_remove.dart';
-import 'package:mladez_zpevnik/components/favorite_icon.dart';
-import 'package:mladez_zpevnik/components/song_list_tile.dart';
+import 'package:mladez_zpevnik/components/song_list_item.dart';
 import 'package:mladez_zpevnik/components/song_list_view.dart';
 import 'package:mladez_zpevnik/services/analytics_service.dart';
-import 'package:mladez_zpevnik/theme/design_system.dart';
 
 class FavoriteList extends StatelessWidget {
   const FavoriteList({super.key});
@@ -33,17 +31,29 @@ class FavoriteList extends StatelessWidget {
             return DismissibleRemove(
               onRemove: removeFavorite,
               dismissibleKey: song.number,
-              child: SongListTile(
+              child: SongListItem(
                 song: song,
                 onLongPress: removeFavorite,
-                trailing: FavoriteIcon(
-                  song.isFavorite,
-                  number: song.number,
-                  size: 30,
-                ),
-                contentPadding: const EdgeInsets.only(
-                  left: AppSpacing.md,
-                  right: AppSpacing.xs,
+                showFavorite: false,
+                trailing: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: removeFavorite,
+                      borderRadius: BorderRadius.circular(8),
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.red,
+                        size: 20,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             );
