@@ -5,6 +5,7 @@ import 'package:mladez_zpevnik/bloc/playlist_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/helpers/chords_migration.dart';
 import 'package:mladez_zpevnik/services/analytics_service.dart';
+import 'package:mladez_zpevnik/theme/design_system.dart';
 
 class PresentPlaylist extends StatelessWidget {
   const PresentPlaylist({super.key});
@@ -18,8 +19,34 @@ class PresentPlaylist extends StatelessWidget {
     final playlist = playlistController.getPlaylist(id);
     Get.find<AnalyticsService>().logPlaylistPresentation(id.toString(), playlist.value.name);
     Get.find<AnalyticsService>().logScreenView('present_playlist');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(title: Text(playlist.value.name)),
+      appBar: AppBar(
+        backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surface,
+        elevation: 0,
+        toolbarHeight: 48,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                (isDark ? AppColors.primaryLight : AppColors.primary)
+                    .withValues(alpha: 0.3),
+                (isDark ? AppColors.secondary : AppColors.secondaryLight)
+                    .withValues(alpha: 0.2),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        title: Text(
+          playlist.value.name,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: isDark ? AppColors.textLight : AppColors.textPrimary,
+          ),
+        ),
+      ),
       body: GestureDetector(
         onDoubleTap:
             () => configController.config.update((val) {

@@ -4,6 +4,7 @@ import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/components/dismissible_remove.dart';
 import 'package:mladez_zpevnik/components/favorite_icon.dart';
 import 'package:mladez_zpevnik/services/analytics_service.dart';
+import 'package:mladez_zpevnik/theme/design_system.dart';
 
 class FavoriteList extends StatelessWidget {
   const FavoriteList({super.key});
@@ -12,8 +13,34 @@ class FavoriteList extends StatelessWidget {
   Widget build(BuildContext context) {
     final SongsController songsController = Get.find();
     Get.find<AnalyticsService>().logScreenView('favorite_list');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-        appBar: AppBar(title: const Text('Oblíbené')),
+        appBar: AppBar(
+          backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surface,
+          elevation: 0,
+          toolbarHeight: 48,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  (isDark ? AppColors.primaryLight : AppColors.primary)
+                      .withValues(alpha: 0.3),
+                  (isDark ? AppColors.secondary : AppColors.secondaryLight)
+                      .withValues(alpha: 0.2),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          title: Text(
+            'Oblíbené',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: isDark ? AppColors.textLight : AppColors.textPrimary,
+            ),
+          ),
+        ),
         body: Obx(() {
           final songs =
               songsController.songs.where((element) => element.isFavorite);

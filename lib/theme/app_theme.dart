@@ -88,6 +88,14 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppBorderRadius.lg),
         ),
       ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: brightness == Brightness.light 
+          ? AppColors.primaryLight 
+          : AppColors.primaryLight.withValues(alpha: 0.9),
+        foregroundColor: Colors.white,
+        elevation: 4,
+        shape: const CircleBorder(),
+      ),
     );
   }
 }

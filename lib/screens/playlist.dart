@@ -9,6 +9,7 @@ import 'package:mladez_zpevnik/components/playlist_fab.dart';
 import 'package:mladez_zpevnik/dialogs/number_select.dart';
 import 'package:mladez_zpevnik/dialogs/song_picker.dart';
 import 'package:mladez_zpevnik/services/analytics_service.dart';
+import 'package:mladez_zpevnik/theme/design_system.dart';
 
 class PlaylistDisplay extends StatelessWidget {
   const PlaylistDisplay({super.key});
@@ -20,9 +21,33 @@ class PlaylistDisplay extends StatelessWidget {
     final SongsController songsController = Get.find();
     final playlist = playlistController.getPlaylist(id);
     Get.find<AnalyticsService>().logScreenView('playlist_display');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
         appBar: AppBar(
-          title: Text(playlist.value.name),
+          backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surface,
+          elevation: 0,
+          toolbarHeight: 48,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  (isDark ? AppColors.primaryLight : AppColors.primary)
+                      .withValues(alpha: 0.3),
+                  (isDark ? AppColors.secondary : AppColors.secondaryLight)
+                      .withValues(alpha: 0.2),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          title: Text(
+            playlist.value.name,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: isDark ? AppColors.textLight : AppColors.textPrimary,
+            ),
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.playlist_add),
