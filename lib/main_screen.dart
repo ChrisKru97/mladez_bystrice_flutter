@@ -5,6 +5,8 @@ import 'package:mladez_zpevnik/screens/songs_with_search.dart';
 import 'package:mladez_zpevnik/services/analytics_service.dart';
 import 'package:mladez_zpevnik/theme/design_system.dart';
 import 'package:mladez_zpevnik/components/animated_components.dart';
+import 'package:mladez_zpevnik/components/common_app_bar.dart';
+import 'package:mladez_zpevnik/components/gradient_background.dart';
 import 'components/menu_row.dart';
 
 class MainScreen extends StatelessWidget {
@@ -17,63 +19,18 @@ class MainScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surface,
-        elevation: 0,
+      appBar: const CommonAppBar(
+        title: 'Mládežový zpěvník',
         toolbarHeight: 36,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                (isDark ? AppColors.primaryLight : AppColors.primary)
-                    .withValues(alpha: 0.3),
-                (isDark ? AppColors.secondary : AppColors.secondaryLight)
-                    .withValues(alpha: 0.2),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-        title: Text(
-          'Mládežový zpěvník',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: isDark ? AppColors.textLight : AppColors.textPrimary,
-          ),
-        ),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: isDark
-              ? AppColors.darkBackgroundGradient
-              : AppColors.backgroundGradient,
-        ),
+      body: GradientBackground(
+        withGlassContainer: true,
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: <Widget>[
             // Main content with animated entrance
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColors.surfaceDark.withValues(alpha: 0.3)
-                      : Colors.white.withValues(alpha: 0.7),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(AppBorderRadius.lg),
-                    topRight: Radius.circular(AppBorderRadius.lg),
-                  ),
-                  border: Border.all(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : Colors.black.withValues(alpha: 0.05),
-                    width: 1,
-                  ),
-                ),
-                child: const SongsWithSearch(),
-              ),
+            const Positioned.fill(
+              child: SongsWithSearch(),
             ),
 
             // Enhanced bottom navigation with glassmorphism

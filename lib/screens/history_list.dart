@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
+import 'package:mladez_zpevnik/components/common_app_bar.dart';
+import 'package:mladez_zpevnik/components/empty_state.dart';
 import 'package:mladez_zpevnik/services/analytics_service.dart';
-import 'package:mladez_zpevnik/theme/design_system.dart';
 
 class HistoryList extends StatelessWidget {
   const HistoryList({super.key});
@@ -12,58 +13,33 @@ class HistoryList extends StatelessWidget {
     final SongsController songsController = Get.find();
     final historyList = songsController.historyList();
     Get.find<AnalyticsService>().logScreenView('history_list');
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surface,
-          elevation: 0,
-          toolbarHeight: 48,
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  (isDark ? AppColors.primaryLight : AppColors.primary)
-                      .withValues(alpha: 0.3),
-                  (isDark ? AppColors.secondary : AppColors.secondaryLight)
-                      .withValues(alpha: 0.2),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+      appBar: const CommonAppBar(title: 'Naposledy otevřené'),
+      body: historyList.isEmpty
+          ? const EmptyState(
+              icon: Icons.history_rounded,
+              title: 'Žádná historie',
+              subtitle: 'Zatím jste neotevřeli žádné písně',
+            )
+          : ListView.separated(
+              separatorBuilder: (_, index) => const Divider(height: 2),
+              itemCount: historyList.length,
+              itemBuilder: (BuildContext context, int index) {
+                final element = historyList.elementAt(index);
+                final songNumber = element['songNumber'] as int;
+                final song = songsController.songBox.get(songNumber);
+                final openedAt = element["openedAt"] as DateTime;
+                if (song == null) return const SizedBox.shrink();
+                return ListTile(
+                  title: Text('${song.number}. ${song.name}',
+                      overflow: TextOverflow.ellipsis),
+                  onTap: () => Get.toNamed('/song', arguments: song.number),
+                  trailing: Text(
+                      '${openedAt.hour.toString().padLeft(2, '0')}:${openedAt.minute.toString().padLeft(2, '0')} ${openedAt.day}.${openedAt.month}.${openedAt.year - 2000}'),
+                );
+              },
             ),
-          ),
-          title: Text(
-            'Naposledy otevřené',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: isDark ? AppColors.textLight : AppColors.textPrimary,
-            ),
-          ),
-        ),
-        body: historyList.isEmpty
-            ? Center(
-                child: Text('Žádné písně',
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Get.isDarkMode ? Colors.white : Colors.black)))
-            : ListView.separated(
-                separatorBuilder: (_, __) => const Divider(
-                      height: 2,
-                    ),
-                itemCount: historyList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final element = historyList.elementAt(index);
-                  final songNumber = element['songNumber'] as int;
-                  final song = songsController.songBox.get(songNumber);
-                  final openedAt = element["openedAt"] as DateTime;
-                  if (song == null) return const Center();
-                  return ListTile(
-                    title: Text('${song.number}. ${song.name}',
-                        overflow: TextOverflow.ellipsis),
-                    onTap: () => Get.toNamed('/song', arguments: song.number),
-                    trailing: Text(
-                        '${openedAt.hour.toString().padLeft(2, '0')}:${openedAt.minute.toString().padLeft(2, '0')} ${openedAt.day}.${openedAt.month}.${openedAt.year - 2000}'),
-                  );
-                }));
+    );
   }
 }

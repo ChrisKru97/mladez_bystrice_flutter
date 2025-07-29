@@ -6,11 +6,11 @@ import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/config_controller.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
 import 'package:mladez_zpevnik/classes/song_with_chords.dart';
+import 'package:mladez_zpevnik/components/common_app_bar.dart';
 import 'package:mladez_zpevnik/components/song_fab.dart';
 import 'package:mladez_zpevnik/components/text_with_chords.dart';
 import 'package:mladez_zpevnik/helpers/chords_migration.dart';
 import 'package:mladez_zpevnik/services/analytics_service.dart';
-import 'package:mladez_zpevnik/theme/design_system.dart';
 import 'components/favorite_icon.dart';
 
 class SongDisplay extends StatelessWidget {
@@ -36,35 +36,9 @@ class SongDisplay extends StatelessWidget {
 
     return ObxValue((showFab) {
       setHideFabTimer(showFab);
-      final isDark = Theme.of(context).brightness == Brightness.dark;
       return Scaffold(
-        appBar: AppBar(
-          backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surface,
-          elevation: 0,
-          toolbarHeight: 48,
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  (isDark ? AppColors.primaryLight : AppColors.primary)
-                      .withValues(alpha: 0.3),
-                  (isDark ? AppColors.secondary : AppColors.secondaryLight)
-                      .withValues(alpha: 0.2),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-          ),
-          title: FittedBox(
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppColors.textLight : AppColors.textPrimary,
-              ),
-            ),
-          ),
+        appBar: CommonAppBar(
+          title: title,
           actions: <Widget>[Obx(() => FavoriteIcon(song.value.isFavorite))],
         ),
         body: GestureDetector(

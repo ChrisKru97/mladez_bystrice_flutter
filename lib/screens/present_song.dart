@@ -2,17 +2,11 @@ import 'dart:core';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mladez_zpevnik/bloc/songs_controller.dart';
+import 'package:mladez_zpevnik/components/presentation_screen_base.dart';
 import 'package:mladez_zpevnik/helpers/chords_migration.dart';
 import 'package:mladez_zpevnik/services/analytics_service.dart';
-
-const nextSlideKeys = [
-  LogicalKeyboardKey.enter,
-  LogicalKeyboardKey.space,
-  LogicalKeyboardKey.arrowRight,
-];
 
 class Slides {
   final List<String> slides;
@@ -113,9 +107,7 @@ Slides getSlides(dynamic arguments) {
 }
 
 class PresentSong extends StatelessWidget {
-  PresentSong({super.key});
-
-  final FocusNode _focusNode = FocusNode();
+  const PresentSong({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -131,60 +123,27 @@ class PresentSong extends StatelessWidget {
       Get.find<AnalyticsService>().logSongPresentation(song.number.toString(), song.name);
     }
 
-    var slideDragUpdated = false;
-
     final shouldRotate = MediaQuery.of(context).size.aspectRatio < 1;
     final fontSize = MediaQuery.of(context).size.longestSide / 20;
 
     return ObxValue(
-      (songIndex) => KeyboardListener(
-        focusNode: _focusNode,
-        autofocus: true,
-        onKeyEvent: (event) {
-          if (event is KeyDownEvent) {
-            if (nextSlideKeys.contains(event.logicalKey)) {
-              songIndex.value = (songIndex.value + 1) % slideTexts.length;
-            } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-              songIndex.value = (songIndex.value - 1) % slideTexts.length;
-            } else if (event.logicalKey == LogicalKeyboardKey.escape) {
-              Get.back();
-            }
-          }
-        },
-        child: GestureDetector(
-          onTap:
-              () => songIndex.value = (songIndex.value + 1) % slideTexts.length,
-          onDoubleTap: () => Get.back(),
-          onVerticalDragEnd: (_) => slideDragUpdated = false,
-          onVerticalDragUpdate: (details) {
-            if (!slideDragUpdated &&
-                details.primaryDelta != null &&
-                (details.primaryDelta! > 15 || details.primaryDelta! < -15)) {
-              slideDragUpdated = true;
-              final slideIncrement = details.primaryDelta! > 15 ? -1 : 1;
-              songIndex.value =
-                  (songIndex.value + slideIncrement) % slideTexts.length;
-            }
-          },
-          child: Scaffold(
-            body: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Center(
-                  child: RotatedBox(
-                    quarterTurns: shouldRotate ? 1 : 0,
-                    child: AutoSizeText(
-                      slideTexts[songIndex.value],
-                      style: TextStyle(
-                        decoration:
-                            slideUnderlines?.contains(songIndex.value) == true
-                                ? TextDecoration.underline
-                                : null,
-                        fontSize: fontSize,
-                        color: Get.isDarkMode ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ),
+      (songIndex) => PresentationScreenBase(
+        currentSlideIndex: songIndex,
+        totalSlides: slideTexts.length,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Center(
+            child: RotatedBox(
+              quarterTurns: shouldRotate ? 1 : 0,
+              child: AutoSizeText(
+                slideTexts[songIndex.value],
+                style: TextStyle(
+                  decoration:
+                      slideUnderlines?.contains(songIndex.value) == true
+                          ? TextDecoration.underline
+                          : null,
+                  fontSize: fontSize,
+                  color: Get.isDarkMode ? Colors.white : Colors.black,
                 ),
               ),
             ),
