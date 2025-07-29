@@ -20,7 +20,7 @@ class MainScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surface,
         elevation: 0,
-        toolbarHeight: 48,
+        toolbarHeight: 36,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -90,8 +90,9 @@ class MainScreen extends StatelessWidget {
                     left: AppSpacing.md,
                     right: AppSpacing.md,
                     top: AppSpacing.md,
-                    bottom:
-                        AppSpacing.md + MediaQuery.of(context).padding.bottom,
+                    bottom: MediaQuery.of(
+                      context,
+                    ).padding.bottom.clamp(AppSpacing.xs, double.infinity),
                   ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(AppBorderRadius.lg),
@@ -115,7 +116,7 @@ class MainScreen extends StatelessWidget {
                     ],
                   ),
                   child: GlassContainer(
-                    opacity: isDark ? 0.6 : 0.75,
+                    opacity: isDark ? 0.4 : 1,
                     child: const MenuRow(),
                   ),
                 );

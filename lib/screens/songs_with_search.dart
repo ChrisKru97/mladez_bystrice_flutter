@@ -13,30 +13,7 @@ class SongsWithSearch extends StatefulWidget {
   State<SongsWithSearch> createState() => _SongsWithSearchState();
 }
 
-class _SongsWithSearchState extends State<SongsWithSearch>
-    with TickerProviderStateMixin {
-  late AnimationController _emptyStateController;
-  late AnimationController _loadingController;
-  
-  @override
-  void initState() {
-    super.initState();
-    _emptyStateController = AnimationController(
-      duration: AppAnimations.medium,
-      vsync: this,
-    );
-    _loadingController = AnimationController(
-      duration: AppAnimations.medium,
-      vsync: this,
-    );
-  }
-
-  @override
-  void dispose() {
-    _emptyStateController.dispose();
-    _loadingController.dispose();
-    super.dispose();
-  }
+class _SongsWithSearchState extends State<SongsWithSearch> {
 
   @override
   Widget build(BuildContext context) => Obx(() {
@@ -56,66 +33,29 @@ class _SongsWithSearchState extends State<SongsWithSearch>
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                TweenAnimationBuilder<double>(
-                  duration: AppAnimations.medium,
-                  tween: Tween(begin: 0.0, end: 1.0),
-                  builder: (context, value, child) {
-                    _emptyStateController.value = value;
-                    return Transform.scale(
-                      scale: value,
-                      child: Opacity(
-                        opacity: value,
-                        child: Icon(
-                          Icons.search_rounded,
-                          size: 64,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    );
-                  },
+                Icon(
+                  Icons.search_rounded,
+                  size: 64,
+                  color: AppColors.textMuted,
                 ),
 
                 const SizedBox(height: AppSpacing.lg),
 
-                TweenAnimationBuilder<double>(
-                  duration: AppAnimations.medium,
-                  tween: Tween(begin: 0.0, end: 1.0),
-                  builder: (context, value, child) {
-                    return Transform.translate(
-                      offset: Offset(0, (1 - value) * 10),
-                      child: Opacity(
-                        opacity: value,
-                        child: Text(
-                          'Žádné výsledky',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                Text(
+                  'Žádné výsledky',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
 
                 const SizedBox(height: AppSpacing.sm),
 
-                TweenAnimationBuilder<double>(
-                  duration: AppAnimations.medium,
-                  tween: Tween(begin: 0.0, end: 1.0),
-                  builder: (context, value, child) {
-                    return Transform.translate(
-                      offset: Offset(0, (1 - value) * 10),
-                      child: Opacity(
-                        opacity: value,
-                        child: Text(
-                          'Zkuste jiné hledání',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                Text(
+                  'Zkuste jiné hledání',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textMuted,
+                  ),
                 ),
               ],
             ),
@@ -132,36 +72,18 @@ class _SongsWithSearchState extends State<SongsWithSearch>
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              TweenAnimationBuilder<double>(
-                duration: AppAnimations.medium,
-                tween: Tween(begin: 0.0, end: 1.0),
-                builder: (context, value, child) {
-                  return Transform.scale(
-                    scale: value,
-                    child: CircularProgressIndicator(
-                      color: AppColors.primary,
-                      strokeWidth: 3,
-                    ),
-                  );
-                },
+              CircularProgressIndicator(
+                color: AppColors.primary,
+                strokeWidth: 3,
               ),
 
               const SizedBox(height: AppSpacing.lg),
 
-              TweenAnimationBuilder<double>(
-                duration: AppAnimations.medium,
-                tween: Tween(begin: 0.0, end: 1.0),
-                builder: (context, value, child) {
-                  return Opacity(
-                    opacity: value,
-                    child: Text(
-                      'Načítání písní...',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  );
-                },
+              Text(
+                'Načítání písní...',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
@@ -195,17 +117,8 @@ class _SongsWithSearchState extends State<SongsWithSearch>
             itemBuilder: (BuildContext context, int index) {
             final song = songs.elementAt(index);
 
-            return TweenAnimationBuilder<double>(
-              duration: Duration(milliseconds: 150 + (index * 20).clamp(0, 200)),
-              tween: Tween(begin: 0.0, end: 1.0),
-              curve: Curves.easeOutCubic,
-              builder: (context, animationValue, child) {
-                return Transform.translate(
-                  offset: Offset(0, (1 - animationValue) * 10),
-                  child: Opacity(
-                    opacity: animationValue,
-                    child: Container(
-              margin: const EdgeInsets.only(bottom: 6.0),
+            return Container(
+              margin: const EdgeInsets.only(bottom: 4.0),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(AppBorderRadius.lg),
@@ -240,7 +153,7 @@ class _SongsWithSearchState extends State<SongsWithSearch>
                   splashColor: AppColors.primary.withValues(alpha: 0.1),
                   highlightColor: AppColors.primary.withValues(alpha: 0.05),
                 child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                   child: Row(
                     children: [
                       // Song number with modern styling
@@ -248,7 +161,7 @@ class _SongsWithSearchState extends State<SongsWithSearch>
                         width: 28,
                         height: 28,
                         decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
+                          color: AppColors.primaryLight.withAlpha(100),
                           borderRadius: BorderRadius.circular(AppBorderRadius.md),
                           boxShadow: [AppShadows.soft],
                         ),
@@ -256,8 +169,8 @@ class _SongsWithSearchState extends State<SongsWithSearch>
                           child: Text(
                             '${song.number}',
                             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
+                              color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                              fontWeight: FontWeight.w600,
                               fontSize: 10,
                             ),
                           ),
@@ -286,7 +199,8 @@ class _SongsWithSearchState extends State<SongsWithSearch>
 
                       // Enhanced favorite icon
                       Container(
-                        padding: const EdgeInsets.all(0),
+                        height: 40,
+                        width: 40,
                         decoration: BoxDecoration(
                           color: song.isFavorite
                             ? AppColors.favorite.withValues(alpha: 0.1)
@@ -300,10 +214,6 @@ class _SongsWithSearchState extends State<SongsWithSearch>
                 ),
                 ),
               ),
-                    ),
-                  ),
-                );
-              },
             );
             },
           ),

@@ -14,13 +14,11 @@ class ModernNavButton extends StatefulWidget {
     required this.icon,
     required this.onPressed,
     this.label,
-    this.isActive = false,
   });
 
   final IconData icon;
   final VoidCallback onPressed;
   final String? label;
-  final bool isActive;
 
   @override
   State<ModernNavButton> createState() => _ModernNavButtonState();
@@ -49,9 +47,10 @@ class _ModernNavButtonState extends State<ModernNavButton>
     _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
       CurvedAnimation(parent: _controller, curve: AppAnimations.fastOutSlowIn),
     );
-    _hoverScaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(parent: _hoverController, curve: Curves.easeOut),
-    );
+    _hoverScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.05,
+    ).animate(CurvedAnimation(parent: _hoverController, curve: Curves.easeOut));
   }
 
   @override
@@ -96,62 +95,62 @@ class _ModernNavButtonState extends State<ModernNavButton>
         onTapUp: _onTapUp,
         onTapCancel: _onTapCancel,
         child: AnimatedBuilder(
-        animation: Listenable.merge([_scaleAnimation, _hoverScaleAnimation]),
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value * _hoverScaleAnimation.value,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                gradient: widget.isActive || _isPressed
-                    ? AppColors.primaryGradient
-                    : LinearGradient(
-                        colors: [
-                          isDark ? AppColors.cardDark : Colors.white,
-                          isDark ? AppColors.surfaceDark : AppColors.surface,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+          animation: Listenable.merge([_scaleAnimation, _hoverScaleAnimation]),
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _scaleAnimation.value * _hoverScaleAnimation.value,
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  gradient: _isPressed
+                      ? AppColors.primaryGradient
+                      : LinearGradient(
+                          colors: [
+                            isDark ? AppColors.cardDark : Colors.white,
+                            isDark ? AppColors.surfaceDark : AppColors.surface,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                  borderRadius: BorderRadius.circular(AppBorderRadius.lg),
+                  boxShadow: [
+                    if (!_isPressed) ...[
+                      AppShadows.medium,
+                      BoxShadow(
+                        color: isDark
+                                  ? Colors.black.withValues(
+                                      alpha: _isHovered ? 0.6 : 0.4,
+                                    )
+                                  : Colors.black.withValues(
+                                      alpha: _isHovered ? 0.15 : 0.1,
+                                    ),
+                        blurRadius: _isHovered ? 16 : 12,
+                        offset: Offset(0, _isHovered ? 6 : 4),
                       ),
-                borderRadius: BorderRadius.circular(AppBorderRadius.lg),
-                boxShadow: [
-                  if (!_isPressed) ...[
-                    AppShadows.medium,
-                    BoxShadow(
-                      color: widget.isActive
-                          ? AppColors.primary.withValues(alpha: 0.3)
-                          : (isDark
-                                ? Colors.black.withValues(alpha: _isHovered ? 0.6 : 0.4)
-                                : Colors.black.withValues(alpha: _isHovered ? 0.15 : 0.1)),
-                      blurRadius: _isHovered ? 16 : 12,
-                      offset: Offset(0, _isHovered ? 6 : 4),
-                    ),
+                    ],
                   ],
-                ],
-                border: Border.all(
-                  color: widget.isActive
-                      ? AppColors.primary.withValues(alpha: 0.4)
-                      : (isDark
-                            ? Colors.white.withValues(alpha: 0.2)
-                            : Colors.black.withValues(alpha: 0.1)),
-                  width: 1,
+                  border: Border.all(
+                    color: isDark
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : Colors.black.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+                child: Center(
+                  child: Icon(
+                    widget.icon,
+                    size: 20,
+                    color: _isPressed
+                        ? Colors.white
+                        : (isDark
+                              ? AppColors.textLight
+                              : AppColors.textSecondary),
+                  ),
                 ),
               ),
-              child: Center(
-                child: Icon(
-                  widget.icon,
-                  size: 20,
-                  color: widget.isActive || _isPressed
-                      ? Colors.white
-                      : (isDark
-                            ? AppColors.textLight
-                            : AppColors.textSecondary),
-                ),
-              ),
-            ),
-          );
-        },
+            );
+          },
         ),
       ),
     );
@@ -210,8 +209,7 @@ class MenuRow extends StatefulWidget {
   State<MenuRow> createState() => _MenuRowState();
 }
 
-class _MenuRowState extends State<MenuRow>
-    with TickerProviderStateMixin {
+class _MenuRowState extends State<MenuRow> with TickerProviderStateMixin {
   late AnimationController _searchInfoController;
   late AnimationController _buttonsController;
   late Animation<double> _searchInfoFadeAnimation;
@@ -220,33 +218,30 @@ class _MenuRowState extends State<MenuRow>
   @override
   void initState() {
     super.initState();
-    
+
     _searchInfoController = AnimationController(
       duration: AppAnimations.medium,
       vsync: this,
     );
-    
+
     _buttonsController = AnimationController(
       duration: AppAnimations.medium,
       vsync: this,
     );
-    
-    _searchInfoFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _searchInfoController,
-      curve: AppAnimations.fastOutSlowIn,
-    ));
-    
-    _searchInfoSlideAnimation = Tween<double>(
-      begin: 0.3,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _searchInfoController,
-      curve: AppAnimations.fastOutSlowIn,
-    ));
-    
+
+    _searchInfoFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _searchInfoController,
+        curve: AppAnimations.fastOutSlowIn,
+      ),
+    );
+
+    _searchInfoSlideAnimation = Tween<double>(begin: 0.3, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _searchInfoController,
+        curve: AppAnimations.fastOutSlowIn,
+      ),
+    );
 
     // Start animations with slight delay
     _searchInfoController.forward();
@@ -264,119 +259,103 @@ class _MenuRowState extends State<MenuRow>
 
   @override
   Widget build(BuildContext context) {
-    final currentRoute = Get.currentRoute;
-
-    return Container(
-      padding: const EdgeInsets.all(6.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Enhanced search info with modern styling
-          AnimatedBuilder(
-            animation: _searchInfoController,
-            builder: (context, child) {
-              return Transform.translate(
-                offset: Offset(0, _searchInfoSlideAnimation.value * 20),
-                child: Opacity(
-                  opacity: _searchInfoFadeAnimation.value,
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 2.0),
-                    child: const SearchInfo(),
-                  ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Enhanced search info with modern styling
+        AnimatedBuilder(
+          animation: _searchInfoController,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(0, _searchInfoSlideAnimation.value * 20),
+              child: Opacity(
+                opacity: _searchInfoFadeAnimation.value,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 2.0),
+                  child: const SearchInfo(),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
+        ),
 
-          // Modern navigation buttons with staggered animations
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: buttonList.asMap().entries.map((entry) {
-              final index = entry.key;
-              final button = entry.value;
-              final isActive = _isButtonActive(currentRoute, index);
+        // Modern navigation buttons with staggered animations
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: buttonList.asMap().entries.map((entry) {
+            final index = entry.key;
+            final button = entry.value;
 
-              return Expanded(
-                child: AnimatedBuilder(
-                  animation: _buttonsController,
-                  builder: (context, child) {
-                    // Stagger the animation based on index
-                    final delayFactor = (index * 0.05).clamp(0.0, 0.8);
-                    final adjustedProgress = (_buttonsController.value - delayFactor).clamp(0.0, 1.0) / (1.0 - delayFactor);
-                    
-                    final fadeValue = Tween<double>(begin: 0.0, end: 1.0).transform(adjustedProgress);
-                    final slideValue = Tween<double>(begin: 0.3, end: 0.0).transform(adjustedProgress);
-                    final scaleValue = Tween<double>(begin: 0.9, end: 1.0).transform(adjustedProgress);
-                    
-                    return Transform.scale(
-                      scale: scaleValue,
-                      child: Transform.translate(
-                        offset: Offset(0, slideValue * 10),
-                        child: Opacity(
-                          opacity: fadeValue,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 2.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ModernNavButton(
-                                  icon: button['icon'] as IconData,
-                                  onPressed: button['onPressed'] as VoidCallback,
-                                  label: button['label'] as String?,
-                                  isActive: isActive,
-                                ),
+            return Expanded(
+              child: AnimatedBuilder(
+                animation: _buttonsController,
+                builder: (context, child) {
+                  // Stagger the animation based on index
+                  final delayFactor = (index * 0.05).clamp(0.0, 0.8);
+                  final adjustedProgress =
+                      (_buttonsController.value - delayFactor).clamp(0.0, 1.0) /
+                      (1.0 - delayFactor);
 
-                                const SizedBox(height: 2.0),
+                  final fadeValue = Tween<double>(
+                    begin: 0.0,
+                    end: 1.0,
+                  ).transform(adjustedProgress);
+                  final slideValue = Tween<double>(
+                    begin: 0.3,
+                    end: 0.0,
+                  ).transform(adjustedProgress);
+                  final scaleValue = Tween<double>(
+                    begin: 0.9,
+                    end: 1.0,
+                  ).transform(adjustedProgress);
 
-                                // Button label
-                                Text(
-                                  button['label'] as String,
-                                  style: Theme.of(context).textTheme.labelSmall
-                                      ?.copyWith(
-                                        color: isActive
-                                            ? AppColors.primary
-                                            : (Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? AppColors.textLight
-                                                  : AppColors.textPrimary),
-                                        fontWeight: isActive
-                                            ? FontWeight.w600
-                                            : FontWeight.w500,
-                                      ),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
+                  return Transform.scale(
+                    scale: scaleValue,
+                    child: Transform.translate(
+                      offset: Offset(0, slideValue * 10),
+                      child: Opacity(
+                        opacity: fadeValue,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ModernNavButton(
+                                icon: button['icon'] as IconData,
+                                onPressed: button['onPressed'] as VoidCallback,
+                                label: button['label'] as String?,
+                              ),
+
+                              const SizedBox(height: 2.0),
+
+                              // Button label
+                              Text(
+                                button['label'] as String,
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(
+                                      color: Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? AppColors.textLight
+                                                : AppColors.textPrimary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    );
-                  },
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
-  bool _isButtonActive(String currentRoute, int buttonIndex) {
-    switch (buttonIndex) {
-      case 0: // Favorites
-        return currentRoute == '/favorite';
-      case 1: // Search
-        return false; // Search is a modal, not a route
-      case 2: // Number select
-        return false; // Number select is a modal, not a route
-      case 3: // History
-        return currentRoute == '/history';
-      case 4: // Playlists
-        return currentRoute == '/playlists' || currentRoute == '/playlist';
-      default:
-        return false;
-    }
-  }
 }
